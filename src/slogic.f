@@ -2320,8 +2320,8 @@
           INTEGER term(nkn,ntr,3)
           REAL slprbc(25)
         ! local
-          REAL rnum,myrand,mtpx,whx
-          INTEGER i,j
+          REAL rnum,myrand
+          INTEGER i,j,mtpx,whx
         ! arguments out
           INTEGER knt,mtp,wh
 
