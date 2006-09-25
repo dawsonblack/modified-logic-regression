@@ -626,9 +626,12 @@
                 END DO
                 CALL stringprint(astring,68+9*4)
                 astring(1:12)="===========>"
+                astring(13:32)="                    "
+                astring(33:52)="                    "
+                astring(53:72)="                    "
+                astring(73:92)="                    "
                 DO j=5,(nsep+ntr)
                   IF(j.LT.13)THEN
-                    astring((j*9-26):(j+9-26))=" "
                     CALL makerstring(j*9-13,j*9-6,astring,
      #                               betas(1,j),4,3)
                   END IF
