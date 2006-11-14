@@ -37,7 +37,7 @@
 
         ! parameters
           INTEGER LGCnknMAX,LGCntrMAX,LGCn1MAX,LGCn2MAX,LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCn2MAX   =  1000)
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
@@ -671,7 +671,7 @@
 
         ! parameters
           INTEGER LGCnsepMAX,LGCn1MAX,LGCn2MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCn2MAX  =   1000)
           PARAMETER (LGCnsepMAX =    50)
         ! arguments in
@@ -722,7 +722,7 @@
 
         ! parameters
           INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
         ! arguments in
           INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),ordrs(n1),seed,mtm
@@ -955,7 +955,7 @@
 
         ! parameters
           INTEGER LGCnknMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCnknMAX  =   128)
         ! arguments in
           INTEGER n1,n2,nkn,ntr,wh
@@ -1841,7 +1841,7 @@
         ! parameters
           INTEGER LGCn1MAX,LGCnknMAX,LGCntrMAX,ltree,iotree(1)
           INTEGER LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
@@ -2822,7 +2822,7 @@
 
         ! parameters
           INTEGER LGCnsepMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCnsepMAX =    50)
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt,cnc(3)
@@ -2869,7 +2869,7 @@
 
         ! parameters
           INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
         ! random number generator
           REAL myrand               ! Declare the type of the rand() function
         ! arguments in
@@ -2953,7 +2953,7 @@
 
         ! parameters
           INTEGER LGCnsepMAX,LGCn1MAX,LGCntrMAX,LGCn2MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCn2MAX   =  1000)
           PARAMETER (LGCnsepMAX =    50)
           PARAMETER (LGCntrMAX  =     5)
@@ -3014,7 +3014,7 @@
 
         ! parameters
           INTEGER LGCn1MAX,LGCntrMAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCntrMAX  =     5)
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,iotrees(1),nfcnt
@@ -3160,7 +3160,7 @@
 
         ! parameters
           INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
         ! random number generator
           REAL myrand               ! declare the type of the rand() function
         ! arguments in
@@ -3692,7 +3692,7 @@
 
         ! parameters
           INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER n1,nop,nsep,ntr,prtr(n1,ntr)
@@ -3821,7 +3821,7 @@
 
         ! parameters
           INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER n1,nop,nsep,ntr,dcph(n1),ordrs(n1),prtr(n1,ntr)
@@ -3973,7 +3973,7 @@
 
         ! parameters 
           INTEGER LGCnknMAX,LGCntrMAX,LGCn1MAX,LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
@@ -4149,7 +4149,7 @@
 
         ! parameters 
           INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCbetaMAX=    55)
         ! arguments in
           INTEGER n1,nop,ntr,nsep,dcph(n1),ordrs(n1),prtr(n1,ntr)
@@ -4283,7 +4283,7 @@
       IMPLICIT none
         ! parameters 
           INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX=   10000)
+          PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCbetaMAX=    55)
         ! i/o
           INTEGER n1,np,delta(n1),idx(n1),lda
@@ -4369,7 +4369,7 @@
       IMPLICIT none
         ! i/o
           INTEGER n1,np,delta(n1),idx(n1),LGCn1MAX
-          PARAMETER (LGCn1MAX=10000)
+          PARAMETER (LGCn1MAX   = 20000)
           DOUBLE PRECISION beta(np),covs(n1*np),logl,myexp,mylog
           REAL weight(n1)
         ! local

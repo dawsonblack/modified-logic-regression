@@ -29,7 +29,7 @@ satisfy the compiler should still be provided.]
 After recompilation, you can fit your model using the option \code{
 type = 0} in \code{logreg}.  Below we give an example for a version
 of the My.own functions for conditional logistic regression which are
-also provided as \bold{condlogic.ff} when you downloaded the files.
+also provided as \bold{inst/condlogic.ff} when you downloaded the files.
 
 \bold{PROGRAMMING DETAILS}
 
