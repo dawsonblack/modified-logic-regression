@@ -772,6 +772,7 @@ print.logregmodel <- function(x, nms, notnms, pstyle = 1, ...)
    scores <- scores[(lscores - ntr + 1):lscores]
    for(j in 1:ntr) {
       if(x$trees[[j]]$trees[1,5]!=0){
+         if(is.na(scores[j])==FALSE){
          if(scores[j] >= 0)
             cat(" +", signif(scores[j], 3), " * ", sep = "")
          else cat(" ", signif(scores[j], 3), " * ", sep = "")
@@ -781,6 +782,7 @@ print.logregmodel <- function(x, nms, notnms, pstyle = 1, ...)
             print.logregtree(x$trees[[j]], nms, pstyle = pstyle)
          if(inn == 0)
             print.logregtree(x$trees[[j]], pstyle = pstyle)
+         }
       }
       else{
          if(j==1){

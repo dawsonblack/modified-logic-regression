@@ -54,7 +54,7 @@
           INTEGER i,j,accept,fcnt,hm,nac,nop,npertemp,tcnt,nrj,nde
           INTEGER nac2,ntot,npckmv(6,LGCntrMAX)
           INTEGER pickmv(6,LGCnknMAX,LGCntrMAX),nsame,nsame2
-          REAL acr,scav,sco,temp,rsp(LGCn1MAX),ttemp
+          REAL acr,sco,temp,rsp(LGCn1MAX)
           INTEGER iearly(0:6,LGCntrMAX,0:LGCnknMAX,LGCn2MAX,0:1,2)
           INTEGER earlyup
           REAL rearly(0:6,LGCntrMAX,0:LGCnknMAX,LGCn2MAX,0:1,2)
@@ -174,7 +174,6 @@
             nrj=0
             nde=0
             temp=(10.0**tstr)*(10.0**(-tcnt/20.0))
-            scav=0.0
             DO j=1,npertemp        
               sco=score(1)
               new=nac
@@ -196,13 +195,12 @@
                 earlyup=earlyup+2
               END IF
               nde=j-nrj-nac
-              scav=(REAL(j-1)*scav+score(1))/REAL(j)
               nac2=nac
               nsame2=nsame
-              CALL writeinfo(ehm,mdl,j,nsep,ntr,temp,score,scav,betas,
+              CALL writeinfo(ehm,mdl,j,nsep,ntr,temp,score,betas,
      #                       nac,nrj,nde,nsame)
               IF (nac.GT.500.AND.j.LT.npertemp) THEN
-                CALL writeinfo(ehm,mdl,ehm,nsep,ntr,temp,score,scav,
+                CALL writeinfo(ehm,mdl,ehm,nsep,ntr,temp,score,
      #                         betas,nac,nrj,nde,nsame)
                 GOTO 1212
               END IF
@@ -310,8 +308,6 @@
         INTEGER nop,reject,ssize,npckmv(6,ntr)
         INTEGER pickmv(6,nkn,ntr)
         REAL score(3),betas(3,0:(nsep+ntr))
-          real tmp
-          character *100 astring
 
       ! precompute separate predictors and intercept for linear regress
         IF(mdl.EQ.2)THEN
@@ -367,7 +363,7 @@
           END DO
         END DO
         IF(mcmc.GT.0)THEN
-           CALL smackonprior(score,ssize,ntr,nkn,conc,term,negs,pick,
+           CALL smackonprior(score,ssize,ntr,nkn,
      #           hyperpars,n2,-1,weight,(REAL(1.)),0)
         END IF
       END
@@ -403,7 +399,7 @@
           INTEGER prtr(n1,ntr),datri(n2,n1)
           REAL temp,penalty,hyperpars(10)
           REAL score(3),cbetas(0:(nsep+ntr))
-          REAL rsp(n1),weight(n1)
+          REAL rsp(n1),weight(n1),zz,zz2
           REAL slprbc(25)
           REAL xtxsep(0:nsep,0:nsep)
           REAL seps(nsep,n1)
@@ -468,6 +464,18 @@
           IF(betas(1,1).GT. -10000.)l1=1
           IF(betas(1,1).LT. 10000.)l2=1
           IF(l1+l2.EQ.0)reject=1
+          IF(reject.eq.0.and.mcmc.gt.0.and.mdl.eq.1)THEN
+             zz=0
+             DO j=1,n1
+                zz=zz+rsp(j)
+             END DO
+             zz=zz/n1
+             zz2=0
+             DO j=1,n1
+                zz2=zz2+(rsp(j)-zz)*(rsp(j)-zz)
+             END DO
+             zz2=(zz2/(n1-1))
+          END IF
           DO j=0,(nsep+ntr)
             betas(1,j)=cbetas(j)
           END DO
@@ -479,6 +487,9 @@
                score(1)=score(1)+penalty/(REAL(n1))*ssize
             ELSE 
                score(1)=score(1)+penalty*ssize
+            END IF
+            IF(mdl.EQ.1.and.mcmc.GT.0)THEN
+               score(1)=score(1)*score(1)*n1/zz2
             END IF
             iearly(mtp,wh,knt,letter,neg,opper)=earlyup+1
             rearly(mtp,wh,knt,letter,neg,opper)=score(1)
@@ -502,8 +513,8 @@
                ELSE
                   rr=1.
                END IF
-               CALL smackonprior(score,ssize,ntr,nkn,conc,term,negs,
-     #           pick,hyperpars,n2,mtp,slprbc,rr,nopold-nop)
+               CALL smackonprior(score,ssize,ntr,nkn,
+     #           hyperpars,n2,mtp,slprbc,rr,nopold-nop)
             END IF
             CALL deciding(score,temp,accept,hyperpars(8),mcmc)
           END IF
@@ -547,13 +558,13 @@
       ! this subroutine creates the output during the annealing run
       ! last modification 10/16/02
 
-      SUBROUTINE writeinfo(ehm,mdl,i,nsep,ntr,temp,score,scav,betas,
+      SUBROUTINE writeinfo(ehm,mdl,i,nsep,ntr,temp,score,betas,
      #                   nac,nrj,nde,nsame)
       IMPLICIT NONE
 
         ! arguments in
           INTEGER ehm,i,mdl,nsep,ntr,nac,nrj,nde,nsame
-          REAL scav,temp,score(3),betas(3,0:(ntr+nsep)),t2
+          REAL temp,score(3),betas(3,0:(ntr+nsep)),t2
           DOUBLE PRECISION t1,mylog
         ! local
           INTEGER j
@@ -700,7 +711,7 @@
         CALL crossval(kfold,n1,n2,mdl,
      #                    nkn,nsp,ntr,conc,negs,pick,term,storage,
      #                    slprbc,datri,weight,tstr,tend,tint,ehm,msz,
-     #                    nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
+     #                    nsep,seps,cnc,score,betas,ssize,dcph,
      #                    nfcnt,seed,sepstt,datritt,resp,rnumsrr,mtm,
      #                    ltree,ioscores)
         END
@@ -715,7 +726,7 @@
       SUBROUTINE crossval(kfold,n1,n2,mdl,
      #                    nkn,nsp,ntr,conc,negs,pick,term,storage,
      #                    slprbc,datri,weight,tstr,tend,tint,ehm,msz,
-     #                    nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
+     #                    nsep,seps,cnc,score,betas,ssize,dcph,
      #                    nfcnt,seed,sepstt,datritt,resp,rnumsrr,mtm,
      #                    ltree,ioscores)
       IMPLICIT NONE
@@ -725,7 +736,7 @@
           PARAMETER (LGCn1MAX   = 20000)
         ! arguments in
           INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt,cnc(3)
-          INTEGER dcph(n1),ordrs(n1),seed,mtm
+          INTEGER dcph(n1),seed,mtm
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1) 
           REAL seps(nsep,n1),resp(n1),rnumsrr(n1)
@@ -1108,10 +1119,10 @@
           CALL evaluate_altlf(wh,knt,n1,n2,nkn,ntr,conc,term,negs,
      #                        datri,storage,nwkv,wkv)
         ELSE IF (mtp.EQ.2) THEN
-          CALL evaluate_altop(wh,knt,n1,nkn,ntr,conc,term,negs,
+          CALL evaluate_altop(wh,knt,n1,nkn,ntr,conc,
      #                        storage,nwkv,wkv)
         ELSE IF (mtp.EQ.3) THEN
-          CALL evaluate_delete(wh,knt,n1,nkn,ntr,conc,term,negs,
+          CALL evaluate_delete(wh,knt,n1,nkn,ntr,conc,
      #                         storage,nwkv,wkv)
         ELSE IF (mtp.EQ.4) THEN
           CALL evaluate_split(wh,knt,n1,n2,nkn,ntr,conc,term,negs,
@@ -1250,15 +1261,13 @@
       ! this subroutine evaluates the tree after an operator was changed
       ! last modification 10/16/02
 
-      SUBROUTINE evaluate_altop(wh,knt,n1,nkn,ntr,conc,term,negs,
+      SUBROUTINE evaluate_altop(wh,knt,n1,nkn,ntr,conc,
      #                          storage,nwkv,wkv)
       IMPLICIT NONE
 
         ! arguments in
           INTEGER knt,n1,nkn,ntr,wh
           INTEGER conc(nkn,ntr,3)
-          INTEGER negs(nkn,ntr,3)
-          INTEGER term(nkn,ntr,3)
         ! local
           INTEGER j,knac,knac2,pp,pp2,pp2b
         ! arguments out
@@ -1300,15 +1309,13 @@
       ! this subroutine evaluates the tree after a leaf was deleted
       ! last modification 10/16/02
 
-      SUBROUTINE evaluate_delete(wh,knt,n1,nkn,ntr,conc,term,negs,
+      SUBROUTINE evaluate_delete(wh,knt,n1,nkn,ntr,conc,
      #                           storage,nwkv,wkv)
       IMPLICIT NONE
 
         ! arguments in
           INTEGER knt,n1,nkn,ntr,wh
           INTEGER conc(nkn,ntr,3)
-          INTEGER negs(nkn,ntr,3)
-          INTEGER term(nkn,ntr,3)
         ! local
           INTEGER j,knac,sibling,knac2,pp,pp2,pp2b
         ! arguments out
@@ -2345,8 +2352,8 @@
                   IF(npckmv(mtpx,whx).GT.0)THEN
                     mtp=mtpx
                     wh=whx
-                    CALL decision(n2,nkn,nsp,ntr,wh,conc,negs,pick,
-     #              term,slprbc,cnc,npckmv,pickmv,msz,ssize,nop,
+                    CALL decision(n2,nkn,ntr,wh,conc,negs,pick,
+     #              term,slprbc,cnc,npckmv,pickmv,msz,ssize,
      #              knt,mtp,mcmc,mctry)
                     GOTO 169
                   END IF
@@ -2372,8 +2379,8 @@
           knt=0
           mtp=0
         ELSE
-          CALL decision(n2,nkn,nsp,ntr,wh,conc,negs,pick,term,slprbc,
-     #                  cnc,npckmv,pickmv,msz,ssize,nop,
+          CALL decision(n2,nkn,ntr,wh,conc,negs,pick,term,slprbc,
+     #                  cnc,npckmv,pickmv,msz,ssize,
      #                  knt,mtp,mcmc,mctry)
         END IF
 169     CONTINUE
@@ -2425,13 +2432,13 @@
       ! this subroutine makes a decision which move to carry out
       ! last modification 10/16/02
 
-      SUBROUTINE decision(n2,nkn,nsp,ntr,wh,conc,negs,pick,term,slprbc,
-     #                    cnc,npckmv,pickmv,msz,ssize,nop,
+      SUBROUTINE decision(n2,nkn,ntr,wh,conc,negs,pick,term,slprbc,
+     #                    cnc,npckmv,pickmv,msz,ssize,
      #                    knt,mtp,mcmc,mctry)
       IMPLICIT NONE
 
         ! arguments in
-          INTEGER msz,n2,nkn,nop,nsp,ntr,ssize,wh,cnc(3)
+          INTEGER msz,n2,nkn,ntr,ssize,wh,cnc(3)
           INTEGER npckmv(6,ntr),pickmv(6,nkn,ntr)
           INTEGER conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
@@ -2439,7 +2446,7 @@
           INTEGER term(nkn,ntr,3),mcmc
           REAL slprbc(25)
         ! local
-          INTEGER sibling,sng,dbl,mctry
+          INTEGER sng,dbl,mctry
           REAL rnum,myrand
         ! arguments out
           INTEGER knt,mtp,rnd1,rnd2,rnd3
@@ -2456,7 +2463,7 @@
           rnum=myrand(0)
           knt=pickmv(1,INT(REAL(npckmv(1,wh))*rnum)+1,wh)
           rnd1= -1
-          CALL altlf(knt,n2,nkn,ntr,wh,conc,negs,term,rnd1,rnd2)
+          CALL altlf(knt,n2,nkn,ntr,wh,negs,term,rnd1,rnd2)
           mtp=1
         ELSE IF (rnum.LT.slprbc(2).OR.(mctry.GT.0.AND.mtp.EQ.2)) THEN
           IF (npckmv(2,wh).EQ.0) GOTO 1000
@@ -2514,12 +2521,11 @@
       ! this subroutine alternates a leaf
       ! last modification 10/17/02
 
-      SUBROUTINE altlf(knt,n2,nkn,ntr,wh,conc,negs,term,rnd1,rnd2)
+      SUBROUTINE altlf(knt,n2,nkn,ntr,wh,negs,term,rnd1,rnd2)
       IMPLICIT NONE
 
         ! arguments in
           INTEGER knt,n2,nkn,ntr,wh,rnd1,rnd2
-          INTEGER conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
           INTEGER term(nkn,ntr,3)
         ! local
@@ -3098,8 +3104,8 @@
          
 
       ! randomization
-        CALL ident_prdcl(n1,n2,ntr,prtr,ncl,nprdcl,prdcl)
-        CALL rand_prdcl(n1,n2,nsep,rresp,rwgt,rseps,
+        CALL ident_prdcl(n1,ntr,prtr,ncl,nprdcl,prdcl)
+        CALL rand_prdcl(n1,nsep,rresp,rwgt,rseps,
      #                  ncl,nprdcl,prdcl,rdcp,rordrs)
         CALL annealing(n1,n2,mdl,nkn,nsp,ntrup,conc,negs,pick,term,
      #                storage,slprbc,rdatri,rwgt,tstr,tend,tint,ehm,
@@ -3115,11 +3121,11 @@
       ! this subroutine identifies the prediction classes
       ! last modification 10/17/02
 
-      SUBROUTINE ident_prdcl(n1,n2,ntr,prtr,ncl,nprdcl,prdcl)
+      SUBROUTINE ident_prdcl(n1,ntr,prtr,ncl,nprdcl,prdcl)
       IMPLICIT NONE
 
         ! arguments in
-          INTEGER n1,n2,ntr
+          INTEGER n1,ntr
           INTEGER prtr(n1,ntr)
         ! local
           INTEGER j,k
@@ -3154,7 +3160,7 @@
       ! this subroutine randomizes the prediction classes
       ! last modification 10/17/02
 
-      SUBROUTINE rand_prdcl(n1,n2,nsep,resp,rwgt,rseps,
+      SUBROUTINE rand_prdcl(n1,nsep,resp,rwgt,rseps,
      #                      ncl,nprdcl,prdcl,rdcp,ordrs)
       IMPLICIT NONE
 
@@ -3164,7 +3170,7 @@
         ! random number generator
           REAL myrand               ! declare the type of the rand() function
         ! arguments in
-          INTEGER n1,n2,ncl,nsep
+          INTEGER n1,ncl,nsep
           INTEGER rdcp(n1),ordrs(n1)
           INTEGER nprdcl(ncl)
           INTEGER prdcl(n1,ncl)
@@ -3393,7 +3399,6 @@
           INTEGER reject
           REAL score(3)
           REAL betas(0:(nsep+ntr))
-          character *100 astring
 
         xstop=0
         CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","scoring()",10,9,
@@ -3443,7 +3448,7 @@
             CALL calcdev(n1,nop,ntr,prtr,nsep,seps,rsp,weight,
      #                   betas,score,reject)
           ELSE IF (mdl.EQ.4) THEN
-            CALL calcplcph(nop,n1,ntr,betas,prtr,nsep,seps,rsp,weight,
+            CALL calcplcph(nop,n1,ntr,betas,prtr,nsep,seps,weight,
      #                   dcph,ordrs,score,oops)
           END IF
         END IF
@@ -3815,7 +3820,7 @@
       ! cox proportional hazards model
       ! last modification 10/17/02
 
-      SUBROUTINE calcplcph(nop,n1,ntr,betas,prtr,nsep,seps,rsp,weight,
+      SUBROUTINE calcplcph(nop,n1,ntr,betas,prtr,nsep,seps,weight,
      #                     dcph,ordrs,score,oops)
       IMPLICIT NONE
 
@@ -3825,7 +3830,7 @@
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER n1,nop,nsep,ntr,dcph(n1),ordrs(n1),prtr(n1,ntr)
-          REAL rsp(n1),weight(n1),seps(nsep,n1)
+          REAL weight(n1),seps(nsep,n1)
         ! local
           INTEGER i,j,k,nnf(2),xstop
           DOUBLE PRECISION loglf,betaf(LGCbetaMAX)
@@ -4671,15 +4676,12 @@
                     iotree((ltree-1)*(4*nkn+3)+(k-1)*4+6)=negs(k,j,3)
                     iotree((ltree-1)*(4*nkn+3)+(k-1)*4+7)=pick(k,j,3)
       END
-      SUBROUTINE smackonprior(score,ssize,ntr,nkn,conc,term,negs,pick,
+      SUBROUTINE smackonprior(score,ssize,ntr,nkn,
      #           hyperpars,n2,mtp,slprbc,rrat,nopdiff)
       IMPLICIT none
-      INTEGER ssize,ntr,nkn,n2,term(nkn,ntr,3),mtp,nopdiff
-      REAL ll,hyperpars(10),score(3),slprbc(6),rrat
-      INTEGER conc(nkn,ntr,3),negs(nkn,ntr,3),pick(nkn,ntr,3)
+      INTEGER ssize,ntr,nkn,n2,mtp,nopdiff
+      REAL hyperpars(10),score(3),slprbc(6),rrat
       DOUBLE PRECISION mylog,postrat,rr,zz
-      CHARACTER *100 astring
-      DOUBLE PRECISION u1,u2,u3
       CALL getv(rr,ssize,ntr,nkn,n2)
       ! a simple hypergeometric prior
       score(1)=0.5*score(1)*exp(hyperpars(2))+hyperpars(1)*ssize
@@ -4901,13 +4903,13 @@
       IMPLICIT NONE
       INTEGER LGCn2MAX,LGCntrMAX
       PARAMETER(LGCn2MAX=1000,LGCntrMAX=5)
-      INTEGER mcmc,new,nkn,ntr,i,j,k,ssize,n2,used1(LGCn2MAX)
+      INTEGER mcmc,new,nkn,ntr,i,j,k,n2,used1(LGCn2MAX)
       INTEGER conc(nkn,ntr,3),negs(nkn,ntr,3),pick(nkn,ntr,3)
       INTEGER visit(2+ntr*nkn),term(nkn,ntr,3),nac,rd1(1)
       REAL lvisit(2),rd2(1),rd3(1)
       REAL hyperpars(10)
-      INTEGER iz2,iz,jz,i2,j2,xstop,rd4(1),zused
-      INTEGER iz3,j3,bout,xused(LGCntrMAX,LGCn2MAX),yused
+      INTEGER iz2,iz,jz,i2,xstop,rd4(1),zused
+      INTEGER iz3,bout,xused(LGCntrMAX,LGCn2MAX),yused
       INTEGER vused(LGCntrMAX)
       xstop=0
       CALL stopper(LGCn2MAX,n2,"LGCn2MAX","storeone",9,8,xstop,1)
@@ -5140,7 +5142,7 @@
       DO wh=1,nop
         DO mtp=1,6
           DO knt=1,nkn
-            CALL isallowed(wh,mtp,knt,negs,pick,term,conc,nkn,ntr,yes)
+            CALL isallowed(wh,mtp,knt,conc,nkn,ntr,yes,pick)
             IF(yes.GE.1)THEN
               CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
               letter=1
@@ -5152,8 +5154,7 @@
                     IF(letter.NE.term(knt,wh,1).OR.
      #                     neg.NE.negs(knt,wh,1))THEN
                       l2=letter
-                      CALL altlf(knt,n2,nkn,ntr,wh,conc,negs,term,l2,
-     #                                        neg)
+                      CALL altlf(knt,n2,nkn,ntr,wh,negs,term,l2,neg)
                       IF(l2.LT.0)GOTO 391
                     
                       CALL evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,
@@ -5239,13 +5240,11 @@
          ntr=-10
       END IF
       END
-      SUBROUTINE isallowed(wh,mtp,knt,negs,pick,term,conc,nkn,ntr,yes)
+      SUBROUTINE isallowed(wh,mtp,knt,conc,nkn,ntr,yes,pick)
       IMPLICIT NONE
+          INTEGER pick(nkn,ntr,3)
           INTEGER wh,mtp,knt,nkn,ntr,yes
           INTEGER conc(nkn,ntr,3)
-          INTEGER negs(nkn,ntr,3)
-          INTEGER pick(nkn,ntr,3)
-          INTEGER term(nkn,ntr,3)
           INTEGER sibling
           yes=0
           IF(pick(knt,wh,1).EQ.1)THEN
@@ -5395,7 +5394,6 @@
           INTEGER n1,nop,nsep,ntr,dcph(n1),prtr(n1,ntr)
           REAL rsp(n1),weight(n1),seps(nsep,n1),betas(0:(nsep+ntr))
         ! local
-          REAL myrand
           INTEGER i,j
         ! arguments out
           REAL score
@@ -5438,7 +5436,7 @@ c       CALL RANDOM_NUMBER(score)
           REAL seps(nsep,n1)
         ! local
           INTEGER j,vv,pow2(20),uu,i,zz,k,i2,l,m
-          DOUBLE PRECISION s1,s2, myrand,nn(16384),phi(2,14)
+          DOUBLE PRECISION s1,s2, nn(16384),phi(2,14)
           DOUBLE PRECISION dd(2,14),eps,phio(2)
         ! arguments out
           INTEGER reject

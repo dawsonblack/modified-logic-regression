@@ -123,13 +123,13 @@
           REAL rsp(n1),weight(n1)
           REAL seps(nsep,n1)
           REAL betas(0:(nsep+ntr))
-        ! local
-          REAL myrand
         ! arguments out
           REAL score
 
-      ! for now, the score is just a random number
-c       CALL RANDOM_NUMBER(score)
+      ! line below only to prevent warnings during compilation
+        score=prtr(1,1)*rsp(1)*dcph(1)*ordrs(1)*weight(1)
+        score=score+nop+wh+seps(1,1)+betas(0)
+      ! for now, the score is 0
         score=0.
 
       END 
@@ -146,18 +146,19 @@ c       CALL RANDOM_NUMBER(score)
           REAL seps(nsep,n1)
         ! local
           INTEGER j
-          REAL myrand
         ! arguments out
           INTEGER reject
           REAL score
           REAL betas(0:(nsep+ntr))
 
-      ! for now, the score is just a random number
+      ! line below only to prevent warnings during compilation
+        score=prtr(1,1)*rsp(1)*dcph(1)*ordrs(1)*weight(1)
+        score=score+nop+wh+seps(1,1)+betas(0)
+      ! for now, the score is 0
         reject=0
         DO j=0,(nsep+ntr)
           betas(j)=0.0
         END DO
-c       CALL RANDOM_NUMBER(score)
         score=0.
 
       END
