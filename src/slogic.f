@@ -28,7 +28,7 @@
       ! this subroutine performs an annealing step
       ! last modification 06/05/03
 
-      SUBROUTINE annealing(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+      SUBROUTINE annealing(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                     storage,slprbc,datri,weight,tstr,tend,tint,
      #                     ehm,msz,nsep,seps,cnc,score,betas,
      #                     ssize,dcph,ordrs,nfcnt,penalty,resp,mtm,
@@ -44,7 +44,7 @@
           PARAMETER (LGCbetaMAX =    55)
 
         ! arguments in
-          INTEGER ehm,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt,mtm
+          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,mtm
           INTEGER cnc(3),dcph(n1),ordrs(n1),storage(2*ntr*nkn*n1) 
           REAL tstr,tend,tint,slprbc(25),weight(n1),rd2(1),rd3(1)
           REAL resp(n1),seps(nsep,n1)
@@ -136,7 +136,7 @@
             DO j=1,hm        
               sco=score(1)
               new=nac
-              CALL annealing_step(n1,n2,mdl,nkn,nsp,ntr,conc,negs,
+              CALL annealing_step(n1,n2,mdl,nkn,ntr,conc,negs,
      #                            pick,term,storage,npckmv,
      #                            pickmv,temp,slprbc,datri,rsp,
      #                            weight,msz,nsep,seps,cnc,score,
@@ -159,13 +159,13 @@
       !   start annealing using the scheme just found
           tstr=REAL(INT(LOG10(temp)))+1+1
           temp=(10.0**tstr)
-          CALL writeinfo(ehm,mdl,0,nsep,ntr,temp,score,score(1),betas,
+          CALL writeinfo(ehm,mdl,0,nsep,ntr,temp,score,betas,
      #         nac,nrj,nde,nsame)
           npertemp=MIN(5000,50*n2)
           if(ehm.GT.0) ehm=npertemp
           tcnt=1
           fcnt=0
-          CALL writeinfo(ehm,mdl,0,nsep,ntr,temp,score,score(1),betas,
+          CALL writeinfo(ehm,mdl,0,nsep,ntr,temp,score,betas,
      #                   nac,nrj,nde,nsame)
       !   if for 5 series in a row there are <10 acceptances stop
           DO WHILE (fcnt.LT.5)
@@ -177,7 +177,7 @@
             DO j=1,npertemp        
               sco=score(1)
               new=nac
-              CALL annealing_step(n1,n2,mdl,nkn,nsp,ntr,conc,negs,
+              CALL annealing_step(n1,n2,mdl,nkn,ntr,conc,negs,
      #                            pick,term,storage,npckmv,
      #                            pickmv,temp,slprbc,datri,rsp,
      #                            weight,msz,nsep,seps,cnc,score,
@@ -224,12 +224,12 @@
           DO i=0,INT(tint)
             temp=(10.0**tstr)*(10.0**((tend-tstr)/tint))**REAL(i)
             if(mcmc.GT.0)temp= -(REAL(i)/10000)-1
-            CALL writeinfo(ehm,mdl,i,nsep,ntr,temp,score,score(1),betas,
+            CALL writeinfo(ehm,mdl,i,nsep,ntr,temp,score,betas,
      #                     nac,nrj,nde,nsame)
             temp=(10.0**tstr)*(10.0**((tend-tstr)/tint))**REAL(i)
             sco=score(1)
             new=nac
-            CALL annealing_step(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,
+            CALL annealing_step(n1,n2,mdl,nkn,ntr,conc,negs,pick,
      #                          term,storage,npckmv,pickmv,
      #                          temp,slprbc,datri,rsp,weight,msz,
      #                          nsep,seps,cnc,score,betas,ssize,nop,
@@ -259,12 +259,12 @@
              IF(mcmc.GT.0.AND.i.GT.nfcnt)THEN
                 IF(i.EQ.(nfcnt+1))THEN
                    CALL storeone(mcmc,new,hyperpars,lvisit,visit,
-     #                           ntr,nkn,conc,negs,pick,term,-17,
+     #                           ntr,nkn,conc,negs,term,-17,
      #                           rd1,rd2,rd3,rd4,bout,n2)
                    IF(bout.GE.0)CALL ciwrite()
                 ELSE
                    CALL storeone(mcmc,new,hyperpars,lvisit,visit,
-     #                           ntr,nkn,conc,negs,pick,term,nac,
+     #                           ntr,nkn,conc,negs,term,nac,
      #                           rd1,rd2,rd3,rd4,bout,n2)
                 END IF
              END IF
@@ -272,7 +272,7 @@
  1216     CONTINUE
         END IF
         IF(nac+nrj+nde.GT.1)THEN
-          CALL writeinfo(ehm,mdl,ehm,nsep,ntr,temp,score,score(1),
+          CALL writeinfo(ehm,mdl,ehm,nsep,ntr,temp,score,
      #                   betas,nac,nrj,nde,nsame)
         END IF
  2424   CONTINUE
@@ -374,7 +374,7 @@
       ! this subroutine performs an annealing step
       ! last modification 06/05/03
 
-      SUBROUTINE annealing_step(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,
+      SUBROUTINE annealing_step(n1,n2,mdl,nkn,ntr,conc,negs,pick,
      #                          term,storage,npckmv,pickmv,
      #                          temp,slprbc,datri,rsp,weight,msz,
      #                          nsep,seps,cnc,score,betas,ssize,nop,
@@ -386,7 +386,7 @@
           INTEGER LGCnknMAX
           PARAMETER (LGCnknMAX  =   128)
         ! arguments in
-          INTEGER n1,n2,msz,mdl,nkn,nsep,nsp,ntr,mtm
+          INTEGER n1,n2,msz,mdl,nkn,nsep,ntr,mtm
           INTEGER cnc(3),mcmc
           INTEGER dcph(n1),ordrs(n1)
           INTEGER npckmv(6,ntr)
@@ -423,7 +423,7 @@
      #          xstop,1)
 
         mctry=0
-147     CALL moving(n2,nkn,nsp,ntr,conc,negs,pick,term,slprbc,cnc,mcmc,
+147     CALL moving(n2,nkn,ntr,conc,negs,pick,term,slprbc,cnc,mcmc,
      #             npckmv,pickmv,msz,ssize,nop,wh,knt,mtp,mctry)
         letter=1
         neg=1
@@ -674,9 +674,9 @@
       ! last modification 10/16/02
 
       SUBROUTINE crossvalx(kfold,n1,n2,mdl,
-     #                    nkn,nsp,ntr,conc,negs,pick,term,storage,
+     #                    nkn,ntr,conc,negs,pick,term,storage,
      #                    slprbc,datri,weight,tstr,tend,tint,ehm,msz,
-     #                    nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
+     #                    nsep,seps,cnc,score,betas,ssize,dcph,
      #                    nfcnt,seed,resp,rnumsrr,mtm,ltree,ioscores)
       IMPLICIT NONE
 
@@ -686,8 +686,8 @@
           PARAMETER (LGCn2MAX  =   1000)
           PARAMETER (LGCnsepMAX =    50)
         ! arguments in
-          INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt,cnc(3)
-          INTEGER dcph(n1),ordrs(n1),seed
+          INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
+          INTEGER dcph(n1),seed
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1) ,mtm
           REAL seps(nsep,n1),resp(n1),rnumsrr(n1)
@@ -709,7 +709,7 @@
      #          xstop,1)
 
         CALL crossval(kfold,n1,n2,mdl,
-     #                    nkn,nsp,ntr,conc,negs,pick,term,storage,
+     #                    nkn,ntr,conc,negs,pick,term,storage,
      #                    slprbc,datri,weight,tstr,tend,tint,ehm,msz,
      #                    nsep,seps,cnc,score,betas,ssize,dcph,
      #                    nfcnt,seed,sepstt,datritt,resp,rnumsrr,mtm,
@@ -724,7 +724,7 @@
       ! last modification 06/05/03
 
       SUBROUTINE crossval(kfold,n1,n2,mdl,
-     #                    nkn,nsp,ntr,conc,negs,pick,term,storage,
+     #                    nkn,ntr,conc,negs,pick,term,storage,
      #                    slprbc,datri,weight,tstr,tend,tint,ehm,msz,
      #                    nsep,seps,cnc,score,betas,ssize,dcph,
      #                    nfcnt,seed,sepstt,datritt,resp,rnumsrr,mtm,
@@ -735,7 +735,7 @@
           INTEGER LGCn1MAX
           PARAMETER (LGCn1MAX   = 20000)
         ! arguments in
-          INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt,cnc(3)
+          INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),seed,mtm
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1) 
@@ -841,7 +841,7 @@
             IF (mdl.EQ.4.or.mdl.EQ.5) THEN
               CALL psort2(datrtokentt,ngrphere,dummy,ngrphere,ordrstt)
             END IF
-            CALL annealing(ngrphere,n2,mdl,nkn,nsp,ntr,conc,negs,pick,
+            CALL annealing(ngrphere,n2,mdl,nkn,ntr,conc,negs,pick,
      #                     term,storage,slprbc,datritt,weighttt,tstr,
      #                     tend,tint,ehm,msz,nsep,sepstt,cnc,score,
      #                     betas,ssize,dcphtt,ordrstt,nfcnt,penalty,
@@ -1938,7 +1938,7 @@
       ! find the single best model -----------------------------------
         IF (choice.EQ.1) THEN
           ltree=ntr
-          CALL annealing(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+          CALL annealing(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   msz,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
@@ -1964,7 +1964,7 @@
         ELSE IF (choice.EQ.7) THEN
           mcmc=1
           ltree=ntr
-          CALL annealing(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+          CALL annealing(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   msz,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
@@ -2071,7 +2071,7 @@
                   CALL stringprint(astring,21)
                 ENDIF
                 ntrnew=MIN(ntr,msz)
-                CALL annealing(n1,n2,mdl,nkn,nsp,ntrnew,
+                CALL annealing(n1,n2,mdl,nkn,ntrnew,
      #                       conc,negs,pick,term,
      #                       storage,slprbc,datri,weight,tstr,tend,tint,
      #                       ehm,msz,nsep,seps,cnc,score,betas,ssize,
@@ -2161,10 +2161,10 @@
                 CALL makeistring(19,21,astring,msz,3)
                 CALL stringprint(astring,21)
               ENDIF
-              CALL crossvalx(kfold,n1,n2,mdl,nkn,nsp,ntr,conc,negs,
+              CALL crossvalx(kfold,n1,n2,mdl,nkn,ntr,conc,negs,
      #                     pick,term,storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,score,
-     #                     betas,ssize,dcph,ordrs,nfcnt,seed,resp,
+     #                     betas,ssize,dcph,nfcnt,seed,resp,
      #                     rnumsrr,mtm,ltree,ioscores)
               ENDIF
             END DO
@@ -2172,13 +2172,13 @@
 
       ! run the null model test for signal in the data ---------------
         ELSE IF (choice.EQ.4) THEN
-          CALL annealing(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+          CALL annealing(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   0,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
      #                   iocoef,ioscores,rd4,bout)
           ioscores(1)=score(1)
-          CALL annealing(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+          CALL annealing(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   msz,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
@@ -2191,7 +2191,7 @@
             CALL stringprint(astring,40)
           END IF
           DO j=1,nrep
-            CALL nullmodelx(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+            CALL nullmodelx(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                     storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,
      #                     score,betas,ssize,dcph,ordrs,nfcnt,resp,mtm)
@@ -2210,13 +2210,13 @@
       ! run the null model test for signal in the data ---------------
         ELSE IF (choice.EQ.5) THEN
           msz=nkn*ntrup
-          CALL annealing(n1,n2,mdl,nkn,nsp,ntrup,conc,negs,pick,term,
+          CALL annealing(n1,n2,mdl,nkn,ntrup,conc,negs,pick,term,
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                 msz,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
      #                   iocoef,ioscores,rd4,bout)
           ioscores(2)=score(3)
-          CALL annealing(n1,n2,mdl,nkn,nsp,ntrup,conc,negs,pick,term,
+          CALL annealing(n1,n2,mdl,nkn,ntrup,conc,negs,pick,term,
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   0,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
@@ -2261,13 +2261,13 @@
                 DO j=1,nrep
                   IF(ntrnew.eq.0)THEN
                     mszmax=ntrup*nkn
-                    CALL nullmodelx(n1,n2,mdl,nkn,nsp,ntrup,conc,negs,
+                    CALL nullmodelx(n1,n2,mdl,nkn,ntrup,conc,negs,
      #                            pick,term,storage,slprbc,datri,weight,
      #                            tstr,tend,tint,ehm,mszmax,nsep,seps,
      #                            cnc,score,betas,ssize,dcph,ordrs,
      #                            nfcnt,resp,mtm)
                   ELSE
-                    CALL randomizationx(n1,n2,mdl,nkn,nsp,ntrnew,
+                    CALL randomizationx(n1,n2,mdl,nkn,ntrnew,
      #                                conc,negs,pick,term,storage,
      #                                slprbc,datri,weight,tstr,tend,
      #                                tint,ehm,msz,nsep,seps,cnc,score,
@@ -2306,9 +2306,6 @@
           END DO
         END IF
 
- 105    FORMAT(A18,I5,2X,A6,I5,A11,F14.5,10X,A10,I3,A5,I2,A8)
- 108    FORMAT(A22,I3,A5,I2,A8)
-
       END 
 
       ! *****************************************************************
@@ -2317,12 +2314,12 @@
       ! this subroutine selects a move for a given tree
       ! last modification 10/16/02
 
-      SUBROUTINE moving(n2,nkn,nsp,ntr,conc,negs,pick,term,slprbc,cnc,
+      SUBROUTINE moving(n2,nkn,ntr,conc,negs,pick,term,slprbc,cnc,
      #                mcmc,npckmv,pickmv,msz,ssize,nop,wh,knt,mtp,mctry)
       IMPLICIT NONE
 
         ! arguments in
-          INTEGER n2,msz,nkn,nsp,ntr,nop,ssize,cnc(3),npckmv(6,ntr)
+          INTEGER n2,msz,nkn,ntr,nop,ssize,cnc(3),npckmv(6,ntr)
           INTEGER pickmv(6,nkn,ntr),mcmc,mctry
           INTEGER conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
@@ -2458,7 +2455,6 @@
  1000   CONTINUE
         rnum=myrand(0)
         IF(mctry.GT.0)rnum=3.
- 2000   CONTINUE
         IF (rnum.LE.slprbc(1).OR.(mctry.GT.0.AND.mtp.EQ.1)) THEN
           rnum=myrand(0)
           knt=pickmv(1,INT(REAL(npckmv(1,wh))*rnum)+1,wh)
@@ -2820,7 +2816,7 @@
       ! this subroutine does the randomization test
       ! last modification 10/17/02
 
-      SUBROUTINE nullmodelx(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+      SUBROUTINE nullmodelx(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                     storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,
      #                     score,betas,ssize,dcph,ordrs,nfcnt,resp,mtm)
@@ -2831,7 +2827,7 @@
           PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCnsepMAX =    50)
         ! arguments in
-          INTEGER ehm,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt,cnc(3)
+          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),ordrs(n1),mtm
           REAL tstr,tend,tint,weight(n1),slprbc(25)
           INTEGER datri(n2,n1)
@@ -2851,7 +2847,7 @@
         CALL stopper(LGCn1MAX,n1,"LGCn1MAX","nullmodelx()",8,12,xstop,0)
         CALL stopper(LGCnsepMAX,nsep,"LGCnsepMAX","nullmodelx()",10,12,
      #          xstop,1)
-        CALL nullmodel(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+        CALL nullmodel(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                     storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,score,
      #                     betas,ssize,dcph,ordrs,nfcnt,rseps,resp,mtm)
@@ -2867,7 +2863,7 @@
       ! this subroutine does the randomization test
       ! last modification 10/17/02
 
-      SUBROUTINE nullmodel(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+      SUBROUTINE nullmodel(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                     storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,score,
      #                     betas,ssize,dcph,ordrs,nfcnt,rseps,resp,mtm)
@@ -2879,7 +2875,7 @@
         ! random number generator
           REAL myrand               ! Declare the type of the rand() function
         ! arguments in
-          INTEGER ehm,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt,cnc(3)
+          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),ordrs(n1),mtm
           REAL tstr,tend,tint,weight(n1),slprbc(25)
           INTEGER datri(n2,n1)
@@ -2929,9 +2925,8 @@
           END DO
         END IF
         CALL psort2(datrtoken,n1,inums,n1,ordrs)
- 1000   CONTINUE
         penalty=0.
-        CALL annealing(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,term,
+        CALL annealing(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                 storage,slprbc,datri,rwgt,tstr,tend,tint,ehm,
      #                 msz,nsep,rseps,cnc,score,betas,ssize,rdcph,ordrs,
      #                 nfcnt,penalty,resp,mtm,mcmc,rdummy,rd1,rd2,rd3,
@@ -2950,7 +2945,7 @@
       ! this subroutine does the randomization test
       ! last modification 10/17/02
 
-      SUBROUTINE randomizationx(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,
+      SUBROUTINE randomizationx(n1,n2,mdl,nkn,ntr,conc,negs,pick,
      #                         term,storage,slprbc,datri,weight,tstr,
      #                         tend,tint,ehm,msz,nsep,seps,cnc,score,
      #                         betas,ssize,dcph,ordrs,iotrees,nfcnt,
@@ -2964,7 +2959,7 @@
           PARAMETER (LGCnsepMAX =    50)
           PARAMETER (LGCntrMAX  =     5)
         ! arguments in
-          INTEGER ehm,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,nfcnt
+          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt
           INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm,iotrees(1)
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1)
@@ -2996,7 +2991,7 @@
               prtr(i,j)=0
            END DO
         END DO
-            CALL randomization(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,
+            CALL randomization(n1,n2,mdl,nkn,ntr,conc,negs,pick,
      #                         term,storage,slprbc,datri,weight,tstr,
      #                         tend,tint,ehm,msz,nsep,seps,cnc,score,
      #                         betas,ssize,dcph,ordrs,iotrees,nfcnt,
@@ -3011,7 +3006,7 @@
       ! this subroutine does the randomization test
       ! last modification 10/17/02
 
-      SUBROUTINE randomization(n1,n2,mdl,nkn,nsp,ntr,conc,negs,pick,
+      SUBROUTINE randomization(n1,n2,mdl,nkn,ntr,conc,negs,pick,
      #                         term,storage,slprbc,datri,weight,tstr,
      #                         tend,tint,ehm,msz,nsep,seps,cnc,score,
      #                         betas,ssize,dcph,ordrs,iotrees,nfcnt,
@@ -3023,7 +3018,7 @@
           PARAMETER (LGCn1MAX   = 20000)
           PARAMETER (LGCntrMAX  =     5)
         ! arguments in
-          INTEGER ehm,n1,n2,mdl,msz,nkn,nsp,ntr,nsep,iotrees(1),nfcnt
+          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,iotrees(1),nfcnt
           INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1)
@@ -3107,7 +3102,7 @@
         CALL ident_prdcl(n1,ntr,prtr,ncl,nprdcl,prdcl)
         CALL rand_prdcl(n1,nsep,rresp,rwgt,rseps,
      #                  ncl,nprdcl,prdcl,rdcp,rordrs)
-        CALL annealing(n1,n2,mdl,nkn,nsp,ntrup,conc,negs,pick,term,
+        CALL annealing(n1,n2,mdl,nkn,ntrup,conc,negs,pick,term,
      #                storage,slprbc,rdatri,rwgt,tstr,tend,tint,ehm,
      #                msznew,nsep,rseps,cnc,score,betas,ssize,rdcp,
      #                rordrs,nfcnt,penalty,rresp,mtm,mcmc,dummy,rd1,rd2,
@@ -3296,7 +3291,7 @@
           REAL score(3)
           REAL betas(3,0:(nkn+ntr))
         ! local
-          INTEGER j,k
+          INTEGER k
         ! arguments out
 
       ! record trees
@@ -4040,7 +4035,7 @@
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
         ! local
-          INTEGER wh,i,j,k,nop,ssize,npckmv(6,ntr)
+          INTEGER wh,i,j,nop,ssize,npckmv(6,ntr)
           INTEGER pickmv(6,nkn,ntr),prtr(n1,ntr)
           REAL rsp(n1)
         ! arguments out
@@ -4898,13 +4893,13 @@
       END IF
       END 
       SUBROUTINE storeone(mcmc,new,hyperpars,lvisit,visit,
-     #           ntr,nkn,conc,negs,pick,term,nac,rd1,rd2,rd3,rd4,
+     #           ntr,nkn,conc,negs,term,nac,rd1,rd2,rd3,rd4,
      #           bout,n2)
       IMPLICIT NONE
       INTEGER LGCn2MAX,LGCntrMAX
       PARAMETER(LGCn2MAX=1000,LGCntrMAX=5)
       INTEGER mcmc,new,nkn,ntr,i,j,k,n2,used1(LGCn2MAX)
-      INTEGER conc(nkn,ntr,3),negs(nkn,ntr,3),pick(nkn,ntr,3)
+      INTEGER conc(nkn,ntr,3),negs(nkn,ntr,3)
       INTEGER visit(2+ntr*nkn),term(nkn,ntr,3),nac,rd1(1)
       REAL lvisit(2),rd2(1),rd3(1)
       REAL hyperpars(10)
@@ -5242,8 +5237,8 @@
       END
       SUBROUTINE isallowed(wh,mtp,knt,conc,nkn,ntr,yes,pick)
       IMPLICIT NONE
-          INTEGER pick(nkn,ntr,3)
           INTEGER wh,mtp,knt,nkn,ntr,yes
+          INTEGER pick(nkn,ntr,3)
           INTEGER conc(nkn,ntr,3)
           INTEGER sibling
           yes=0

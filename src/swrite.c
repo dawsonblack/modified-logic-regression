@@ -14,7 +14,6 @@ int *visit,*k;
 void ciwrite_()
 {
    FILE *ff;
-   int i;
    ff=fopen("slogiclisting.tmp","w");
    fclose(ff);
 }
