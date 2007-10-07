@@ -7,7 +7,7 @@
 fitted by \code{logreg}.}
 
 
-\usage{plot.logregmodel(x, pscript=FALSE, title=TRUE, nms, ...)}
+\usage{\method{plot}{logregmodel}(x, pscript=FALSE, title=TRUE, nms, ...)}
 
 
 \arguments{

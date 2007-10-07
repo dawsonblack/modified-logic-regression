@@ -6,7 +6,7 @@
 Regression models that were fitted by a single call to \code{logreg}.}
 
 
-\usage{predict.logreg(object, msz, ntr, newbin, newsep, ...)}
+\usage{\method{predict}{logreg}(object, msz, ntr, newbin, newsep, ...)}
 
 
 \arguments{

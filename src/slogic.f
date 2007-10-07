@@ -91,6 +91,7 @@
               prtr(i,j)=0
            END DO
         END DO
+        nsame2=0
         nac2=0
         DO j=0,(nsep+ntr)
            betas(1,j)=0
@@ -461,6 +462,7 @@
       ! take care that the there is real convergence
           l1=0 
           l2=0
+          zz2=0
           IF(betas(1,1).GT. -10000.)l1=1
           IF(betas(1,1).LT. 10000.)l2=1
           IF(l1+l2.EQ.0)reject=1

@@ -6,7 +6,7 @@
 \description{Makes a plot of one Logic Regression tree, fitted by
 \code{logreg}.}
 
-\usage{plot.logregtree(x, nms, full=TRUE, and.or.cx=1.0, leaf.sz=1.0, 
+\usage{\method{plot}{logregtree}(x, nms, full=TRUE, and.or.cx=1.0, leaf.sz=1.0, 
                 leaf.txt.cx=1.0, coef.cx=1.0, indents=rep(0,4), coef=TRUE,
                 coef.rd=4, ...)}
 

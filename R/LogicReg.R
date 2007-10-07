@@ -78,10 +78,10 @@ frame.logreg <- function(fit, msz, ntr, newbin, newresp, newsep, newcens, newwei
    else {
       binhere <- newbin
       lbinhere <- length(binhere)
-      if(is.matrix(binhere) == FALSE)
-         binhere <- matrix(binhere, ncol = fit$nbinary)
       if(is.data.frame(binhere))
          binhere <- as.matrix(binhere)
+      if(is.matrix(binhere) == FALSE)
+         binhere <- matrix(binhere, ncol = fit$nbinary)
       n1 <- length(binhere[, 1])
       n2 <- length(binhere[1,  ])
       if(n2 != fit$nbinary)
@@ -539,11 +539,11 @@ plot.logregtree <- function(x, nms, full = TRUE, and.or.cx = 1.0, leaf.sz = 1.0,
                if(data$conc[which] == 4) {
                   if(data$neg[which] == 0) {
                      points(x.val[j], y.val, pch = 1, cex = 7.0*leaf.sz)
-                     text(x.val[j], y.val, as.character( data$knot[ which]), cex = cx4)
+                     text(x.val[j], y.val, as.character( data$knot[ which]), cex = 1)
                   }
                   if(data$neg[which] == 1) {
                      points(x.val[j], y.val, pch = 16, cex = 7.0*leaf.sz)
-                     text(x.val[j], y.val, as.character( data$knot[ which]), cex = cx4, col = logregwhite)
+                     text(x.val[j], y.val, as.character( data$knot[ which]), cex = 1, col = logregwhite)
                   }
                }
             }

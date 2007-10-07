@@ -5,7 +5,7 @@
 
 \description{Prints formulas for objects fitted by \code{logreg}. }
 
-\usage{print.logregtree(x, nms, notnms, pstyle, ...)}
+\usage{\method{print}{logregtree}(x, nms, notnms, pstyle, ...)}
 
 
 \arguments{

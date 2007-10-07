@@ -5,7 +5,7 @@
 
 \description{Makes plots for objects fitted by \code{logreg}. }
 
-\usage{plot.logreg(x, pscript=FALSE, title=TRUE, ...)}
+\usage{\method{plot}{logreg}(x, pscript=FALSE, title=TRUE, ...)}
 
 
 \arguments{

@@ -1,6 +1,6 @@
 Package: LogicReg
-Version: 1.4.6
-Date: 2007-10-03
+Version: 1.4.7
+Date: 2007-10-07
 Title: Logic Regression
 Author: Charles Kooperberg <clk@fhcrc.org> and Ingo Ruczinski <ingo@jhu.edu>
 Maintainer: Charles Kooperberg <clk@fhcrc.org> 
