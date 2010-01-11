@@ -106,7 +106,7 @@ Nonlinear Estimation and Classification} (Eds: D. Denison, M. Hansen,
 C. Holmes, B. Mallick, B. Yu), Springer: New York, 333-344.
 
 Selected chapters from the dissertation of Ingo Ruczinski, available
-from \url{http://bear.fhcrc.org/~ingor/logic/documents/myphd-logic.pdf}}
+from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}
 
 
 \author{

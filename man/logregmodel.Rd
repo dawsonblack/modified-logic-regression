@@ -36,7 +36,7 @@ using Logic Regression, \emph{Genetic Epidemiology}, \bold{21},
 S626-S631.
 
 Selected chapters from the dissertation of Ingo Ruczinski, available
-from \url{http://bear.fhcrc.org/~ingor/logic/documents/myphd-logic.pdf}}
+from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}
 
 
 \author{

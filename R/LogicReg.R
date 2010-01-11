@@ -20,7 +20,7 @@
 # Journal of Computational and Graphical Statistics, 12, 475-511.
 # Other references can be found on our homepages
 # http://www.biostat.jhsph.edu/~iruczins/
-# http://bear.fhcrc.org/~clk
+# http://kooperberg.fhcrc.org/~clk
 # You can contact us at ingo@jhu.edu and clk@fhcrc.org
 # =======================================================================
 
@@ -1078,20 +1078,20 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       if(k==2 && mdl!=4){
          if(mdl==5)
             stop("Exponential survival models are only implemented if\nall separate predictors are binary")
-         print("Logistic regression runs much fast if\nall separate predictors are binary")
+         cat("Logistic regression runs much fast if\nall separate predictors are binary\n")
       }
       if(mdl==4 && k!=2){
-         print(paste("The code will be run much faster if you use exponential regression\n",
+         cat(paste("The code will be run much faster if you use exponential regression\n",
                                     "instead of proportional hazards models after a cumulative hazards\n",
                                     "transformation, as all your separate predictors are binary\n",
-                                    "type help(cumhaz) for more information"))
+                                    "type help(cumhaz) for more information\n"))
       }
    }
    if(nsep==0 && mdl==4){
-      print(paste("The code will be run much faster if you use exponential regression\n",
+      cat(paste("The code will be run much faster if you use exponential regression\n",
                             "instead of proportional hazards models after a cumulative hazards\n",
                             "transformation, as you have no separate continuous predictors\n",
-                            "type help(cumhaz) for more information"))
+                            "type help(cumhaz) for more information\n"))
    }
    if(miss.tree == 1)
       tree.control <- logreg.tree.control(n1 = n1)

@@ -20,7 +20,7 @@
 ! Journal of Computational and Graphical Statistics, 12, 475-511
 ! Other references can be found on our homepages
 ! http://www.biostat.jhsph.edu/~iruczins/
-! http://bear.fhcrc.org/~clk
+! http://kooperberg.fhcrc.org
 ! You can contact us at ingo@jhu.edu and clk@fhcrc.org
 ! =======================================================================
 
@@ -5527,25 +5527,34 @@ c       CALL RANDOM_NUMBER(score)
               betas(i)=mylog(phi(2,i))
            END DO
         END IF
+        IF(uu.eq.1)THEN
+           phi(2,1) = phi(2,1)/phi(1,1)
+           betas(0)=mylog(phi(1,1))
+           betas(1)=mylog(phi(2,1))
+        END IF
         reject=0
+117     CONTINUE
         j=pow2(uu+1)
         score=0
         DO i=1,j
           l=i
           pp=betas(0)
-          DO k=1,uu
-             m=(l+1)/2
-             IF(2*m.EQ.l)pp=pp+betas(uu+1-k)
-             l=m
-          END DO
+          IF(uu.gt.0)THEN
+            DO k=1,uu
+               m=(l+1)/2
+               IF(2*m.EQ.l)pp=pp+betas(uu+1-k)
+               l=m
+            END DO
+          END IF
           score=score-myexp(pp)*nn(i)
         END DO
-        DO i=1,uu
-          score=score+betas(i)*dd(2,i)
-        END DO
+        IF(uu.gt.0)THEN
+          DO i=1,uu
+            score=score+betas(i)*dd(2,i)
+          END DO
+        END IF
         score=score+betas(0)*vvv
         score=-score
-117     CONTINUE
       END
       ! *****************************************************************
       ! *****************************************************************

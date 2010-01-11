@@ -5,19 +5,13 @@ frame.logreg            Constructs a data frame for one or more Logic
 logreg                  Logic Regression
 logreg.anneal.control   Control for Logic Regression
 logreg.mc.control       Control for Logic Regression
-logregmodel             Format of class logregmodel
 logreg.myown            Writing your own Logic Regression scoring
                         function
 logreg.savefit1         Sample results for Logic Regression
-logreg.savefit2         Sample results for Logic Regression
-logreg.savefit3         Sample results for Logic Regression
-logreg.savefit4         Sample results for Logic Regression
-logreg.savefit5         Sample results for Logic Regression
-logreg.savefit6         Sample results for Logic Regression
-logreg.savefit7         Sample results for Logic Regression
 logreg.testdat          Test data for Logic Regression
-logregtree              Format of class logregtree
 logreg.tree.control     Control for logreg
+logregmodel             Format of class logregmodel
+logregtree              Format of class logregtree
 plot.logreg             Plots for Logic Regression
 plot.logregmodel        Plots for Logic Regression
 plot.logregtree         A plot of one Logic Regression tree.
