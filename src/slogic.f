@@ -37,8 +37,8 @@
 
         ! parameters
           INTEGER LGCnknMAX,LGCntrMAX,LGCn1MAX,LGCn2MAX,LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 20000)
-          PARAMETER (LGCn2MAX   =  1000)
+          PARAMETER (LGCn1MAX   = 40000)
+          PARAMETER (LGCn2MAX   =  2000)
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
@@ -70,20 +70,22 @@
           INTEGER term(nkn,ntr,3)
           INTEGER ssize,xstop
           REAL score(3),betas(3,0:(nsep+ntr))
-          CHARACTER *80 astring
+          CHARACTER *125 astring
 
         ! npckmv: how many available for a move of a particular type 
         ! pickmv: which available for a move of a particular type
         ! prtr: logic trees predictions
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","annealing()",8,11,xstop,0)
-        CALL stopper(LGCn2MAX,n2,"LGCn2MAX","annealing()",8,11,xstop,0)
-        CALL stopper(LGCnknMAX,nkn,"LGCnknMAX","annealing()",9,11,
-     #               xstop,0)
-        CALL stopper(LGCntrMAX,ntr,"LGCntrMAX","annealing()",9,11,
-     #               xstop,0)
-        CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","annealing()",10,
-     #          11,xstop,1)
+        !CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","annealing()     ",
+     #  !            xstop,0)
+        !CALL stopper(LGCn2MAX,n2,"LGCn2MAX  ","annealing()     ",
+     #  !            xstop,0)
+        ! CALL stopper(LGCnknMAX,nkn,"LGCnknMAX ","annealing()     ",
+     #  !             xstop,0)
+        ! CALL stopper(LGCntrMAX,ntr,"LGCntrMAX ","annealing()     ",
+     #  !            xstop,0)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","annealing()     "
+     #  !           ,xstop,1)
 
       ! calculate response for scoring function
         DO i=1,LGCn1MAX
@@ -109,7 +111,7 @@
      #                      mtm,mcmc,hyperpars)
         IF (msz.EQ.0) THEN
           IF(ehm.GE.0)THEN
-             CALL stringprint("  ",2)
+             CALL stringprint2()
              astring(1:31)='The model of size 0 has score  '
              CALL makerstring(32,43,astring,score(1),7,4)
              CALL stringprint(astring,43)
@@ -309,6 +311,7 @@
         INTEGER nop,reject,ssize,npckmv(6,ntr)
         INTEGER pickmv(6,nkn,ntr)
         REAL score(3),betas(3,0:(nsep+ntr))
+        CHARACTER*125 astring
 
       ! precompute separate predictors and intercept for linear regress
         IF(mdl.EQ.2)THEN
@@ -349,7 +352,8 @@
           betas(1,j)=cbetas(j)
         END DO
         IF (reject.EQ.1) THEN
-          CALL stringprint("Initial model could not be fitted!",34)
+          astring(1:34)="Initial model could not be fitted!"
+          CALL stringprint(astring,34)
           STOP
         END IF
         IF(mdl.EQ.2)THEN
@@ -420,8 +424,8 @@
         xstop=0
         hyperpars(8)=0.
         if(mcmc.GT.0)temp=1.
-        CALL stopper(LGCnknMAX,nkn,"LGCnknMAX","annealing_step()",9,16,
-     #          xstop,1)
+        ! CALL stopper(LGCnknMAX,nkn,"LGCnknMAX " ,"annealing_step()",
+     #  !      xstop,1)
 
         mctry=0
 147     CALL moving(n2,nkn,ntr,conc,negs,pick,term,slprbc,cnc,mcmc,
@@ -570,7 +574,7 @@
           DOUBLE PRECISION t1,mylog
         ! local
           INTEGER j
-          CHARACTER *120 astring
+          CHARACTER *125 astring
         ! arguments out
         ! none
 
@@ -585,7 +589,7 @@
         IF (ehm.GT.0) THEN
           IF (mdl.EQ.1) THEN
             IF (i.EQ.0) THEN
-              CALL stringprint('  ',2)
+              CALL stringprint2()
               astring(1:26)="log-temp current score    "
               astring(27:59)="best score        acc / rej /sing"
               CALL stringprint(astring,59)
@@ -604,7 +608,7 @@
             END IF
           ELSE 
             IF (i.EQ.0) THEN
-              CALL stringprint('  ',2)
+              CALL stringprint2()
               astring(1:26)="log-temp current score    "
               IF(temp.LT.0)astring(1:26)="iter(10k)  current scr    "
               astring(27:59)="best score        acc / rej /sing"
@@ -683,10 +687,10 @@
       IMPLICIT NONE
 
         ! parameters
-          INTEGER LGCnsepMAX,LGCn1MAX,LGCn2MAX
-          PARAMETER (LGCn1MAX   = 20000)
-          PARAMETER (LGCn2MAX  =   1000)
-          PARAMETER (LGCnsepMAX =    50)
+          INTEGER LGCbetaMAX,LGCn1MAX,LGCn2MAX
+          PARAMETER (LGCn1MAX   = 40000)
+          PARAMETER (LGCn2MAX  =   2000)
+          PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),seed
@@ -701,14 +705,16 @@
           INTEGER ssize,storage(2*ntr*nkn*n1)
           REAL score(3),betas(3,0:(nsep+ntr)),ioscores(1)
         ! local
-          REAL sepstt(LGCnsepMAX,LGCn1MAX)
+          REAL sepstt(LGCbetaMAX,LGCn1MAX)
           INTEGER datritt(LGCn2MAX,LGCn1MAX)
           INTEGER xstop
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","crossvalx()",8,11,xstop,0)
-        CALL stopper(LGCn2MAX,n2,"LGCn2MAX","crossvalx()",8,11,xstop,0)
-        CALL stopper(LGCnsepMAX,nsep,"LGCnsepMAX","crossvalx()",10,11,
-     #          xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","crossvalx()     ",
+     #  !         xstop,0)
+        ! CALL stopper(LGCn2MAX,n2,"LGCn2MAX  ","crossvalx()     ",
+     #  !        xstop,0)
+        !CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","crossvalx()     "
+     #  !        ,xstop,1)
 
         CALL crossval(kfold,n1,n2,mdl,
      #                    nkn,ntr,conc,negs,pick,term,storage,
@@ -735,7 +741,7 @@
 
         ! parameters
           INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
         ! arguments in
           INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),seed,mtm
@@ -762,7 +768,8 @@
           REAL sepstt(nsep,n1),penalty,rdummy(10),rd2(2),rd3(2)
           CHARACTER *125 astring
           xstop=0
-          CALL stopper(LGCn1MAX,n1,"LGCn1MAX","crossval()",8,10,xstop,1)
+          ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","crossval()      ",
+     #    !                  xstop,1)
 
         ! cvscore: cross-validation scores (tr,travg,test,testavg)
 
@@ -968,7 +975,7 @@
 
         ! parameters
           INTEGER LGCnknMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCnknMAX  =   128)
         ! arguments in
           INTEGER n1,n2,nkn,ntr,wh
@@ -983,10 +990,10 @@
         ! arguments out
           INTEGER prtr(n1,ntr)
           xstop=0
-          CALL stopper(LGCn1MAX,n1,"LGCn1MAX","evaluate_first()",8,16,
-     #            xstop,0)
-          CALL stopper(LGCnknMAX,nkn,"LGCnknMAX","evaluate_first()",9,
-     #            16,xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","evaluate_first()",
+     #  !         xstop,0)
+        ! CALL stopper(LGCnknMAX,nkn,"LGCnknMAX " ,"evaluate_first()",
+     #  !         xstop,1)
 
 
         ! initialize mat and rank
@@ -1749,7 +1756,10 @@
       SUBROUTINE slogreg(n1,n2,nsep,intpars,rpars,seps,dcph,orders,resp,
      #                   weight,datri,iotrees,iocoef,ioscores,rd4)
 
-      INTEGER LGCnknMAX,LGCntrMAX
+      INTEGER LGCnknMAX,LGCntrMAX,LGCn1MAX,LGCn2MAX,LGCbetaMAX
+      PARAMETER (LGCn1MAX   = 40000)
+      PARAMETER (LGCn2MAX   =  2000)
+      PARAMETER (LGCbetaMAX =    55)
       PARAMETER (LGCnknMAX  =   128)
       PARAMETER (LGCntrMAX  =     5)
       INTEGER n1,n2,nsep,cnc(3),mdl,msz,nkn,ehm,mszlo,mszup
@@ -1817,14 +1827,21 @@
          nfcnt=intpars(14)
          bout=intpars(16)
       END IF
-      CALL stopper(LGCnknMAX,nkn,"LGCnknMAX","slogreg()",9,9,xstop,0)
-      CALL stopper(LGCntrMAX,ntr,"LGCntrMAX","slogreg()",9,9,xstop,1)
+      CALL xstopper(LGCn1MAX,n1,"LGCn1MAX  ",xstop,0,17)
+      CALL xstopper(LGCn2MAX,n2,"LGCn2MAX  ",xstop,0,5)
+      CALL xstopper(LGCnknMAX,nkn+1,"LGCnknMAX ",xstop,0,7)
+      CALL xstopper(LGCntrMAX,ntr,"LGCntrMAX ",xstop,0,7)
+      CALL xstopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX",xstop,1,15)
+      IF(xstop.eq.0)THEN
       CALL logreg(mdl,msz,n1,n2,nkn,ntr,cnc,nsep,tstr,tend,tint,ehm,
      #                  mszlo,mszup,ntrlo,ntrup,seed,kfold,nrep,
      #                  choice,nfcnt,penalty,mtm,seps,dcph,orders,
      #                  resp,weight,datri,iotrees,ltree,iocoef,
      #                  ioscores,conc,negs,pick,term,hyperpars,rd4,bout)
       intpars(1)=ltree
+      ELSE
+         intpars(1)=-999
+      ENDIF
       END
       
 
@@ -1850,7 +1867,7 @@
         ! parameters
           INTEGER LGCn1MAX,LGCnknMAX,LGCntrMAX,ltree,iotree(1)
           INTEGER LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
@@ -1875,7 +1892,7 @@
           REAL cbetas(0:LGCbetaMAX),xtxsep(LGCbetaMAX+1,LGCbetaMAX+1)
           INTEGER npckmv(6,LGCntrMAX)
           INTEGER pickmv(6,LGCnknMAX,LGCntrMAX)
-          CHARACTER *100 astring
+          CHARACTER *125 astring
           
         ! betas: the parameter estimates in the model - current/stored/best
         ! choice: which type of logic regression
@@ -1905,11 +1922,14 @@
         ltree=0
         xstop=0
         mcmc=0
-        CALL stopper(LGCnknMAX,nkn,"LGCnknMAX","logreg()",9,9,xstop,0)
-        CALL stopper(LGCntrMAX,ntr,"LGCntrMAX","logreg()",9,9,xstop,0)
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","logreg()",8,9,xstop,0)
-        CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","logreg()",10,9,
-     #          xstop,1)
+        ! CALL stopper(LGCnknMAX,nkn,"LGCnknMAX ","logreg()        ",
+     #  !         xstop,0)
+        ! CALL stopper(LGCntrMAX,ntr,"LGCntrMAX ","logreg()        ",
+     #  !         xstop,0)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","logreg()        ",
+     #  !         xstop,0)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","logreg()        ",
+     #  !         xstop,1)
         DO i=1,3
           DO j=0,LGCbetaMAX
              betas(i,j)=0.
@@ -2043,7 +2063,7 @@
           ltree=0
           DO ntr=ntrlo,ntrup
             IF (ehm.GE.0) THEN
-              CALL stringprint('  ',2)
+              CALL stringprint2()
               astring(1:39)="The number of trees in these models is "
               CALL makeistring(40,42,astring,ntr,3)
               CALL stringprint(astring,42)
@@ -2051,7 +2071,7 @@
             DO msz=mszlo,mszup
               IF (msz.GE.0.AND.msz.LT.ntr.AND.ntr.GT.ntrlo) THEN
                 IF(ehm.GE.0)THEN
-                  CALL stringprint('  ',2)
+                  CALL stringprint2()
                  astring(1:40)='The size for this model is smaller than'
                   astring(41:76)=' the number of trees you requested.'
                   CALL stringprint(astring,76)
@@ -2061,13 +2081,15 @@
                   CALL makeistring(11,13,astring,ntr,3)
                   astring(14:14)=")"
                   CALL stringprint(astring,14)
-                  CALL stringprint(
-     #               'To save CPU time, we will skip this run.',40)
-                  CALL stringprint("On to the next model...",23)
+                  astring(1:40)=
+     #                        "To save CPU time, we will skip this run."
+                  CALL stringprint(astring,40)
+                  astring(1:23)="On to the next model..."
+                  CALL stringprint(astring,23)
                 END IF
               ELSE
                 IF (ehm.GE.0.AND.msz.GT.0) THEN
-                  CALL stringprint('  ',2)
+                  CALL stringprint2()
                   astring(1:18)="The model size is "
                   CALL makeistring(19,21,astring,msz,3)
                   CALL stringprint(astring,21)
@@ -2134,7 +2156,7 @@
           ltree=0
           DO ntr=ntrlo,ntrup
             IF (ehm.GE.0) THEN
-              CALL stringprint('  ',2)
+              CALL stringprint2()
               astring(1:39)="The number of trees in these models is "
               CALL makeistring(40,42,astring,ntr,3)
               CALL stringprint(astring,42)
@@ -2142,7 +2164,7 @@
             DO msz=mszlo,mszup
               IF (msz.GE.0.AND.msz.LT.ntr.AND.ntr.GT.ntrlo) THEN
                 IF (ehm.GE.0) THEN
-                  CALL stringprint('  ',2)
+                  CALL stringprint2()
                  astring(1:40)='The size for this model is smaller than'
                   astring(41:76)=' the number of trees you requested.'
                   CALL stringprint(astring,76)
@@ -2152,13 +2174,15 @@
                   CALL makeistring(11,13,astring,ntr,3)
                   astring(14:14)=")"
                   CALL stringprint(astring,14)
-                  CALL stringprint(
-     #               'To save CPU time, we will skip this run.',40)
-                  CALL stringprint("On to the next model...",23)
+                  astring(1:40)=
+     #                        "To save CPU time, we will skip this run."
+                  CALL stringprint(astring,40)
+                  astring(1:23)="On to the next model..."
+                  CALL stringprint(astring,23)
                 END IF
               ELSE
               IF (ehm.GE.0) THEN
-                CALL stringprint('  ',2)
+                CALL stringprint2()
                 astring(1:18)="The model size is "
                 CALL makeistring(19,21,astring,msz,3)
                 CALL stringprint(astring,21)
@@ -2187,7 +2211,7 @@
      #                   iocoef,ioscores,rd4,bout)
           ioscores(2)=score(3)
           IF (ehm.EQ.0) THEN
-            CALL stringprint('  ',2)
+            CALL stringprint2()
             astring(1:25)="The best model has score "
             CALL makerstring(26,40,astring,score(3),10,4)
             CALL stringprint(astring,40)
@@ -2227,7 +2251,7 @@
           ltree=0
           DO ntr=ntrlo,ntrup
             IF (ehm.GE.0) THEN
-              CALL stringprint('  ',2)
+              CALL stringprint2()
               astring(1:39)="The number of trees in these models is "
               CALL makeistring(40,42,astring,ntr,3)
               CALL stringprint(astring,42)
@@ -2235,7 +2259,7 @@
             DO msz=mszlo,mszup
               IF (msz.GE.0.AND.msz.LT.ntr.AND.ntr.GT.ntrlo) THEN
                 IF(ehm.GE.0)THEN
-                  CALL stringprint('  ',2)
+                  CALL stringprint2()
                  astring(1:40)='The size for this model is smaller than'
                   astring(41:76)=' the number of trees you requested.'
                   CALL stringprint(astring,76)
@@ -2245,15 +2269,17 @@
                   CALL makeistring(11,13,astring,ntr,3)
                   astring(14:14)=")"
                   CALL stringprint(astring,14)
-                  CALL stringprint(
-     #               'To save CPU time, we will skip this run.',40)
-                  CALL stringprint("On to the next model...",23)
+                  astring(1:40)=
+     #                        "To save CPU time, we will skip this run."
+                  CALL stringprint(astring,40)
+                  astring(1:23)="On to the next model..."
+                  CALL stringprint(astring,23)
                 END IF
               ELSE
                 ltree=ltree+1
                 ntrnew=MIN(ntr,msz)
                 IF (ehm.GE.0) THEN
-                  CALL stringprint('  ',2)
+                  CALL stringprint2()
                   astring(1:18)="The model size is "
                   CALL makeistring(19,21,astring,msz,3)
                   CALL stringprint(astring,21)
@@ -2449,6 +2475,7 @@
           REAL rnum,myrand
         ! arguments out
           INTEGER knt,mtp,rnd1,rnd2,rnd3
+          CHARACTER*125 astring
 
       ! select move from selection scheme
         IF(mcmc.GT.0)mcmc=1
@@ -2508,7 +2535,8 @@
           CALL prune(knt,dbl,sng,nkn,ntr,wh,conc,negs,pick,term)
           mtp=6
         ELSE
-          CALL stringprint("error: this move is not defined!",32)
+          astring(1:32)="error: this move is not defined!"
+          CALL stringprint(astring,32)
           STOP
         END IF
       END 
@@ -2825,9 +2853,9 @@
       IMPLICIT NONE
 
         ! parameters
-          INTEGER LGCnsepMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
-          PARAMETER (LGCnsepMAX =    50)
+          INTEGER LGCbetaMAX,LGCn1MAX
+          PARAMETER (LGCn1MAX   = 40000)
+          PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),ordrs(n1),mtm
@@ -2835,7 +2863,7 @@
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
         ! local
-          REAL rseps(LGCnsepMAX,LGCn1MAX)
+          REAL rseps(LGCbetaMAX,LGCn1MAX)
           INTEGER xstop
         ! arguments out
           INTEGER ssize,conc(nkn,ntr,3)
@@ -2846,9 +2874,10 @@
           REAL score(3),betas(0:(nsep+ntr),3)
 
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","nullmodelx()",8,12,xstop,0)
-        CALL stopper(LGCnsepMAX,nsep,"LGCnsepMAX","nullmodelx()",10,12,
-     #          xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","nullmodelx()    ",
+     #  !     xstop,0)
+        !CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","nullmodelx()    "
+     #  !      xstop,1)
         CALL nullmodel(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                     storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,score,
@@ -2873,7 +2902,7 @@
 
         ! parameters
           INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
         ! random number generator
           REAL myrand               ! Declare the type of the rand() function
         ! arguments in
@@ -2898,7 +2927,8 @@
 
         mcmc=0
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","nullmodel()",8,11,xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","nullmodel()     ",
+     #  !             xstop,1)
 
       ! randomize all cases, save responses and randomize
         DO j=1,n1
@@ -2955,10 +2985,10 @@
       IMPLICIT NONE
 
         ! parameters
-          INTEGER LGCnsepMAX,LGCn1MAX,LGCntrMAX,LGCn2MAX
-          PARAMETER (LGCn1MAX   = 20000)
-          PARAMETER (LGCn2MAX   =  1000)
-          PARAMETER (LGCnsepMAX =    50)
+          INTEGER LGCbetaMAX,LGCn1MAX,LGCntrMAX,LGCn2MAX
+          PARAMETER (LGCn1MAX   = 40000)
+          PARAMETER (LGCn2MAX   =  2000)
+          PARAMETER (LGCbetaMAX =    55)
           PARAMETER (LGCntrMAX  =     5)
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt
@@ -2967,7 +2997,7 @@
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
         ! local
-          REAL rseps(LGCnsepMAX,LGCn1MAX)
+          REAL rseps(LGCbetaMAX,LGCn1MAX)
           INTEGER prtr(LGCn1MAX,LGCntrMAX)
           INTEGER rdatri(LGCn2MAX,LGCn1MAX)
           INTEGER xstop,i,j
@@ -2980,14 +3010,14 @@
           REAL score(3),betas(0:(nsep+ntr),3)
 
           xstop=0
-          CALL stopper(LGCn1MAX,n1,"LGCn1MAX","randomizationx()",8,16,
-     #            xstop,0)
-          CALL stopper(LGCn2MAX,n2,"LGCn2MAX","randomizationx()",8,16,
-     #            xstop,0)
-          CALL stopper(LGCntrMAX,ntr,"LGCntrMAX","randomizationx()",9,
-     #            16,xstop,0)
-          CALL stopper(LGCnsepMAX,nsep,"LGCnsepMAX","randomizationx()",
-     #            10,16,xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","randomizationx()",
+     #  !         xstop,0)
+        ! CALL stopper(LGCn2MAX,n2,"LGCn2MAX  ","randomizationx()",
+     #  !         xstop,0)
+        ! CALL stopper(LGCntrMAX,ntr,"LGCntrMAX ","randomizationx()",
+     #  !         xstop,0)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","randomizationx()"
+     #  !        ,xstop,1)
         DO i=1,LGCn1MAX
            DO j=1,LGCntrMAX
               prtr(i,j)=0
@@ -3017,7 +3047,7 @@
 
         ! parameters
           INTEGER LGCn1MAX,LGCntrMAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCntrMAX  =     5)
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,iotrees(1),nfcnt
@@ -3043,10 +3073,10 @@
 
           xstop=0
           mcmc=0
-          CALL stopper(LGCn1MAX,n1,"LGCn1MAX","randomization()",8,15,
-     #                 xstop,0)
-          CALL stopper(LGCntrMAX,ntr,"LGCntrMAX","randomization()",9,15,
-     #            xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","randomization() ",
+     #  !              xstop,0)
+        ! CALL stopper(LGCntrMAX,ntr,"LGCntrMAX ","randomization() ",
+     #  !         xstop,1)
 
       ! read and evaluate
         DO j=1,nkn
@@ -3163,7 +3193,7 @@
 
         ! parameters
           INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
         ! random number generator
           REAL myrand               ! declare the type of the rand() function
         ! arguments in
@@ -3179,7 +3209,8 @@
           REAL wk1(LGCn1MAX)
         ! arguments out
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","rand_prdcl()",8,12,xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","rand_prdcl()    ",
+     #  !            xstop,1)
 
       ! randomize the prediction classes
         DO j=1,ncl
@@ -3398,8 +3429,8 @@
           REAL betas(0:(nsep+ntr))
 
         xstop=0
-        CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","scoring()",10,9,
-     #          xstop,1)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","scoring()       "
+     #  !      ,xstop,1)
 
 
       ! initialize
@@ -3555,8 +3586,8 @@
           REAL betas(0:(nsep+ntr))
 
         xstop=0
-        CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","calcbetarss()",
-     #          10,13,xstop,1)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","calcbetarss()   "
+     #  !       ,xstop,1)
 
         ! estimate the parameters for linear regression 
         xtx(0,0)=xtxsep(0,0)
@@ -3615,7 +3646,7 @@
         END IF
         tweight=xtx(0,0)
         DO k=0,(nsep+nop)
-          IF(xty(k).lt.1.0D-10)xty(k)=0
+          IF((xty(k).lt.1.0D-10).and.(xty(k).gt.(-1.0D-10)))xty(k)=0
           xty(k)=xty(k)/tweight
           DO l=0,(nsep+nop)
             IF(xtx(k,l).lt.1.0D-10)xtx(k,l)=0
@@ -3694,7 +3725,7 @@
 
         ! parameters
           INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER n1,nop,nsep,ntr,prtr(n1,ntr)
@@ -3716,9 +3747,10 @@
           REAL betas(0:(nsep+ntr)),score(3)
 
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","calcdev()",8,9,xstop,0)
-        CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","calcdev()",10,9,
-     #          xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","calcdev()       ",
+     #  !       xstop,0)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","calcdev()       "
+     #  !      ,xstop,1)
           
         n1tmp=n1
         IF(nsep+ntr.LT.10)THEN
@@ -3823,7 +3855,7 @@
 
         ! parameters
           INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER n1,nop,nsep,ntr,dcph(n1),ordrs(n1),prtr(n1,ntr)
@@ -3835,12 +3867,13 @@
         ! arguments out
           REAL score(3),betas(0:(nsep+ntr)),r
           INTEGER oops
-          CHARACTER *80 astring
+          CHARACTER *125 astring
 
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","calcplcph()",8,11,xstop,0)
-        CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","calcplcph()",10,
-     #          11,xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","calcplcph()     ",
+     #  !       xstop,0)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","calcplcph()     "
+     #  !       ,xstop,1)
 
         DO i=1,n1
           IF((dcph(i).NE.0).and.(dcph(i).NE.1)) THEN
@@ -3975,7 +4008,7 @@
 
         ! parameters 
           INTEGER LGCnknMAX,LGCntrMAX,LGCn1MAX,LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
@@ -3996,13 +4029,14 @@
         ! arguments out
           REAL score(3)
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","testsetx()",8,10,xstop,0)
-        CALL stopper(LGCnknMAX,nkn,"LGCnknMAX","testsetx()",9,10,
-     #               xstop,0)
-        CALL stopper(LGCntrMAX,ntr,"LGCntrMAX","testsetx()",9,10,
-     #               xstop,0)
-        CALL stopper(LGCbetaMAX,ntr+nsep,"LGCbetaMAX","testsetx()",10,
-     #               10,xstop,1)
+        ! CALL stopper(LGCn1MAX  ,n1,"LGCn1MAX  ","testsetx()      ",
+     #  !            xstop,0)
+        ! CALL stopper(LGCnknMAX ,nkn,"LGCnknMAX ","testsetx()      ",
+     #  !             xstop,0)
+        ! CALL stopper(LGCntrMAX ,ntr,"LGCntrMAX ","testsetx()      ",
+     #  !              xstop,0)
+        ! CALL stopper(LGCbetaMAX,ntr+nsep,"LGCbetaMAX","testsetx()      "
+     #  !            ,xstop,1)
         DO i=1,LGCn1MAX
            DO j=1,LGCntrMAX
               prtr(i,j)=0
@@ -4042,6 +4076,7 @@
           REAL rsp(n1)
         ! arguments out
           REAL score(3)
+          CHARACTER*125 astring
 
       ! calculate response for scoring function
         DO j=1,n1
@@ -4057,6 +4092,7 @@
         END DO
 
       ! choose scoring function for model type
+        astring(1:13)="not done yet!"
         IF (mdl.EQ.1) THEN
           score(1)=0.0
           DO i=1,n1
@@ -4082,7 +4118,7 @@
            CALL My_own_scoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,nop,
      #                         wh,nsep,seps,score(1),betas)
         ELSE 
-          CALL stringprint('not done yet!',13)
+          CALL stringprint(astring,13)
           STOP
         END IF
 
@@ -4151,7 +4187,7 @@
 
         ! parameters 
           INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCbetaMAX=    55)
         ! arguments in
           INTEGER n1,nop,ntr,nsep,dcph(n1),ordrs(n1),prtr(n1,ntr)
@@ -4164,9 +4200,10 @@
           REAL score(3),r
 
         xstop=0
-        CALL stopper(LGCn1MAX,n1,"LGCn1MAX","scorepll()",8,10,xstop,0)
-        CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","scorepll()",10,
-     #          10,xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","scorepll()      ",
+     #  !       xstop,0)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","scorepll()      "
+     #  !       ,xstop,1)
 
       ! calculate the partial likleihood
         nnf(1)=nop+nsep
@@ -4222,8 +4259,8 @@
           INTEGER iter,i,np,xstop
 
         xstop=0
-        CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","myphxx()",10,8,
-     #          xstop,1)
+        ! CALL stopper(LGCbetaMAX,nsep+ntr,"LGCbetaMAX","myphxx()        "
+     #  !      ,xstop,1)
 
           DO i=1,np
             beta(i)=0.
@@ -4285,7 +4322,7 @@
       IMPLICIT none
         ! parameters 
           INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCbetaMAX=    55)
         ! i/o
           INTEGER n1,np,delta(n1),idx(n1),lda
@@ -4298,9 +4335,10 @@
           DOUBLE PRECISION s0,s1r,u,z,s2(LGCbetaMAX*LGCbetaMAX)
           INTEGER i,i2,j,k,r,s,it,xstop
           xstop=0
-          CALL stopper(LGCn1MAX,n1,"LGCn1MAX","mygradph()",8,10,xstop,0)
-          CALL stopper(LGCbetaMAX,np,"LGCbetaMAX","mygradph()",10,10,
-     #                 xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","mygradph()      ",
+     #  !              xstop,0)
+        ! CALL stopper(LGCbetaMAX,np,"LGCbetaMAX","mygradph()      ",
+     #  !              xstop,1)
 
           u=0
           DO i=1,n1
@@ -4371,14 +4409,15 @@
       IMPLICIT none
         ! i/o
           INTEGER n1,np,delta(n1),idx(n1),LGCn1MAX
-          PARAMETER (LGCn1MAX   = 20000)
+          PARAMETER (LGCn1MAX   = 40000)
           DOUBLE PRECISION beta(np),covs(n1*np),logl,myexp,mylog
           REAL weight(n1)
         ! local
           INTEGER i,k,xstop
           DOUBLE PRECISION z,s0,ff(LGCn1MAX),ff2(LGCn1MAX),gg(LGCn1MAX)
           xstop=0
-          CALL stopper(LGCn1MAX,n1,"LGCn1MAX","mypllxx()",8,9,xstop,1)
+        ! CALL stopper(LGCn1MAX,n1,"LGCn1MAX  ","mypllxx()       ",
+     #  !                       xstop,1)
 
           logl=0.
           DO i=1,n1
@@ -4422,8 +4461,8 @@
           INTEGER job,info
           INTEGER ipvt(LGCbetaMAX),xstop
           xstop=0
-          CALL stopper(LGCbetaMAX,n,"LGCbetaMAX","lusolveph()",10,11,
-     #                 xstop,1)
+        ! CALL stopper(LGCbetaMAX,n,"LGCbetaMAX","lusolveph()     ",
+     #  !              xstop,1)
 
           job=0
           k=0
@@ -4513,14 +4552,48 @@
           END 
       ! *****************************************************************
       ! *****************************************************************
-      SUBROUTINE  stopper(i,j,s1,s2,m,n,vv,ww)
+      SUBROUTINE  xstopper(i,j,s1,vv,ww,k)
 
-        INTEGER i,j,m,n,vv,ww
-        CHARACTER*20 s1,s2
-        CHARACTER*80 s3
+        INTEGER i,j,vv,ww,k
+        CHARACTER*10 s1
+        CHARACTER*125 astring,s3
+        m=10
+        n=16
 
       IF(i.LT.j)THEN
-        CALL stringprint("Insufficient declaration",24)
+        astring(1:24)="Insufficient declaration"
+        CALL stringprint(astring,24)
+             
+        s3(1:10)=s1(1:10)
+        s3(11:14)=" is "
+        CALL makeistring(15,22,s3,i,8)
+        s3(23:46)=". It should be at least "
+        CALL makeistring(47,54,s3,j,8)
+        s3(55:66)=". Fix it in "
+        CALL makeistring(67,74,s3,k,8)
+        s3(75:82)=" places."
+        CALL stringprint(s3,82)
+        vv=vv+1
+      END IF
+      IF(ww.GT.0.AND.vv.GT.0)THEN
+        astring(1:28)="Please fix and recompile...."
+        CALL stringprint(astring,28)
+      END IF
+      END
+      ! *****************************************************************
+      ! *****************************************************************
+      SUBROUTINE  stopper(i,j,s1,s2,vv,ww)
+
+        INTEGER i,j,m,n,vv,ww
+        CHARACTER*10 s1
+        CHARACTER*16 s2
+        CHARACTER*125 astring,s3
+        m=10
+        n=16
+
+      IF(i.LT.j)THEN
+        astring(1:24)="Insufficient declaration"
+        CALL stringprint(astring,24)
              
         s3(1:m)=s1(1:m)
         s3((m+1):(m+4))=" in "
@@ -4535,7 +4608,8 @@
         vv=vv+1
       END IF
       IF(ww.GT.0.AND.vv.GT.0)THEN
-        CALL stringprint('Please fix and recompile....',28)
+        astring(1:28)="Please fix and recompile...."
+        CALL stringprint(astring,28)
         STOP
       END IF
       END
@@ -4543,14 +4617,14 @@
       ! *****************************************************************
       SUBROUTINE makeistring(k1,k2,astring,i,j)
       INTEGER i,j,k,k1,k2
-      CHARACTER *40 aa
-      CHARACTER *80 astring
+      CHARACTER *125 aa
+      CHARACTER *125 astring
       CALL makeiistring(aa,i,j,k,0)
       astring(k1:k2)=aa(1:(k2-k1+1))
       END
       SUBROUTINE makerstring(k1,k2,astring,rr,i,j)
-      CHARACTER *20 aa,bb
-      CHARACTER *80 astring
+      CHARACTER *125 aa,bb
+      CHARACTER *125 astring
       REAL r,rr
       INTEGER i,j,p,k,l,s2,k3,ww
       ww=1
@@ -4600,7 +4674,7 @@
       END
       
       SUBROUTINE makeiistring(aa,i,j,p,f)
-      CHARACTER *20 aa
+      CHARACTER *125 aa
       INTEGER i,j,p,f
       INTEGER i2,k,l,m,n
       i2=i
@@ -4655,8 +4729,16 @@
         END IF
       END IF
       END
+      SUBROUTINE stringprint2()
+      CHARACTER *2 aa
+      INTEGER i
+      REAL k
+      aa(1:2)='  '
+      i=2
+      CALL realpr(aa,i,k,0)
+      END
       SUBROUTINE stringprint(aa,i)
-      CHARACTER *80 aa
+      CHARACTER *125 aa
       INTEGER i
       REAL k
       CALL realpr(aa,i,k,0)
@@ -4899,7 +4981,7 @@
      #           bout,n2)
       IMPLICIT NONE
       INTEGER LGCn2MAX,LGCntrMAX
-      PARAMETER(LGCn2MAX=1000,LGCntrMAX=5)
+      PARAMETER(LGCn2MAX=2000,LGCntrMAX=5)
       INTEGER mcmc,new,nkn,ntr,i,j,k,n2,used1(LGCn2MAX)
       INTEGER conc(nkn,ntr,3),negs(nkn,ntr,3)
       INTEGER visit(2+ntr*nkn),term(nkn,ntr,3),nac,rd1(1)
@@ -4909,9 +4991,11 @@
       INTEGER iz3,bout,xused(LGCntrMAX,LGCn2MAX),yused
       INTEGER vused(LGCntrMAX)
       xstop=0
-      CALL stopper(LGCn2MAX,n2,"LGCn2MAX","storeone",9,8,xstop,1)
+      ! CALL stopper(LGCn2MAX,n2,"LGCn2MAX  ","storeone()      ",
+     #!     xstop,1)
       xstop=0
-      CALL stopper(LGCntrMAX,ntr,"LGCntrMAX","storeone",9,9,xstop,1)
+      ! CALL stopper(LGCntrMAX,ntr,"LGCntrMAX ","storeone()      ",
+     #!       xstop,1)
       IF(new.eq.nac)THEN
          new=0
       ELSE
@@ -5305,8 +5389,8 @@
         INTEGER nwkv,wkv(LGCnknMAX),l1,l2
         xstop=0
         nopold=nop
-        CALL stopper(LGCnknMAX,nkn,"LGCnknMAX","evalgreed()",9,11,
-     #          xstop,1)
+        ! CALL stopper(LGCnknMAX,nkn,"LGCnknMAX ","evalgreed()     ",
+     #  !         xstop,1)
         CALL gstoring(nkn,ntr,conc,pick,ssize,nop)
         CALL evaluating(wh,knt,mtp,n1,n2,nkn,ntr,conc,term,negs,
      #                  datri,prtr,storage,nwkv,wkv)

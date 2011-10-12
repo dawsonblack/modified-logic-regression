@@ -352,7 +352,7 @@ plot.logreg <- function(x, pscript = FALSE, title = TRUE, ...)
       rng[2] <- rng[2] + sign(rng[2]) * 0.02 * rng[2]
       if(pscript)
          postscript("nmplot.ps", print.it = FALSE, horizontal = TRUE, ...)
-      test <- hist(data, xlim = rng, plot = FALSE)
+      test <- hist(data, plot = FALSE)
       hist(data, xlim = rng, xlab = "score", ylab = "counts", main = "")
       lines(rep(data2[1], 2), 0.98 * c(0, max(test$counts)))
       lines(rep(data2[2], 2), 0.98 * c(0, max(test$counts)))
@@ -1258,6 +1258,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       scores = as.single(rep(-100, nc)),
       rd4 = as.integer(rep(0, nxx)),
       PACKAGE="LogicReg")
+   if(fit$ip[1]<(-900))stop("fatal declaration error - reduce problem or recompile package")
    ipars <- (choice)
    rpars <- c(penalty)
    if(mdl == 0)
