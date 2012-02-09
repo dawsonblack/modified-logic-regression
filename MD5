@@ -1,5 +1,6 @@
-da6fe50ff127329c1059074bbd965550 *DESCRIPTION
+d3bb43bcb6ee94285b23e9ccd522cc51 *DESCRIPTION
 d981a4cb4499bdf145b8b14a5f39813c *INDEX
+16237d09798c445d2d9977d4cfc53a8b *NAMESPACE
 73537385133630b5f1e4f4c7f37be334 *R/LogicReg.R
 5e0053f6aa1cf5497c660babc1991eb9 *data/logreg.savefit1.RData
 b5561de7d3e78103ead3189a5b0a19e9 *data/logreg.savefit2.RData
@@ -9,7 +10,7 @@ b0f711edaa544fd65962ad74fc802593 *data/logreg.savefit4.RData
 9fb868d56b084d354425fdab360980a0 *data/logreg.savefit6.RData
 c7c680df660f544b4dbf1604c79a7566 *data/logreg.savefit7.RData
 befe0e5a816803401eeae25c1a96f71a *data/logreg.testdat.RData
-c16447a723720d804c0e146413a8a9dd *inst/condlogic.ff
+fc9f22a1234e1a3e629c95d5c46ef613 *inst/condlogic.ff
 1ff3f2cc23beaa882ecd9df4776560e8 *man/cumhaz.Rd
 b7a7a0a313c16ebff23d9c4235944379 *man/eval.logreg.Rd
 89d32a97f070cf314c78bac318db6c4e *man/frame.logreg.Rd
@@ -31,5 +32,5 @@ efe112edd76f8b80ff111a6aecc9e0ce *man/print.logreg.Rd
 a1ad0b10a44a863e336a551214b9be2c *man/print.logregtree.Rd
 9adb5061501a1bf7c0429a1da43cc925 *src/My_own_scoring.f
 4ca8a73fde90aefd7ccd7e57a922aa70 *src/external.f
-eb3075dcb7856fe70d0868571d0574a9 *src/slogic.f
+3f76fc745a728eb185100f8e53ff061d *src/slogic.f
 8fa8c60e51aa59f5b51cf30880eba632 *src/swrite.c

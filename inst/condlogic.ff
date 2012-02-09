@@ -9,7 +9,7 @@
       IMPLICIT NONE
         ! parameters
           INTEGER LGCn1MAX,LGCbetaMAX
-           PARAMETER (LGCn1MAX = 20000)
+           PARAMETER (LGCn1MAX = 40000)
            PARAMETER (LGCbetaMAX =  55)
         ! arguments in
           INTEGER n1,nop,ntr,nsep,wh
@@ -28,12 +28,12 @@
         IF(n1.GT.LGCn1MAX)THEN
            CALL stringprint("LGCn1MAX too small in My_own_scoring",36)
            CALL stringprint("fix and recompile",18)
-           STOP
+           CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
         IF(nsep+ntr.GT.LGCbetaMAX)THEN
            CALL stringprint("LGCbetaMAX too small in My_own_scoring",38)
            CALL stringprint("fix and recompile",18)
-           STOP
+           CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
 
         j=0
@@ -104,7 +104,7 @@
         IF(nsep+ntr.GT.LGCbetaMAX)THEN
            CALL stringprint("LGCbetaMAX too small in myphxxz",31)
            CALL stringprint("fix and recompile",18)
-           STOP
+           CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
 
           DO i=1,np
@@ -161,7 +161,7 @@
      #           strata,np6)
       IMPLICIT none
           INTEGER LGCn1MAX,LGCbetaMAX
-           PARAMETER (LGCn1MAX = 20000)
+           PARAMETER (LGCn1MAX = 40000)
            PARAMETER (LGCbetaMAX =  55)
         ! i/o
           INTEGER n1,np,np6
@@ -177,12 +177,12 @@
         IF(n1.GT.LGCn1MAX)THEN
            CALL stringprint("LGCn1MAX too small in mygradphz",31)
            CALL stringprint("fix and recompile",18)
-           STOP
+           CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
         IF(np.GT.LGCbetaMAX)THEN
            CALL stringprint("LGCbetaMAX too small in mygradphz",33)
            CALL stringprint("fix and recompile",18)
-           STOP
+           CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
           u=0
           DO i=1,n1
@@ -252,7 +252,7 @@
       SUBROUTINE mypllxxz(logl,beta,delta,idx,covs,np,n1,strata)
       IMPLICIT none
           INTEGER LGCn1MAX
-           PARAMETER (LGCn1MAX = 20000)
+           PARAMETER (LGCn1MAX = 40000)
         ! i/o
           INTEGER n1,np
           INTEGER delta(n1),idx(n1),strata(n1)
@@ -264,7 +264,6 @@
         IF(n1.GT.LGCn1MAX)THEN
            CALL stringprint("LGCn1MAX too small in mypllxxz",30)
            CALL stringprint("fix and recompile",18)
-           STOP
         END IF
           logl=0.
           DO i=1,n1
@@ -303,7 +302,7 @@
 
         ! parameters
           INTEGER LGCn1MAX,LGCbetaMAX
-           PARAMETER (LGCn1MAX = 20000)
+           PARAMETER (LGCn1MAX = 40000)
            PARAMETER (LGCbetaMAX =  55)
         ! arguments in
           INTEGER n1,nop,nsep,ntr,wh,reject
@@ -320,17 +319,18 @@
         IF(n1.GT.LGCn1MAX)THEN
            CALL stringprint("LGCn1MAX too small in My_own_fitting",36)
            CALL stringprint("fix and recompile",18)
-           STOP
+           CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
         IF(nsep+ntr.GT.LGCbetaMAX)THEN
            CALL stringprint("LGCbetaMAX too small in My_own_fitting",38)
            CALL stringprint("fix and recompile",18)
-           STOP
+           CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
         DO i=1,n1
            IF((dchp(i).NE.0).and.(dchp(i).NE.1)) THEN
               CALL stringprint("not all censoring cases 0 or 1",30)
-              STOP 
+              CALL stringprint("reset to 1",10)
+              dchp(i)=2
            END IF
         END DO
 
