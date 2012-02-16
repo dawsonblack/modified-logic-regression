@@ -3362,6 +3362,7 @@
           INTEGER reject
           REAL score(3)
           REAL betas(0:(nsep+ntr))
+          CHARACTER astring*125
 
       ! initialize
         DO j=0,nsep+ntr
@@ -3372,6 +3373,13 @@
       ! choose scoring function for model type
         IF (mdl.NE.1.AND.nopold.LE.nop.AND.mdl.NE.2)
      #    CALL singularities(n1,nop,ntr,wh,prtr,nsep,seps,reject,mtm)
+        IF(reject.eq.0)THEN
+            astring(1:14)="mdl nopold nop "
+            call makeistring(15,18,astring,mdl,4)
+            call makeistring(19,22,astring,nopold,4)
+            call makeistring(23,26,astring,nop,4)
+            if(reject.eq.999)call stringprint(astring,26)
+        END IF
         IF (reject.EQ.0) THEN
           IF (mdl.EQ.0)THEN
             CALL My_own_fitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,
@@ -3517,6 +3525,7 @@
           REAL tweight,tmp
         ! arguments out
           REAL betas(0:(nsep+ntr))
+          CHARACTER astring*125
 
         ! estimate the parameters for linear regression 
         xtx(0,0)=xtxsep(0,0)
