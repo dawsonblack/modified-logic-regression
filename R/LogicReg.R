@@ -1484,7 +1484,3 @@ cumhaz <- function(y,d)
    if(missing(d)) d <- rep(1,length(y))
    d - coxph(Surv(y,d)~1,iter.max=0)$residuals
 }
-.First.lib <- function(lib, pkg)
-{
-   library.dynam("LogicReg", pkg, lib)
-}
