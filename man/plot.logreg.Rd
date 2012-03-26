@@ -68,7 +68,7 @@ Nonlinear Estimation and Classification} (Eds: D. Denison, M. Hansen,
 C. Holmes, B. Mallick, B. Yu), Springer: New York, 333-344.
 
 Kooperberg C, Ruczinki I (2005). Identifying interacting SNPs using
-Monte Carlo Logic Regression, Genetic Epidemiology, in press.
+Monte Carlo Logic Regression, \emph{Genetic Epidemiology}, \bold{28}, 157-170.
 
 Selected chapters from the dissertation of Ingo Ruczinski, available
 from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}

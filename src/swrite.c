@@ -7,7 +7,7 @@ int *visit,*k;
    int i;
    ff=fopen("slogiclisting.tmp","a");
    fprintf(ff,"%f %f ",lvisit[0],lvisit[1]);
-   for(i=0;i<(*k);i++)fprintf(ff,"%d ",visit[i]);
+   for(i=1;i<(*k);i++)fprintf(ff,"%d ",visit[i]);
    fprintf(ff,"\n");
    fclose(ff);
 }

@@ -767,29 +767,42 @@ print.logregmodel <- function(x, nms, notnms, pstyle = 1, ...)
    ntr <- x$ntrees[1]
    scores <- x$coef
    lscores <- length(scores)
-   scores <- scores[(lscores - ntr + 1):lscores]
-   for(j in 1:ntr) {
-      if(x$trees[[j]]$trees[1,5]!=0){
-         tmp <- (scores[j] >= 0)
-         if(is.na(tmp)==FALSE){
-         if(scores[j] >= 0)
-            cat(" +", signif(scores[j], 3), " * ", sep = "")
-         else cat(" ", signif(scores[j], 3), " * ", sep = "")
-         if(inn == 2)
-            print.logregtree(x$trees[[j]], nms, notnms, pstyle = pstyle)
-         if(inn == 1)
-            print.logregtree(x$trees[[j]], nms, pstyle = pstyle)
-         if(inn == 0)
-            print.logregtree(x$trees[[j]], pstyle = pstyle)
-         }
+   if(scores[1]!=0)cat(signif(scores[1],3))
+    if(lscores>(ntr+1)){
+       sscores <- scores[2:(lscores-ntr)]
+       xl <- length(sscores)
+       for(i in 1:xl){
+          if(sscores[i]>0)
+              cat(" +",signif(sscores[i], 3), " * sep[,",i,"]",sep="")
+          else
+              cat(" ",signif(sscores[i], 3), " * sep[,",i,"]",sep="")
       }
-      else{
-         if(j==1){
-            if(scores[j] >= 0)
-               cat(" +", signif(scores[j], 3), " * 1", sep = "")
-            else cat(" ", signif(scores[j], 3), " *  1", sep = "")
-         }
-      }
+    }
+    tscores <- scores[(lscores - ntr + 1):lscores]
+    for (j in 1:ntr) {
+        if (x$trees[[j]]$trees[1, 5] != 0) {
+            tmp <- (tscores[j] >= 0)
+            if (is.na(tmp) == FALSE) {
+                if (tscores[j] >= 0)
+                  cat(" +", signif(tscores[j], 3), " * ", sep = "")
+                else cat(" ", signif(tscores[j], 3), " * ", sep = "")
+                if (inn == 2)
+                  print.logregtree(x$trees[[j]], nms, notnms,
+                    pstyle = pstyle)
+                if (inn == 1)
+                  print.logregtree(x$trees[[j]], nms, pstyle = pstyle)
+                if (inn == 0)
+                  print.logregtree(x$trees[[j]], pstyle = pstyle)
+            }
+        }
+        else {
+            if (j == 1) {
+                if (tscores[j] >= 0)
+                  cat(" +", signif(tscores[j], 3), " * 1", sep = "")
+                else cat(" ", signif(tscores[j], 3), " *  1",
+                  sep = "")
+            }
+        }
    }
    cat("\n")
    invisible()
@@ -1078,6 +1091,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       if(k==2 && mdl!=4){
          if(mdl==5)
             stop("Exponential survival models are only implemented if\nall separate predictors are binary")
+         if(mdl==3)
          cat("Logistic regression runs much fast if\nall separate predictors are binary\n")
       }
       if(mdl==4 && k!=2){
@@ -1173,6 +1187,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
    orders <- order(rank(resp) + runif(n1)/1000000)
    nkn <- tree.control$treesize * 2 - 1
    nxx <- 2
+   
    if(choice == 1 || choice == 7) {
       na <- ntr[1] * (nkn * 4 + 3)
       nb <- nsep + ntr[1] + 1
@@ -1199,6 +1214,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       na <- nb <- 2
       nc <- nrep + 2
    }
+   n100 <- -100
    if(choice == 7) {
       na <- 256
       nb <- n2
@@ -1208,9 +1224,10 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       nxx <- nc * n2
       if(abs(mc.control$output) < 3)
          nxx <- 1
+      n100 <- 0
    }
    if(choice != 5)
-      xtree <- rep(-100, na)
+      xtree <- rep(n100, na)
    if(choice == 5) {
       nb <- 2
       nd <- (ntr[2] - ntr[1] + 1) * (msz[2] - msz[1] + 1)
@@ -1239,8 +1256,9 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
          }
          allscores <- oldfit$allscores
       }
-      xtree <- c(xtree, rep(-100, 4 * nkn * 10))
+      xtree <- c(xtree, rep(n100, 4 * nkn * 10))
    }
+   ip4 <- 2*ipars[4]+1
    fit <- .Fortran("slogreg",
       as.integer(n1),
       as.integer(n2),
@@ -1254,8 +1272,14 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       as.single(wgt),
       as.integer(t(bin)),
       trees = as.integer(xtree),
-      coef = as.single(rep(-100, nb)),
-      scores = as.single(rep(-100, nc)),
+      coef = as.single(rep(n100, nb)),
+      scores = as.single(rep(n100, nc)),
+      as.integer(ipars[6]),
+      as.integer(ip4),
+      as.integer(rep(0,2*ipars[6]*ip4*n1)),
+      as.integer(rep(0,7*ipars[6]*(ip4+1)*n2*4)),
+      as.single(rep(0,7*ipars[6]*(ip4+1)*n2*4)),
+      as.integer(t(bin)),
       rd4 = as.integer(rep(0, nxx)),
       PACKAGE="LogicReg")
    if(fit$ip[1]<(-900))stop("fatal declaration error - reduce problem or recompile package")

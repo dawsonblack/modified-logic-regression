@@ -1,7 +1,7 @@
-55a3dd89e29317345824f09ec3839145 *DESCRIPTION
+a85d886d4226516f95dad8538b7cedcd *DESCRIPTION
 d981a4cb4499bdf145b8b14a5f39813c *INDEX
 a6bedd588b8e803b7b66a12d32932ec6 *NAMESPACE
-b99f79f0fc26a82dfa21964ddc058f9a *R/LogicReg.R
+bbb532fcb106a26e3f462876ca9ac339 *R/LogicReg.R
 5e0053f6aa1cf5497c660babc1991eb9 *data/logreg.savefit1.RData
 b5561de7d3e78103ead3189a5b0a19e9 *data/logreg.savefit2.RData
 bb5c8496d460b905c7ce6146475384cf *data/logreg.savefit3.RData
@@ -14,16 +14,16 @@ fc9f22a1234e1a3e629c95d5c46ef613 *inst/condlogic.ff
 1ff3f2cc23beaa882ecd9df4776560e8 *man/cumhaz.Rd
 b7a7a0a313c16ebff23d9c4235944379 *man/eval.logreg.Rd
 89d32a97f070cf314c78bac318db6c4e *man/frame.logreg.Rd
-4345e32bd79d8ecafa121680c37b0f15 *man/logreg.Rd
+6868240331f676db3d698cbcdc8495f7 *man/logreg.Rd
 09cd9cb580d99563b84cc6eea6107a63 *man/logreg.anneal.control.Rd
-c64743e79fb97880602e7e0f2479593a *man/logreg.mc.control.Rd
+a2b4cc258e30de1a77d18e75bc3fe94c *man/logreg.mc.control.Rd
 7b9e072a36a6f7da951fe61ae5359160 *man/logreg.myown.Rd
 f2230fb7b04d269783aa1ee5896f7fdd *man/logreg.savefit1.Rd
 845f8a3a3911a393d3d0c915630edacb *man/logreg.testdat.Rd
 2cc0c4a68f5f7bcba2acc0ec022bd586 *man/logreg.tree.control.Rd
 08f7add09f4549bba6c8166df7565b66 *man/logregmodel.Rd
 fce6c8957a7be277bb69c7c0e216a224 *man/logregtree.Rd
-3a1927f658100a8695d89e4687147356 *man/plot.logreg.Rd
+c7462460cdbdf21099d2e8606c7cf768 *man/plot.logreg.Rd
 337dfc22c8f2aa0a4dcf0269d1bea6be *man/plot.logregmodel.Rd
 1364d2776b3904b26257077b49923f2f *man/plot.logregtree.Rd
 f4eb0a6e07dd317d13524f0c261f252b *man/predict.logreg.Rd
@@ -32,5 +32,5 @@ efe112edd76f8b80ff111a6aecc9e0ce *man/print.logreg.Rd
 a1ad0b10a44a863e336a551214b9be2c *man/print.logregtree.Rd
 9adb5061501a1bf7c0429a1da43cc925 *src/My_own_scoring.f
 4ca8a73fde90aefd7ccd7e57a922aa70 *src/external.f
-453586859f4f9320f91ef22defad8646 *src/slogic.f
-8fa8c60e51aa59f5b51cf30880eba632 *src/swrite.c
+683faf06f7feb13c2313f6be5f267088 *src/slogic.f
+6ff3987edd9fa3a554c1f9ffbc3b32c8 *src/swrite.c

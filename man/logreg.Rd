@@ -209,10 +209,9 @@ In addition, the file
 in the current working directory can be
 created. This file contains a compact listing of all models visited. Column 1:
 proportional to the log posterior probability of the model; column 2: score
-(log-likelihood); column 3 and 4: how often was this model visited (this column
-is here twice for historical reasons), column 5 through 4 + maximum number
+(log-likelihood); column 3: how often was this model visited, column 4 through 3 + maximum number
 of leaves: summary of the first tree, if there are two trees,
-column 5 + maximum number of leaves through 4 + twice the maximum number
+column 4 + maximum number of leaves through 3 + twice the maximum number
 of leaves contains the second tree, and so on.\cr
 In this compact notation, leaves are in the same sequence as the rows in
 a \code{logregtree} object; a zero means that the leave is empty, a
@@ -482,7 +481,7 @@ using Logic Regression, \emph{Genetic Epidemiology}, \bold{21},
 S626-S631.
 
 Kooperberg C, Ruczinki I (2005). Identifying interacting SNPs using
-Monte Carlo Logic Regression, Genetic Epidemiology, in press.
+Monte Carlo Logic Regression, \emph{Genetic Epidemiology}, \bold{28}, 157-170.
 
 Selected chapters from the dissertation of Ingo Ruczinski, available
 from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}
