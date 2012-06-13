@@ -1,7 +1,7 @@
-a85d886d4226516f95dad8538b7cedcd *DESCRIPTION
+bca11262e9485e3b5c204ada3c5b47f8 *DESCRIPTION
 d981a4cb4499bdf145b8b14a5f39813c *INDEX
 a6bedd588b8e803b7b66a12d32932ec6 *NAMESPACE
-bbb532fcb106a26e3f462876ca9ac339 *R/LogicReg.R
+7867d39b67659a270fcdac2295c7fdd1 *R/LogicReg.R
 5e0053f6aa1cf5497c660babc1991eb9 *data/logreg.savefit1.RData
 b5561de7d3e78103ead3189a5b0a19e9 *data/logreg.savefit2.RData
 bb5c8496d460b905c7ce6146475384cf *data/logreg.savefit3.RData

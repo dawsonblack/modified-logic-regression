@@ -561,124 +561,126 @@ plot.logregtree <- function(x, nms, full = TRUE, and.or.cx = 1.0, leaf.sz = 1.0,
 }
 
 
-predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
+predict.logreg <- function(object, msz, ntr, newbin, newsep, ...) 
 {
-   if(class(object) != "logreg")
-      stop("object not of class logreg")
-   if(object$choice > 2 && object$choice !=6)
-      stop("object$choice needs to be 1, 2, or 6")
-   if(!missing(newbin)) {
-      if(missing(msz) && missing(ntr) && missing(newsep))
-         y <- frame.logreg(fit = object, newbin = newbin)
-      if(missing(msz) && missing(ntr) && (missing(newsep) == FALSE))
-         y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep)
-      if(missing(msz) && (missing(ntr) == FALSE) && missing(newsep))
-         y <- frame.logreg(fit = object, newbin = newbin, ntr = ntr)
-      if(missing(msz) && (missing(ntr) == FALSE) && (missing(newsep) == FALSE))
-         y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, ntr = ntr)
-      if((missing(msz) == FALSE) && missing(ntr) && missing(newsep))
-         y <- frame.logreg(fit = object, newbin = newbin, msz = msz)
-      if((missing(msz) == FALSE) && missing(ntr) && (missing(newsep) == FALSE))
-         y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, msz = msz)
-      if((missing(msz) == FALSE) && (missing(ntr) == FALSE) && missing(newsep))
-         y <- frame.logreg(fit = object, newbin = newbin, ntr = ntr, msz = msz)
-      if((missing(msz) == FALSE) && (missing(ntr) == FALSE) && (missing(newsep) == FALSE))
-         y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, ntr = ntr, msz = msz)
-   }
-   else {
-      if(missing(msz) && missing(ntr))
-         y <- frame.logreg(fit = object)[, -1]
-      if(missing(msz) && (missing(ntr) == FALSE))
-         y <- frame.logreg(fit = object, ntr = ntr)[, -1]
-      if((missing(msz) == FALSE) && missing(ntr))
-         y <- frame.logreg(fit = object, msz = msz)[, -1]
-      if((missing(msz) == FALSE) && (missing(ntr) == FALSE))
-         y <- frame.logreg(fit = object, ntr = ntr, msz = msz)[, -1]
-   }
-   unstrip <- function(x)
-   {
-      dd <- dim(x)
-      y <- x
-      if(length(dd) == 2) {
-         dd2 <- dd[2]
-         if(dd2 == 1)
-            y <- c(x[, 1])
-         if(dd2 == 2)
-            y <- cbind(c(x[, 1]), c(x[, 2]))
-         if(dd2 > 2)
-            y <- cbind(c(x[, 1]), c(x[, 2]), c(x[, 3]))
-         if(dd2 > 3)
-            for(i in 4:dd2)
-               y <- cbind(y, c(x[, i]))
-         y
-      }
-      if(length(dd) == 1 || length(dd) == 0) {
-         y <- c(unlist(c(unlist(x))))
-         names(y) <- NULL
-      }
-      y
-   }
-   ly <- length(y[, 1])
-   if(is.matrix(y) == FALSE)
-      y <- matrix(unstrip(y), nrow = ly)
-   y <- y[, -1]
-   if(object$type == "proportional.hazards")
-      y <- y[, -1]
-   z <- NULL
-   if(length(y) == ly)
-      y <- matrix(y, ncol = 1)
-   y <- cbind(y, rep(1, ly))
-   if(object$select == "single.model") {
-      z <- rep(object$model$coef[1], length(y[, 1]))
-      for(i in 2:length(object$model$coef))
-         z <- z + object$model$coef[i] * y[, i - 1]
-   }
-   if(object$select == "multiple.models") {
-      if(missing(msz))
-         msz <- min(object$nleaves):max(object$nleaves)
-      if(missing(ntr))
-         ntr <- min(object$ntrees):max(object$ntrees)
-      z <- NULL
-      if(object$nsep > 0) {
-         y1 <- y[, 1:object$nsep]
-         y <- y[,  - (1:object$nsep)]
-      }
-      jk <- 0
-      for(i in 1:object$nmodels) {
-         nt1 <- object$alltrees[[i]]$ntrees
-         ms1 <- object$alltrees[[i]]$nleaves
-         if(sum(nt1 == ntr) * sum(ms1 == msz) > 0) {
-            jk <- jk + 1
-            if(length(y) == ly)
-               y <- matrix(y, ncol = 1)
-            y3 <- y[, (1:nt1)]
-            if(i != object$nmodels)
-               y <- y[,  - (1:nt1)]
-            if(nt1 == 1)
-               y3 <- matrix(y3, ncol = 1)
-            if(object$nsep > 0)
-               y3 <- cbind(y1, y3)
-            cc <- object$alltrees[[i]]$coef
-            z2 <- cc[1]
-            if(length(cc) > 1)
-               for(ii in 2:length(cc))
-                  z2 <- z2 + cc[ii] * y3[, ii - 1]
-            str <- paste("tr", nt1, ".lf", ms1, sep = "")
-            if(length(z) > 0) {
-               z <- data.frame(z, z2)
+    if(class(object) != "logreg") 
+        stop("object not of class logreg")
+    if(object$choice > 2 && object$choice !=6) 
+        stop("object$choice needs to be 1, 2, or 6")
+    if(!missing(newbin)) {
+        if(missing(msz) && missing(ntr) && missing(newsep)) 
+            y <- frame.logreg(fit = object, newbin = newbin)
+        if(missing(msz) && missing(ntr) && (missing(newsep) == FALSE)) 
+            y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep)
+        if(missing(msz) && (missing(ntr) == FALSE) && missing(newsep)) 
+            y <- frame.logreg(fit = object, newbin = newbin, ntr = ntr)
+        if(missing(msz) && (missing(ntr) == FALSE) && (missing(newsep) == FALSE)) 
+            y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, ntr = ntr)
+        if((missing(msz) == FALSE) && missing(ntr) && missing(newsep)) 
+            y <- frame.logreg(fit = object, newbin = newbin, msz = msz)
+        if((missing(msz) == FALSE) && missing(ntr) && (missing(newsep) == FALSE)) 
+            y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, msz = msz)
+        if((missing(msz) == FALSE) && (missing(ntr) == FALSE) && missing(newsep)) 
+            y <- frame.logreg(fit = object, newbin = newbin, ntr = ntr, msz = msz)
+        if((missing(msz) == FALSE) && (missing(ntr) == FALSE) && (missing(newsep) == FALSE)) 
+            y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, ntr = ntr, msz = msz)
+    }
+    else {
+        if(missing(msz) && missing(ntr)) 
+            y <- frame.logreg(fit = object)[, -1]
+        if(missing(msz) && (missing(ntr) == FALSE)) 
+            y <- frame.logreg(fit = object, ntr = ntr)[, -1]
+        if((missing(msz) == FALSE) && missing(ntr)) 
+            y <- frame.logreg(fit = object, msz = msz)[, -1]
+        if((missing(msz) == FALSE) && (missing(ntr) == FALSE)) 
+            y <- frame.logreg(fit = object, ntr = ntr, msz = msz)[, -1]
+    }
+    iik <- 0
+    if(missing(msz) && missing(ntr) && object$select == "greedy") iik <- 1
+    unstrip <- function(x) 
+    {
+        dd <- dim(x)
+        y <- x
+        if(length(dd) == 2) {
+            dd2 <- dd[2]
+            if(dd2 == 1) 
+                y <- c(x[, 1])
+            if(dd2 == 2) 
+                y <- cbind(c(x[, 1]), c(x[, 2]))
+            if(dd2 > 2) 
+                y <- cbind(c(x[, 1]), c(x[, 2]), c(x[, 3]))
+            if(dd2 > 3) 
+                for(i in 4:dd2)
+                   y <- cbind(y, c(x[, i]))
+            y
+        }
+        if(length(dd) == 1 || length(dd) == 0) {
+            y <- c(unlist(c(unlist(x))))
+            names(y) <- NULL
+        }
+        y
+    }
+    ly <- length(y[, 1])
+    if(is.matrix(y) == FALSE) 
+        y <- matrix(unstrip(y), nrow = ly)
+    y <- y[, -1]
+    if(object$type == "proportional.hazards") 
+        y <- y[, -1]
+    z <- NULL
+    if(length(y) == ly) 
+        y <- matrix(y, ncol = 1)
+    y <- cbind(y, rep(1, ly))
+    if(object$select == "single.model") {
+        z <- rep(object$model$coef[1], length(y[, 1]))
+        for(i in 2:length(object$model$coef)) 
+            z <- z + object$model$coef[i] * y[, i - 1]
+    }
+    if(object$select == "multiple.models" |object$select == "greedy") {
+        if(missing(msz)) 
+            msz <- min(object$nleaves):max(object$nleaves)
+        if(missing(ntr)) 
+            ntr <- min(object$ntrees):max(object$ntrees)
+        z <- NULL
+        if(object$nsep > 0) {
+            y1 <- y[, 1:object$nsep]
+            y <- y[, - (1:object$nsep)]
+        }
+        jk <- 0
+        for(i in 1:object$nmodels) {
+            nt1 <- object$alltrees[[i]]$ntrees
+            ms1 <- object$alltrees[[i]]$nleaves
+            if(sum(nt1 == ntr) * sum(ms1 == msz) > 0| iik == 1) {
+                jk <- jk + 1
+                if(length(y) == ly) 
+                  y <- matrix(y, ncol = 1)
+                y3 <- y[, (1:nt1)]
+                if(i != object$nmodels) 
+                  y <- y[, - (1:nt1)]
+                if(nt1 == 1) 
+                  y3 <- matrix(y3, ncol = 1)
+                if(object$nsep > 0) 
+                  y3 <- cbind(y1, y3)
+                cc <- object$alltrees[[i]]$coef
+                z2 <- cc[1]
+                if(length(cc) > 1) 
+                  for(ii in 2:length(cc)) 
+                    z2 <- z2 + cc[ii] * y3[, ii - 1]
+                str <- paste("tr", nt1, ".lf", ms1, sep = "")
+                if(length(z) > 0) {
+                  z <- data.frame(z, z2)
+                }
+                else {
+                  z <- data.frame(z2)
+                }
+                names(z)[jk] <- str
             }
-            else {
-               z <- data.frame(z2)
-            }
-            names(z)[jk] <- str
-         }
-      }
-   }
-   if(object$type == "classification")
-      z[z != 0] <- 1
-   if(object$type == "logistic")
-      z <- exp(z)/(1 + exp(z))
-   z
+        }
+    }
+    if(object$type == "classification") 
+        z[z != 0] <- 1
+    if(object$type == "logistic") 
+        z <- exp(z)/(1 + exp(z))
+    z
 }
 print.logreg <- function(x, nms, notnms, pstyle = 1, ...)
 {
