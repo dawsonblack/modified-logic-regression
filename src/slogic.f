@@ -3408,6 +3408,14 @@
             DO j=0,(nsep+ntr)
               betas(j)=smbetas(j)
             END DO 
+       ! the next few lines are here only for Holger Schwender's TRIO package
+          ELSE IF (mdl.EQ.9)THEN
+            CALL triofitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,
+     #                     nop,wh,nsep,seps,score(1),smbetas,reject)
+            DO j=0,(nsep+ntr)
+              betas(j)=smbetas(j)
+            END DO           
+       ! the previous lines are here only for Holger Schwender's TRIO package
           ELSE IF (mdl.EQ.5)THEN
             CALL expofit(prtr,rsp,dcph,weight,n1,ntr,
      #                        nop,nsep,seps,score(1),smbetas,reject)
