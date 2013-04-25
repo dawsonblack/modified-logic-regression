@@ -125,8 +125,8 @@ C     calculate d2mat = t(dmu/dbeta) %*% winv %*% (dmu/dbeta)
       end
 C***********************************************************************
       subroutine dgeco(a,lda,n,ipvt,rcond,z)
-      integer lda,n,ipvt(1)
-      double precision a(lda,1),z(1)
+      integer lda,n,ipvt(*)
+      double precision a(lda,*),z(*)
       double precision rcond
 c
 c     dgeco factors a double precision matrix by gaussian elimination
@@ -321,8 +321,8 @@ c
 
 
       subroutine dgedi(a,lda,n,ipvt,det,work,job)
-      integer lda,n,ipvt(1),job
-      double precision a(lda,1),det(2),work(1)
+      integer lda,n,ipvt(*),job
+      double precision a(lda,*),det(2),work(*)
 c
 c     dgedi computes the determinant and inverse of a matrix
 c     using the factors computed by dgeco or dgefa.
@@ -451,8 +451,8 @@ c
 
       subroutine dgefa(a,lda,n,ipvt,info)
         IMPLICIT NONE
-      integer lda,n,ipvt(1),info
-      double precision a(lda,1)
+      integer lda,n,ipvt(*),info
+      double precision a(lda,*)
 c
 c     dgefa factors a double precision matrix by gaussian elimination.
 c
@@ -852,8 +852,8 @@ c
 c        include 'prot_params.inc'
         double precision TINY
         parameter(TINY = 1.0E-20)
-        integer N, INDX(N),OOPS,LDA
-        double precision A(LDA,N), D
+        integer N, INDX(*),OOPS,LDA
+        double precision A(LDA,*), D
         integer i,imax,j,k
         double precision big,dum,sum,temp,vv(50)
 **
@@ -922,8 +922,8 @@ c        include 'prot_params.inc'
 ** N is 'nang', INDX is the permution vector output by
 ** LUDCMP, B is input as the right-hand side vector 'tau'
 ** and output as the solution vector.
-        integer N,INDX(N),LDA
-        double precision A(LDA,N), B(N)
+        integer N,INDX(*),LDA
+        double precision A(LDA,*), B(*)
         integer i,ii,ip,j
         double precision sum
 **

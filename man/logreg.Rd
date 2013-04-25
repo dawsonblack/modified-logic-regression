@@ -517,10 +517,10 @@ Charles Kooperberg \email{clk@fhcrc.org}.
 data(logreg.savefit1,logreg.savefit2,logreg.savefit3,logreg.savefit4,
      logreg.savefit5,logreg.savefit6,logreg.savefit7,logreg.testdat)
 
-myanneal <- logreg.anneal.control(start = -1, end = -4, iter = 2500, update = 100)
-# in practie we would use 25000 iterations or more - the use of 2500 is only
+myanneal <- logreg.anneal.control(start = -1, end = -4, iter = 500, update = 100)
+# in practie we would use 25000 iterations or far more - the use of 500 is only
 # to have the examples run fast
-\dontrun{myanneal <- logreg.anneal.control(start = -1, end = -4, iter = 25000, update = 1000)}
+\dontrun{myanneal <- logreg.anneal.control(start = -1, end = -4, iter = 25000, update = 500)}
 fit1 <- logreg(resp = logreg.testdat[,1], bin=logreg.testdat[, 2:21], type = 2,
                select = 1, ntrees = 2, anneal.control = myanneal)
 # the best score should be in the 0.97-0.98 range
@@ -534,8 +534,8 @@ plot(fit1)
 # there are some streaks, thanks to the very discrete predictions
 #
 # a bit less output
- myanneal2 <- logreg.anneal.control(start = -1, end = -4, iter = 2500, update = 0)
-# in practie we would use 25000 iterations or more - the use of 2500 is only 
+ myanneal2 <- logreg.anneal.control(start = -1, end = -4, iter = 500, update = 0)
+# in practie we would use 25000 iterations or more - the use of 500 is only 
 # to have the examples run fast
 \dontrun{myanneal2 <- logreg.anneal.control(start = -1, end = -4, iter = 25000, update = 0)}
 #
@@ -594,7 +594,7 @@ plot(logreg.savefit4)
 #
 # Monte Carlo Logic Regression
 fit7 <- logreg(select = 7, oldfit = fit1, mc.control=
-               logreg.mc.control(nburn=1000, niter=10000, hyperpars=log(2)))
+               logreg.mc.control(nburn=500, niter=2500, hyperpars=log(2)))
 # we need many more iterations for reasonable results
 \dontrun{logreg.savefit7 <- logreg(select = 7, oldfit = fit1, mc.control=
                logreg.mc.control(nburn=1000, niter=100000, hyperpars=log(2)))}

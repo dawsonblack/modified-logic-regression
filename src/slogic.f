@@ -46,10 +46,10 @@
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,mtm
           INTEGER cnc(3),dcph(n1),ordrs(n1),storage(2*ntr*nkn*n1) 
-          REAL tstr,tend,tint,slprbc(25),weight(n1),rd2(1),rd3(1)
+          REAL tstr,tend,tint,slprbc(25),weight(n1),rd2(*),rd3(*)
           REAL resp(n1),seps(nsep,n1)
           REAL penalty,hyperpars(10)
-          INTEGER datri(n2,n1),mcmc,rd1(1),rd4(1),bout
+          INTEGER datri(n2,n1),mcmc,rd1(*),rd4(*),bout
         ! local
           INTEGER i,j,accept,fcnt,hm,nac,nop,npertemp,tcnt,nrj,nde
           INTEGER nac2,ntot,npckmv(6,LGCntrMAX)
@@ -690,7 +690,7 @@
           INTEGER pick(nkn,ntr,3)
           INTEGER term(nkn,ntr,3)
           INTEGER ssize,storage(2*ntr*nkn*n1)
-          REAL score(3),betas(3,0:(nsep+ntr)),ioscores(1)
+          REAL score(3),betas(3,0:(nsep+ntr)),ioscores(*)
         ! local
           REAL sepstt(LGCbetaMAX,LGCn1MAX)
           INTEGER datritt(n2,n1)
@@ -735,7 +735,7 @@
           INTEGER pick(nkn,ntr,3)
           INTEGER term(nkn,ntr,3)
           INTEGER ssize,storage(2*ntr*nkn*n1)
-          REAL score(3),betas(3,0:(nsep+ntr)),ioscores(1)
+          REAL score(3),betas(3,0:(nsep+ntr)),ioscores(*)
         ! local
           INTEGER hmpg,hmlo,ngrp,hmpgx,ngrpx
           INTEGER i,j,k,l,cnt,cnt2,dummy(LGCn1MAX),rnumsi(LGCn1MAX)
@@ -1390,7 +1390,11 @@
         pp=(wh-1)*nkn*n1+(knac-1)*n1
         IF (negs(knac,wh,1).EQ.0) THEN
           DO j=1,n1
-            storage(pp+j)=datri(iterm,j)
+            IF(iterm.EQ.0)THEN
+               storage(pp+j)=1
+            ELSE
+               storage(pp+j)=datri(iterm,j)
+            END IF
           END DO
         ELSE 
           DO j=1,n1
@@ -1496,14 +1500,20 @@
         knac=4*knt
         iterm=term(knac,wh,1)
         pp=(wh-1)*nkn*n1+(knac-1)*n1
-        IF (negs(knac,wh,1).EQ.0) THEN
+        IF(iterm.EQ.0)THEN
           DO j=1,n1
-            storage(pp+j)=datri(iterm,j)
+            storage(pp+j)=0
           END DO
-        ELSE 
-          DO j=1,n1
-            storage(pp+j)=1-datri(iterm,j)
-          END DO
+        ELSE
+           IF (negs(knac,wh,1).EQ.0) THEN
+             DO j=1,n1
+               storage(pp+j)=datri(iterm,j)
+             END DO
+           ELSE 
+             DO j=1,n1
+               storage(pp+j)=1-datri(iterm,j)
+             END DO
+           END IF
         END IF
         nwkv=nwkv+1
         wkv(nwkv)=knac
@@ -1736,15 +1746,15 @@
       PARAMETER (LGCnknMAX  =   128)
       PARAMETER (LGCntrMAX  =     5)
       INTEGER n1,n2,nsep,cnc(3),mdl,msz,nkn,ehm,mszlo,mszup,ntrx,nknx
-      INTEGER storage2(n2,n1),storage(1)
+      INTEGER storage2(n2,n1),storage(*)
       INTEGER storage3(0:6,ntrx,0:nknx,n2,0:1,2)
       REAL storage4(0:6,ntrx,0:nknx,n2,0:1,2)
       INTEGER ntrlo,ntrup,seed,kfold,nrep,choice,nfcnt,mtm
       INTEGER intpars(17),dcph(n1),orders(n1),datri(n2,n1)
-      INTEGER iotrees(1),bout
+      INTEGER iotrees(*),bout
       REAL seps(nsep,n1),resp(n1),weight(n1),rpars(14),tstr,tend,tint
-      REAL penalty,iocoef(1),ioscores(1),hyperpars(10)
-      INTEGER conc(LGCnknMAX,LGCntrMAX,3),xstop,rd4(1)
+      REAL penalty,iocoef(*),ioscores(*),hyperpars(10)
+      INTEGER conc(LGCnknMAX,LGCntrMAX,3),xstop,rd4(*)
       INTEGER negs(LGCnknMAX,LGCntrMAX,3),i,j,k
       INTEGER pick(LGCnknMAX,LGCntrMAX,3)
       INTEGER term(LGCnknMAX,LGCntrMAX,3)
@@ -1842,7 +1852,7 @@
         ! how many selection probabilities/relations:
   
         ! parameters
-          INTEGER LGCn1MAX,LGCnknMAX,LGCntrMAX,ltree,iotree(1)
+          INTEGER LGCn1MAX,LGCnknMAX,LGCntrMAX,ltree,iotree(*)
           INTEGER LGCbetaMAX
           PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCnknMAX  =   128)
@@ -1851,7 +1861,7 @@
 
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
-          INTEGER i,j,ssize,ehm,seed,nfcnt,error,nsp,k,rd4(1),bout
+          INTEGER i,j,ssize,ehm,seed,nfcnt,error,nsp,k,rd4(*),bout
           INTEGER choice,kfold,mdl,msz,n1,n2,nkn,nsep,ntr
           INTEGER ntrnew,mszlo,mszup,nrep,ntrlo,ntrup
           INTEGER cnc(3),mtm
@@ -1863,7 +1873,7 @@
           INTEGER storage(2*ntr*nkn*n1),datritt(n2,n1)
           INTEGER sseed(3)
           REAL tstr,tend,tint,score(3),slprbc(25),penalty,hyperpars(10)
-          REAL weight(n1),betas(3,0:LGCbetaMAX),resp(n1),iocoef(1)
+          REAL weight(n1),betas(3,0:LGCbetaMAX),resp(n1),iocoef(*)
           INTEGER datri(n2,n1),mcmc
           REAL seps(nsep,n1),rnumsrr(LGCn1MAX),ioscores(n1),myrand
           INTEGER mszmax,iolast,iosclast
@@ -2760,7 +2770,11 @@
             GOTO 592
           END IF
           neg=r2
-          conc(knt,wh,1)=cnc(r3)
+          IF(r3.GT.0)THEN
+             conc(knt,wh,1)=cnc(r3)
+          ELSE
+             conc(knt,wh,1)=0
+          END IF
         END IF
         term(2*knt+1,wh,1)=letter
         negs(2*knt+1,wh,1)=neg
@@ -2966,7 +2980,7 @@
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt
-          INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm,iotrees(1)
+          INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm,iotrees(*)
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
@@ -3018,7 +3032,7 @@
         ! arguments in
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
-          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,iotrees(1),nfcnt
+          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,iotrees(*),nfcnt
           INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1)
@@ -3226,7 +3240,7 @@
       IMPLICIT NONE
 
         ! arguments in
-          INTEGER msz,nkn,ntr,wh,stst,iotrees(1)
+          INTEGER msz,nkn,ntr,wh,stst,iotrees(*)
         ! local
           INTEGER k,ltree,j
         ! arguments out
@@ -4748,7 +4762,7 @@
       END
       SUBROUTINE reorder(iotree,conc,term,negs,pick,ltree,k,j,nkn,
      #                   ntrnew)
-      INTEGER iotree(1),ltree,k,j,nkn,ntrnew
+      INTEGER iotree(*),ltree,k,j,nkn,ntrnew
       INTEGER conc(nkn,ntrnew,3)
       INTEGER negs(nkn,ntrnew,3)
       INTEGER pick(nkn,ntrnew,3)
@@ -4987,10 +5001,10 @@
       PARAMETER(LGCn2MAX=2000,LGCntrMAX=5)
       INTEGER mcmc,new,nkn,ntr,i,j,k,n2,used1(LGCn2MAX)
       INTEGER conc(nkn,ntr,3),negs(nkn,ntr,3)
-      INTEGER visit(2+ntr*nkn),term(nkn,ntr,3),nac,rd1(1)
-      REAL lvisit(2),rd2(1),rd3(1)
+      INTEGER visit(2+ntr*nkn),term(nkn,ntr,3),nac,rd1(*)
+      REAL lvisit(2),rd2(*),rd3(*)
       REAL hyperpars(10)
-      INTEGER iz2,iz,jz,i2,rd4(1),zused
+      INTEGER iz2,iz,jz,i2,rd4(*),zused
       INTEGER iz3,bout,xused(LGCntrMAX,LGCn2MAX),yused
       INTEGER vused(LGCntrMAX),zz
       IF(new.eq.nac)THEN
@@ -5342,7 +5356,9 @@
                 ELSE
                   sibling=knt-1
                 END IF
-                IF (conc(sibling,wh,1).EQ.3) yes=1
+                IF (sibling.GT.0)THEN
+                   IF (conc(sibling,wh,1).EQ.3) yes=1
+                END IF
               END IF
             END IF
             IF(mtp.EQ.4)THEN
