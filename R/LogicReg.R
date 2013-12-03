@@ -623,7 +623,9 @@ predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
     ly <- length(y[, 1])
     if(is.matrix(y) == FALSE) 
         y <- matrix(unstrip(y), nrow = ly)
+    lly <- length(y[,1])
     y <- y[, -1]
+    if(lly==1) y <- matrix(y, nrow=1)
     if(object$type == "proportional.hazards") 
         y <- y[, -1]
     z <- NULL
@@ -651,8 +653,12 @@ predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
             ms1 <- object$alltrees[[i]]$nleaves
             if(sum(nt1 == ntr) * sum(ms1 == msz) > 0| iik == 1) {
                 jk <- jk + 1
-                if(length(y) == ly) 
-                  y <- matrix(y, ncol = 1)
+                if(ly==1)
+                  y <- matrix(y, nrow = 1)
+                else{
+                   if(length(y) == ly) 
+                     y <- matrix(y, ncol = 1)
+                }
                 y3 <- y[, (1:nt1)]
                 if(i != object$nmodels) 
                   y <- y[, - (1:nt1)]
@@ -663,8 +669,8 @@ predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
                 cc <- object$alltrees[[i]]$coef
                 z2 <- cc[1]
                 if(length(cc) > 1) 
-                  for(ii in 2:length(cc)) 
-                    z2 <- z2 + cc[ii] * y3[, ii - 1]
+                  for(ii in 2:length(cc))
+                     z2 <- z2 + cc[ii] * y3[, ii - 1]
                 str <- paste("tr", nt1, ".lf", ms1, sep = "")
                 if(length(z) > 0) {
                   z <- data.frame(z, z2)
@@ -781,8 +787,8 @@ print.logregmodel <- function(x, nms, notnms, pstyle = 1, ...)
       }
     }
     tscores <- scores[(lscores - ntr + 1):lscores]
-    for (j in 1:ntr) {
-        if (x$trees[[j]]$trees[1, 5] != 0) {
+    for(j in 1:ntr) {
+        if(x$trees[[j]]$trees[1, 5] != 0) {
             tmp <- (tscores[j] >= 0)
             if (is.na(tmp) == FALSE) {
                 if (tscores[j] >= 0)
@@ -1505,8 +1511,8 @@ logreg.mc.control <- function(nburn = 1000, niter = 25000, hyperpars = 0, update
 cumhaz <- function(y,d)
 {
    logregtmp <- hist(1:10, plot = FALSE)
-   if(length(logregtmp$mids) > 0)
-      library(survival)
+   #if(length(logregtmp$mids) > 0)
+   #   library(survival)
    if(missing(d)) d <- rep(1,length(y))
    d - coxph(Surv(y,d)~1,iter.max=0)$residuals
 }

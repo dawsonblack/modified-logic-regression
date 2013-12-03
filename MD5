@@ -1,7 +1,7 @@
-74a307a2818a6bb1a657ad15e2c0dcdf *DESCRIPTION
+52a573e525285fbfab0e4ecececbadd7 *DESCRIPTION
 d981a4cb4499bdf145b8b14a5f39813c *INDEX
 a6bedd588b8e803b7b66a12d32932ec6 *NAMESPACE
-7867d39b67659a270fcdac2295c7fdd1 *R/LogicReg.R
+a5b94de43dbec0df85cd04d5537f0f93 *R/LogicReg.R
 5e0053f6aa1cf5497c660babc1991eb9 *data/logreg.savefit1.RData
 b5561de7d3e78103ead3189a5b0a19e9 *data/logreg.savefit2.RData
 bb5c8496d460b905c7ce6146475384cf *data/logreg.savefit3.RData
@@ -14,7 +14,7 @@ fc9f22a1234e1a3e629c95d5c46ef613 *inst/condlogic.ff
 1ff3f2cc23beaa882ecd9df4776560e8 *man/cumhaz.Rd
 b7a7a0a313c16ebff23d9c4235944379 *man/eval.logreg.Rd
 89d32a97f070cf314c78bac318db6c4e *man/frame.logreg.Rd
-f77effc91af2e0984098e4ae9c7d8b08 *man/logreg.Rd
+1703065432f28ea7b399f25e4620c0ae *man/logreg.Rd
 09cd9cb580d99563b84cc6eea6107a63 *man/logreg.anneal.control.Rd
 a2b4cc258e30de1a77d18e75bc3fe94c *man/logreg.mc.control.Rd
 7b9e072a36a6f7da951fe61ae5359160 *man/logreg.myown.Rd

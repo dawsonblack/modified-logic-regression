@@ -523,7 +523,7 @@ myanneal <- logreg.anneal.control(start = -1, end = -4, iter = 500, update = 100
 \dontrun{myanneal <- logreg.anneal.control(start = -1, end = -4, iter = 25000, update = 500)}
 fit1 <- logreg(resp = logreg.testdat[,1], bin=logreg.testdat[, 2:21], type = 2,
                select = 1, ntrees = 2, anneal.control = myanneal)
-# the best score should be in the 0.97-0.98 range
+# the best score should be in the 0.95-1.10 range
 plot(fit1)
 # you'll probably see X1-X4 as well as a few noise predictors
 # use logreg.savefit1 for the results with 25000 iterations
