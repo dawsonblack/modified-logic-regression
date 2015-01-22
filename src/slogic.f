@@ -3990,7 +3990,7 @@
         CALL myphxx(dcph,ordrs,covsf,nnf(1),n1,nsep,ntr,loglf,betaf,
      #              oops,weight)
         r=n1
-        score(1)=-loglf
+        if(oops.ne.1)score(1)=-loglf
         betas(0)=0.0
         DO j=1,(nsep+nop)
           betas(j)=betaf(j)
@@ -4350,6 +4350,7 @@
               END IF
             END DO
             CALL lusolveph(hess,grad,np,oops,LGCbetaMAX)
+            IF(iter.EQ.9) oops=1
             IF(oops.EQ.1)RETURN
             alpha=1
             zolala = 0
