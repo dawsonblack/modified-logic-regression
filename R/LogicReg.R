@@ -21,7 +21,7 @@
 # Other references can be found on our homepages
 # http://www.biostat.jhsph.edu/~iruczins/
 # http://kooperberg.fhcrc.org/~clk
-# You can contact us at ingo@jhu.edu and clk@fhcrc.org
+# You can contact us at ingo@jhu.edu and clk@fredhutch.org
 # =======================================================================
 
 eval.logreg <- function(ltree, data)

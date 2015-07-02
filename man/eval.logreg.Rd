@@ -48,7 +48,7 @@ C. Holmes, B. Mallick, B. Yu), Springer: New York, 333-344.
 
 \author{
 Ingo Ruczinski \email{ingo@jhu.edu} and
-Charles Kooperberg \email{clk@fhcrc.org}}
+Charles Kooperberg \email{clk@fredhutch.org}}
 
 
 \seealso{

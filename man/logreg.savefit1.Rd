@@ -26,7 +26,7 @@ things like plotting, printing, and predicting.
 
 \author{
 Ingo Ruczinski \email{ingo@jhu.edu} and
-Charles Kooperberg \email{clk@fhcrc.org}}
+Charles Kooperberg \email{clk@fredhutch.org}}
 
 \examples{
 data(logreg.savefit1)

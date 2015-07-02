@@ -73,7 +73,7 @@ Monte Carlo Logic Regression, \emph{Genetic Epidemiology}, \bold{28}, 157-170.}
 
 \author{
 Ingo Ruczinski \email{ingo@jhu.edu} and
-Charles Kooperberg \email{clk@fhcrc.org}.
+Charles Kooperberg \email{clk@fredhutch.org}.
 }
 
 

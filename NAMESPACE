@@ -9,3 +9,16 @@ exportPattern(".")
 import(
   survival
 )
+
+S3method(plot, logreg)
+S3method(plot, logregmodel)
+S3method(plot, logregtree)
+S3method(print, logreg)
+S3method(print, logregmodel)
+S3method(print, logregtree)
+S3method(predict, logreg)
+importFrom("graphics", "axis", "barplot", "box", "hist", "abline", "image", "lines", "par", "plot", "points", "text")
+importFrom("stats", "runif", "var")
+importFrom("utils", "help")
+importFrom("grDevices", "dev.off", "postscript")
+

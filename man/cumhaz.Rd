@@ -41,7 +41,7 @@ Ruczinski I, Kooperberg C, LeBlanc ML (2003).  Logic Regression,
 
 \author{
 Ingo Ruczinski \email{ingo@jhu.edu} and
-Charles Kooperberg \email{clk@fhcrc.org}.
+Charles Kooperberg \email{clk@fredhutch.org}.
 }
 
 

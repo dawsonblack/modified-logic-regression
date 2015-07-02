@@ -68,7 +68,7 @@ from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}
 
 \author{
 Ingo Ruczinski \email{ingo@jhu.edu} and
-Charles Kooperberg \email{clk@fhcrc.org}.
+Charles Kooperberg \email{clk@fredhutch.org}.
 }
 
 
