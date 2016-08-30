@@ -71,7 +71,7 @@
           INTEGER term(nkn,ntr,3)
           INTEGER ssize
           REAL score(3),betas(3,0:(nsep+ntr))
-          CHARACTER *125 astring
+          CHARACTER (LEN=125) astring
 
         ! npckmv: how many available for a move of a particular type 
         ! pickmv: which available for a move of a particular type
@@ -298,7 +298,7 @@
         INTEGER nop,reject,ssize,npckmv(6,ntr)
         INTEGER pickmv(6,nkn,ntr)
         REAL score(3),betas(3,0:(nsep+ntr))
-        CHARACTER*125 astring
+        CHARACTER(LEN=125) astring
 
       ! precompute separate predictors and intercept for linear regress
         IF(mdl.EQ.2)THEN
@@ -559,7 +559,7 @@
           DOUBLE PRECISION t1,mylog
         ! local
           INTEGER j
-          CHARACTER *125 astring
+          CHARACTER (LEN=125) astring
         ! arguments out
         ! none
 
@@ -570,7 +570,7 @@
         ELSE 
             t1= -temp-1 
         END IF
-        t2=t1
+        t2=REAL(t1)
         IF (ehm.GT.0) THEN
           IF (mdl.EQ.1) THEN
             IF (i.EQ.0) THEN
@@ -677,13 +677,13 @@
           PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
-          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
-          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
           INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),seed
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1) ,mtm
           REAL seps(nsep,n1),resp(n1),rnumsrr(n1)
+          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
+          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
         ! arguments out
           INTEGER conc(nkn,ntr,3),ltree
           INTEGER negs(nkn,ntr,3)
@@ -747,7 +747,7 @@
           INTEGER ordrstt(LGCn1MAX),rd1(2),rd4(2),bout
           REAL datrtokentt(LGCn1MAX),resptt(LGCn1MAX)
           REAL sepstt(nsep,n1),penalty,rdummy(10),rd2(2),rd3(2)
-          CHARACTER *125 astring
+          CHARACTER (LEN=125) astring
         ! cvscore: cross-validation scores (tr,travg,test,testavg)
 
           mcmc=0
@@ -1859,8 +1859,6 @@
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
 
-          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
-          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
           INTEGER i,j,ssize,ehm,seed,nfcnt,error,nsp,k,rd4(*),bout
           INTEGER choice,kfold,mdl,msz,n1,n2,nkn,nsep,ntr
           INTEGER ntrnew,mszlo,mszup,nrep,ntrlo,ntrup
@@ -1881,7 +1879,9 @@
           REAL cbetas(0:LGCbetaMAX),xtxsep(LGCbetaMAX+1,LGCbetaMAX+1)
           INTEGER npckmv(6,LGCntrMAX)
           INTEGER pickmv(6,LGCnknMAX,LGCntrMAX)
-          CHARACTER *125 astring
+          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
+          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
+          CHARACTER (LEN=125) astring
           
         ! betas: the parameter estimates in the model - current/stored/best
         ! choice: which type of logic regression
@@ -1931,9 +1931,9 @@
           IF(sseed(1).LT.0)THEN
              sseed(1)= -seed
           END IF
-          i=myrand(sseed(1))
+          i=INT(myrand(sseed(1)))
         ELSE
-          i=myrand(1773)
+          i=INT(myrand(1773))
         END IF
 
       ! find the single best model -----------------------------------
@@ -2458,7 +2458,7 @@
           REAL rnum,myrand
         ! arguments out
           INTEGER knt,mtp,rnd1,rnd2,rnd3
-          CHARACTER*125 astring
+          CHARACTER (LEN=125) astring
 
       ! select move from selection scheme
         IF(mcmc.GT.0)mcmc=1
@@ -2846,13 +2846,13 @@
           PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
-          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
-          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),ordrs(n1),mtm
           REAL tstr,tend,tint,weight(n1),slprbc(25)
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
+          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
+          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
         ! local
           REAL rseps(LGCbetaMAX,LGCn1MAX)
         ! arguments out
@@ -2893,13 +2893,13 @@
         ! random number generator
           REAL myrand               ! Declare the type of the rand() function
         ! arguments in
-          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
-          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),ordrs(n1),mtm
           REAL tstr,tend,tint,weight(n1),slprbc(25)
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
+          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
+          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
         ! local
           INTEGER i,j,dummy(LGCn1MAX),inums(LGCn1MAX),rdcph(LGCn1MAX)
           INTEGER rnumsi(LGCn1MAX),sordrs(LGCn1MAX)
@@ -2977,13 +2977,13 @@
           PARAMETER (LGCbetaMAX =    55)
           PARAMETER (LGCntrMAX  =     5)
         ! arguments in
-          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
-          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt
           INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm,iotrees(*)
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
+          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
+          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
         ! local
           REAL rseps(LGCbetaMAX,LGCn1MAX)
           INTEGER prtr(LGCn1MAX,LGCntrMAX)
@@ -3030,13 +3030,13 @@
           PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCntrMAX  =     5)
         ! arguments in
-          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
-          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,iotrees(*),nfcnt
           INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
+          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
+          REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
         ! local
           INTEGER j,k,l,wh,ncl,msznew,rdcp(LGCn1MAX)
           INTEGER prtr(n1,ntr),rordrs(LGCn1MAX)
@@ -3397,7 +3397,7 @@
           INTEGER reject
           REAL score(3)
           REAL betas(0:(nsep+ntr))
-          CHARACTER astring*125
+          CHARACTER (LEN=125) astring
 
       ! initialize
         DO j=0,nsep+ntr
@@ -3624,7 +3624,7 @@
             END DO        
           END DO        
         END IF
-        tweight=xtx(0,0)
+        tweight=REAL(xtx(0,0))
         DO k=0,(nsep+nop)
           xty(k)=xty(k)/tweight
           xty2(k)=xty(k)
@@ -3703,7 +3703,7 @@
         DO j=0,(nsep+nop)
            betas(j)=0
            IF(io(j).EQ.1)THEN
-              betas(j)=xty(k3)
+              betas(j)=REAL(xty(k3))
               k3=k3+1
            END IF
         END DO
@@ -3900,7 +3900,7 @@
             END IF
             IF (ABS(loglik_old-loglik).GT.eps) conv=0
             beta(j)=beta_new(j)
-            betas(j-1)=beta_new(j)
+            betas(j-1)=REAL(beta_new(j))
           END DO
           loglik_old=loglik
         END DO
@@ -3915,8 +3915,8 @@
           IF (p(k).GT.0.D0.AND.p(k).LT.1.D0) THEN
             prb=p(k)
             prb2=1.-prb
-            score(1)=score(1)-2.0*(y(k)*mylog(prb)+
-     #                             (n(k)-y(k))*mylog(prb2))
+            score(1)=REAL(score(1)-2.0*(y(k)*mylog(prb)+
+     #                             (n(k)-y(k))*mylog(prb2)))
           ELSE
             reject=1
             GOTO 1000
@@ -3953,7 +3953,7 @@
         ! arguments out
           REAL score(3),betas(0:(nsep+ntr)),r
           INTEGER oops
-          CHARACTER *125 astring
+          CHARACTER (LEN=125) astring
 
         DO i=1,n1
           IF((dcph(i).NE.0).and.(dcph(i).NE.1)) THEN
@@ -3990,10 +3990,10 @@
         CALL myphxx(dcph,ordrs,covsf,nnf(1),n1,nsep,ntr,loglf,betaf,
      #              oops,weight)
         r=n1
-        if(oops.ne.1)score(1)=-loglf
+        if(oops.ne.1)score(1)=REAL(-loglf)
         betas(0)=0.0
         DO j=1,(nsep+nop)
-          betas(j)=betaf(j)
+          betas(j)=REAL(betaf(j))
         END DO
 
       END 
@@ -4147,7 +4147,7 @@
           REAL rsp(n1)
         ! arguments out
           REAL score(3)
-          CHARACTER*125 astring
+          CHARACTER (LEN=125) astring
 
       ! calculate response for scoring function
         DO j=1,n1
@@ -4218,7 +4218,7 @@
           DOUBLE PRECISION prd,myexp,mylog
         ! arguments out
           REAL score(3)
-          CHARACTER*125 astring
+          CHARACTER (LEN=125) astring
 
       ! calculate the predictions
         score(1)=0.0
@@ -4240,7 +4240,7 @@
       ! calculate the deviance
           IF (prd.GT.0.D0.AND.prd.LT.1.D0) THEN
             IF (rsp(i).EQ.0) prd=1-prd
-            score(1)=score(1)-2.0*weight(i)*mylog(prd)
+            score(1)=score(1)-REAL(2.0*weight(i)*mylog(prd))
           ELSE
           astring(1:34)=" * Fitted probabilities of 0 or 1 *" 
           CALL stringprint(astring,35)
@@ -4302,7 +4302,7 @@
         j=nsep+nop
         CALL mypllxx(loglf,betaf,dcph,ordrs,covsf,j,n1,weight)
         r=n1
-        score(1)=-loglf
+        score(1)=REAL(-loglf)
 
       END 
 
@@ -4542,7 +4542,7 @@
       SUBROUTINE STRINGCOM(s1,s2,ls1,ls2)
       IMPLICIT none
 
-          CHARACTER *80 s1,s2,s3
+          CHARACTER (LEN=80) s1,s2,s3
           INTEGER ls1,ls2
 
           s3(1:ls1)=s1(1:ls1)
@@ -4606,8 +4606,8 @@
       SUBROUTINE  xstopper(i,j,s1,vv,ww,k)
 
         INTEGER i,j,vv,ww,k
-        CHARACTER*10 s1
-        CHARACTER*125 astring,s3
+        CHARACTER (LEN=10) s1
+        CHARACTER (LEN=125) astring,s3
         m=10
         n=16
 
@@ -4635,14 +4635,14 @@
       ! *****************************************************************
       SUBROUTINE makeistring(k1,k2,astring,i,j)
       INTEGER i,j,k,k1,k2
-      CHARACTER *125 aa
-      CHARACTER *125 astring
+      CHARACTER  (LEN=125) aa
+      CHARACTER  (LEN=125) astring
       CALL makeiistring(aa,i,j,k,0)
       astring(k1:k2)=aa(1:(k2-k1+1))
       END
       SUBROUTINE makerstring(k1,k2,astring,rr,i,j)
-      CHARACTER *125 aa,bb
-      CHARACTER *125 astring
+      CHARACTER  (LEN=125) aa,bb
+      CHARACTER  (LEN=125) astring
       REAL r,rr
       INTEGER i,j,p,k,l,s2,k3,ww
       ww=1
@@ -4654,17 +4654,17 @@
       ELSE
          s=r
       END IF
-      k=s
+      k=INT(s)
       if(r.LT.0)k=-k
       k3=k
       IF(j.GT.0)THEN
-        k=s
+        k=INT(s)
         s=s-k
         DO k=1,j
            s2=s2*10
            s=s*10
         END DO
-        k=(s+0.5)
+        k=INT(s+0.5)
       END IF
       IF(k.eq.s2)THEN
          k=0
@@ -4692,7 +4692,7 @@
       END
       
       SUBROUTINE makeiistring(aa,i,j,p,f)
-      CHARACTER *125 aa
+      CHARACTER (LEN=125) aa
       INTEGER i,j,p,f
       INTEGER i2,k,l,m,n
       i2=i
@@ -4748,7 +4748,7 @@
       END IF
       END
       SUBROUTINE stringprint2()
-      CHARACTER *2 aa
+      CHARACTER (LEN=2) aa
       INTEGER i
       REAL k
       aa(1:2)='  '
@@ -4756,7 +4756,7 @@
       CALL realpr(aa,i,k,0)
       END
       SUBROUTINE stringprint(aa,i)
-      CHARACTER *125 aa
+      CHARACTER (LEN=125) aa
       INTEGER i
       REAL k
       CALL realpr(aa,i,k,0)
@@ -4783,7 +4783,7 @@
       ! a simple hypergeometric prior
       score(1)=0.5*score(1)*exp(hyperpars(2))
       hyperpars(10)=score(1)
-      score(1)=score(1)+rr+hyperpars(1)*ssize
+      score(1)=REAL(score(1)+rr+hyperpars(1)*ssize)
       hyperpars(9)=score(1)
       hyperpars(8)=0.
       zz=(slprbc(3)-slprbc(2))/(slprbc(4)-slprbc(2)+slprbc(1))
@@ -4796,7 +4796,7 @@
          IF(mtp.EQ.3.AND.ssize.EQ.0)postrat=1./(zz*(2*n2))
          IF(mtp.EQ.3.AND.nopdiff.GT.0)postrat=1./(zz*(2*n2))
          IF(mtp.EQ.0)postrat=(2*n2)*zz
-         hyperpars(8)=mylog(postrat)
+         hyperpars(8)=REAL(mylog(postrat))
       END IF
       END 
       SUBROUTINE getv2(nn,ssize,nkn,n2)
@@ -5146,7 +5146,7 @@
       END DO
       rt=nsep+ntr
       i2=nsep+ntr
-      k=2.0**rt
+      k=INT(2.0**rt)
       DO i=1,k
          DO j=1,i2
             x(i,j+1)=0.
@@ -5170,7 +5170,7 @@
          j=0
          k=1
          DO l=1,nsep
-            j=j+k*seps(l,i)
+            j=INT(j+k*seps(l,i))
             k=k*2
          END DO
          DO l=1,ntr
@@ -5511,8 +5511,8 @@ c       CALL RANDOM_NUMBER(score)
               prd=prd+betas(nsep+j)*REAL(prtr(i,j))
             END DO
           END IF
-          score=score-myexp(prd)*rsp(i)*weight(i)
-          IF(dcph(i).EQ.1)score=score+prd*weight(i)
+          score=score-REAL(myexp(prd)*rsp(i)*weight(i))
+          IF(dcph(i).EQ.1)score=score+REAL(prd*weight(i))
              
         END DO
         score = - score
@@ -5567,7 +5567,7 @@ c       CALL RANDOM_NUMBER(score)
            zz = 0
            IF(nsep.GT.0)THEN
               DO j=1,nsep
-                 zz=2*zz+seps(j,i)
+                 zz=INT(2*zz+seps(j,i))
               END DO
            END IF
            IF(nop.GT.0)THEN
@@ -5580,7 +5580,7 @@ c       CALL RANDOM_NUMBER(score)
               vvv=vvv+weight(i)
               IF(nsep.GT.0)THEN
                  DO j=1,nsep
-                    i2=seps(j,i)+1
+                    i2=INT(seps(j,i)+1)
                     dd(i2,j)=dd(i2,j)+weight(i)
                  END DO
               END IF
@@ -5600,7 +5600,7 @@ c       CALL RANDOM_NUMBER(score)
               s1 = s1 + weight(i)*rsp(i)
               s2 = s2 + weight(i)*dcph(i)
            END DO
-           betas(0)=mylog(s1/s2)
+           betas(0)=REAL(mylog(s1/s2))
            GOTO 117
         END IF
         DO i=1,100
@@ -5622,15 +5622,15 @@ c       CALL RANDOM_NUMBER(score)
               phi(2,i) = phi(2,i)/phi(1,i)
            END DO
            phi(2,1) = phi(2,1)/phi(1,1)
-           betas(0)=mylog(phi(1,1))
+           betas(0)=REAL(mylog(phi(1,1)))
            DO i=1,uu
-              betas(i)=mylog(phi(2,i))
+              betas(i)=REAL(mylog(phi(2,i)))
            END DO
         END IF
         IF(uu.eq.1)THEN
            phi(2,1) = phi(2,1)/phi(1,1)
-           betas(0)=mylog(phi(1,1))
-           betas(1)=mylog(phi(2,1))
+           betas(0)=REAL(mylog(phi(1,1)))
+           betas(1)=REAL(mylog(phi(2,1)))
         END IF
         reject=0
 117     CONTINUE
@@ -5646,14 +5646,14 @@ c       CALL RANDOM_NUMBER(score)
                l=m
             END DO
           END IF
-          score=score-myexp(pp)*nn(i)
+          score=score-REAL(myexp(pp)*nn(i))
         END DO
         IF(uu.gt.0)THEN
           DO i=1,uu
-            score=score+betas(i)*dd(2,i)
+            score=score+REAL(betas(i)*dd(2,i))
           END DO
         END IF
-        score=score+betas(0)*vvv
+        score=score+REAL(betas(0)*vvv)
         score=-score
       END
       ! *****************************************************************

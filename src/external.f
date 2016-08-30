@@ -1246,7 +1246,7 @@ C
       else
         CALL zufall(1,k)
       END IF
-      myrand=k(1)
+      myrand=REAL(k(1))
       end
       subroutine zufall(n,a)
       implicit none
@@ -1486,7 +1486,7 @@ c
       double precision svblk(*)
       common /klotz0/buff,ptr
 c
-      ptr = svblk(1)
+      ptr = INT(svblk(1))
       do 1 i=1,607
          buff(i) = svblk(i+1)
 1     continue

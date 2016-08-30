@@ -1,4 +1,4 @@
-d37c53deba0eb9f78379c090c2814b71 *DESCRIPTION
+07b9ea7d97ff5e664c1837b7f80d8d42 *DESCRIPTION
 d981a4cb4499bdf145b8b14a5f39813c *INDEX
 bb7afa4aadcb0b48e1f1b8aabb9dc270 *NAMESPACE
 0d184f6853cd9828253d593c04be7ccc *R/LogicReg.R
@@ -31,7 +31,7 @@ ec26d3448faea1617f12ed014b4ee773 *man/print.logreg.Rd
 666476c63dc96a6081be5030f4025753 *man/print.logregmodel.Rd
 06351d6e2f6d3ce59e4d44ad8fe8cc9c *man/print.logregtree.Rd
 9adb5061501a1bf7c0429a1da43cc925 *src/My_own_scoring.f
-581d047877d15ce7c1c1e5c96335432e *src/external.f
-31a74a05f2c97bda8a169285b3bfb6ac *src/slogic.f
+61bbdd1d0a0a4870410ee1113a3bd6f3 *src/external.f
+cbd5ea7be5602f0e3f8f925c42cc4407 *src/slogic.f
 6ff3987edd9fa3a554c1f9ffbc3b32c8 *src/swrite.c
-27120db7cc11e9483a5f9b35958e3166 *src/trioLR.f
+97f144338ed453fdf870cdff69ad041b *src/trioLR.f

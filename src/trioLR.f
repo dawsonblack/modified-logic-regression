@@ -256,6 +256,9 @@
               CALL REXIT("Response not correctly specified.")
            END IF
         END DO
+        ordrs(1)=ordrs(1)
+        weight(1)=weight(1)
+        wh=wh
 
        ! reorganize the data
          j=0
@@ -263,7 +266,7 @@
          DO i=1,n1
             idx(i)=i
             IF(j.EQ.0)THEN
-               l=rsp(i)
+               l=INT(rsp(i))
                IF(l.GT.0)THEN
                   k=k+1
                   j=l
@@ -294,7 +297,7 @@
          IF (myicheck.GT.0) THEN
             DO i=1,n1
                IF (rsp(i).GT.0) THEN
-                  m=rsp(i)
+                  m=INT(rsp(i))
                   DO j=1,m
                      IF (prtr(i,1).NE.prtr(i+j,1)) THEN
                         IF (prtr(i,1).EQ.0) THEN
@@ -338,9 +341,9 @@
      #                loglf,betaf,strata,reject)
 
          r=n1
-         score(1)=-loglf/r
+         score(1)=REAL(-loglf/r)
          DO i=1,(nsep+nop)
-            betas(i)=betaf(i)
+            betas(i)=REAL(betaf(i))
          END DO
          
          IF (myausfahrt.EQ.1) THEN
