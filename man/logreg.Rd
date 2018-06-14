@@ -543,8 +543,8 @@ plot(fit1)
  fit2 <- logreg(resp = logreg.testdat[,1], bin=logreg.testdat[, 2:21], type = 2,
                select = 2, ntrees = c(1,2), nleaves =c(1,7), anneal.control = myanneal2)
 # equivalent
- fit2 <- logreg(select = 2, ntrees = c(1,2), nleaves =c(1,7), oldfit = fit1,
-                anneal.control = myanneal2)
+\dontrun{fit2 <- logreg(select = 2, ntrees = c(1,2), nleaves =c(1,7), oldfit = fit1,
+                anneal.control = myanneal2)}
  plot(fit2)
 # use logreg.savefit2 for the results with 25000 iterations
  plot(logreg.savefit2)
@@ -556,7 +556,7 @@ plot(fit1)
  fit3 <- logreg(resp = logreg.testdat[,1], bin=logreg.testdat[, 2:21], type = 2,
                 select = 3, ntrees = c(1,2), nleaves=c(1,7), anneal.control = myanneal2)
 # equivalent
- fit3 <- logreg(select = 3, oldfit = fit2)
+\dontrun{fit3 <- logreg(select = 3, oldfit = fit2)}
  plot(fit3)
 # use logreg.savefit3 for the results with 25000 iterations
  plot(logreg.savefit3)
@@ -565,7 +565,7 @@ plot(fit1)
  fit4 <- logreg(resp = logreg.testdat[,1], bin=logreg.testdat[, 2:21], type = 2,
                 select = 4, ntrees = 2, anneal.control = myanneal2)
 # equivalent
- fit4 <- logreg(select = 4, anneal.control = myanneal2, oldfit = fit1)
+\dontrun{fit4 <- logreg(select = 4, anneal.control = myanneal2, oldfit = fit1)}
  plot(fit4)
 # use logreg.savefit4 for the results with 25000 iterations
 plot(logreg.savefit4)
@@ -578,7 +578,7 @@ plot(logreg.savefit4)
             select = 5, ntrees = c(1,2), nleaves=c(1,7), anneal.control = myanneal2,
             nrep = 10, oldfit = fit2)
 # equivalent
- fit5 <- logreg(select = 5, nrep = 10, oldfit = fit2)
+\dontrun{fit5 <- logreg(select = 5, nrep = 10, oldfit = fit2)}
  plot(fit5)
 # use logreg.savefit5 for the results with 25000 iterations and 25 permutations
  plot(logreg.savefit5)

@@ -78,6 +78,9 @@
         ! prtr: logic trees predictions
 
       ! calculate response for scoring function
+      DO i=1,(2+ntr*nkn)
+         visit(i)=0
+      END DO
       DO i=1,LGCn1MAX
          DO j=1,LGCntrMAX
             prtr(i,j)=0
@@ -1905,6 +1908,9 @@
         ! nfcnt: number of iterations after which to check whether there
         !        are 10 changes
         ! penalty: penalty parameter for model size
+        score(1)=0.
+        score(2)=0.
+        score(3)=0.
         iolast=0
         iosclast=0
         ltree=0
@@ -3569,6 +3575,18 @@
         ! arguments out
           REAL betas(0:(nsep+ntr))
 
+        DO i=0,LGCbetaMAX
+           xty(i)=0.
+           xty2(i)=0.
+           io(i)=0
+           DO j=0,LGCbetaMAX
+              xtx(i,j)=0.
+              xtx2(i,j)=0.
+           END DO
+        END DO
+        DO i=1,(4*LGCbetaMAX+4)
+           dummy_vec(i)=0
+        END DO
         ! estimate the parameters for linear regression 
         xtx(0,0)=xtxsep(0,0)
         xty(0)=0.0

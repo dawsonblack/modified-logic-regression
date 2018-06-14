@@ -1,6 +1,6 @@
 Package: LogicReg
-Version: 1.5.9
-Date: 2016-08-30
+Version: 1.5.10
+Date: 2018-06-14
 Title: Logic Regression
 Author: Charles Kooperberg <clk@fredhutch.org> and Ingo Ruczinski <ingo@jhu.edu>
 Maintainer: Charles Kooperberg <clk@fredhutch.org>
@@ -8,7 +8,7 @@ Depends: R (>= 2.10), survival
 Imports: stats, graphics, utils, grDevices
 Description: Routines for fitting Logic Regression models.
 License: GPL (>= 2)
-Packaged: 2016-08-30 16:23:47 UTC; clk
 NeedsCompilation: yes
+Packaged: 2018-06-14 17:09:42 UTC; clk
 Repository: CRAN
-Date/Publication: 2016-08-30 23:45:20
+Date/Publication: 2018-06-14 21:26:21 UTC

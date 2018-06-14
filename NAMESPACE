@@ -1,6 +1,6 @@
 # Remove the previous line if you edit this file
 
-useDynLib(LogicReg)
+useDynLib(LogicReg, .registration = TRUE)
 
 # Export all names
 exportPattern(".")
