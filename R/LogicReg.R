@@ -1192,6 +1192,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       nburn, mc.control$niter, mc.control$output)
    rpars <- c(anneal.control$start, anneal.control$end, anneal.control$
       iter, penalty, mc.control$hyperpars)
+   if(length(rpars)<14)rpars <- c(rpars,rep(0,14))[1:14]
    orders <- order(rank(resp) + runif(n1)/1000000)
    nkn <- tree.control$treesize * 2 - 1
    nxx <- 2

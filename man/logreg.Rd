@@ -594,13 +594,13 @@ plot(logreg.savefit4)
 #
 # Monte Carlo Logic Regression
 fit7 <- logreg(select = 7, oldfit = fit1, mc.control=
-               logreg.mc.control(nburn=500, niter=2500, hyperpars=log(2)))
+               logreg.mc.control(nburn=500, niter=2500, hyperpars=log(2), output=-2))
 # we need many more iterations for reasonable results
 \dontrun{logreg.savefit7 <- logreg(select = 7, oldfit = fit1, mc.control=
                logreg.mc.control(nburn=1000, niter=100000, hyperpars=log(2)))}
 #
 plot(fit7)
-# use logreg.savefit7 for the results with 25000 iterations
+# use logreg.savefit7 for the results with 100,000 iterations
 plot(logreg.savefit7)
 
 }

@@ -748,7 +748,7 @@
           INTEGER datritt(n2,n1)
           INTEGER dcphtt(LGCn1MAX),mcmc
           INTEGER ordrstt(LGCn1MAX),rd1(2),rd4(2),bout
-          REAL datrtokentt(LGCn1MAX),resptt(LGCn1MAX)
+          REAL datrtokentt(LGCn1MAX),resptt(LGCn1MAX),r7(LGCn1MAX)
           REAL sepstt(nsep,n1),penalty,rdummy(10),rd2(2),rd3(2)
           CHARACTER (LEN=125) astring
         ! cvscore: cross-validation scores (tr,travg,test,testavg)
@@ -781,7 +781,15 @@
               rnumsi(l)=j
             END IF
           END DO
-          IF(seed.GE.0)CALL psort2(rnumsr,n1,dummy,n1,rnumsi)
+          IF(seed.GE.0)THEN
+             DO k=1,n1
+                r7(k)=rnumsi(k)
+             END DO
+             CALL psort2(rnumsr,n1,dummy,n1,r7)
+             DO k=1,n1
+                rnumsi(k)=NINT(r7(k))
+             END DO
+          END IF
       ! cross validation steps
           DO k=1,4
             cvscore(k)=0.0
@@ -828,7 +836,13 @@
             END IF
 
             IF (mdl.EQ.4.or.mdl.EQ.5) THEN
-              CALL psort2(datrtokentt,ngrphere,dummy,ngrphere,ordrstt)
+             DO l=1,ngrphere
+                r7(l)=ordrstt(l)
+             END DO
+              CALL psort2(datrtokentt,ngrphere,dummy,ngrphere,r7)
+             DO l=1,ngrphere
+                ordrstt(l)=NINT(r7(l))
+             END DO
             END IF
             CALL annealing(ngrphere,n2,mdl,nkn,ntr,conc,negs,pick,
      #                     term,storage,slprbc,datritt,weighttt,tstr,
@@ -857,7 +871,13 @@
               END IF
             END DO
             IF (mdl.EQ.4.or.mdl.EQ.5) THEN
-              CALL psort2(datrtokentt,hmpghere,dummy,hmpghere,ordrstt)
+             DO l=1,ngrphere
+                r7(l)=ordrstt(l)
+             END DO
+              CALL psort2(datrtokentt,ngrphere,dummy,ngrphere,r7)
+             DO l=1,ngrphere
+                ordrstt(l)=NINT(r7(l))
+             END DO
             END IF
             CALL testsetx(hmpghere,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                   betas,datritt,weighttt,dcphtt,ordrstt,
@@ -2918,6 +2938,7 @@
           INTEGER term(nkn,ntr,3)
           INTEGER storage(2*ntr*nkn*n1),mcmc,rd1(2)
           REAL score(3),betas(0:(nsep+ntr),3),rdummy(10),rd2(2),rd3(2)
+          REAL r7(LGCn1MAX)
           INTEGER rd4(2),bout
 
         mcmc=0
@@ -2926,10 +2947,12 @@
         DO j=1,n1
           dummy(j)=j
           rnumsi(j)=j
+          r7(j)=j
           rnumsr(j)=myrand(0)
         END DO
-        CALL psort2(rnumsr,n1,dummy,n1,rnumsi)
+        CALL psort2(rnumsr,n1,dummy,n1,r7)
         DO j=1,n1
+          rnumsi(j)=NINT(r7(j))
           rrsp(j)=resp(j)
           sordrs(j)=ordrs(j)
         END DO
@@ -2939,6 +2962,7 @@
           rdcph(j)=dcph(rnumsi(j))
           inums(j)=j
           ordrs(j)=j
+          r7(j)=j
           datrtoken(j)=resp(j)
         END DO
         IF(nsep.GT.0)THEN
@@ -2948,7 +2972,10 @@
             END DO
           END DO
         END IF
-        CALL psort2(datrtoken,n1,inums,n1,ordrs)
+        CALL psort2(datrtoken,n1,inums,n1,r7)
+        DO j=1,n1
+          ordrs(j)=NINT(r7(j))
+        END DO
         penalty=0.
         CALL annealing(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                 storage,slprbc,datri,rwgt,tstr,tend,tint,ehm,
@@ -3185,7 +3212,7 @@
           INTEGER j,k,l
           INTEGER nn
           INTEGER rnumsi(LGCn1MAX),wk2(LGCn1MAX)
-          REAL wk1(LGCn1MAX)
+          REAL wk1(LGCn1MAX),r7(LGCn1MAX)
         ! arguments out
 
       ! randomize the prediction classes
@@ -3195,10 +3222,12 @@
             DO k=1,nn
               wk2(k)=k
               rnumsi(k)=k
+              r7(k)=k
               wk1(k)=myrand(0) 
             END DO
-            CALL psort2(wk1,nn,wk2,nn,rnumsi)
+            CALL psort2(wk1,nn,wk2,nn,r7)
             DO k=1,nn
+              rnumsi(k)=NINT(r7(k))
               wk1(k)=resp(prdcl(k,j))
             END DO
             DO k=1,nn
@@ -3229,10 +3258,13 @@
         DO j=1,n1
           wk2(j)=j
           ordrs(j)=j
+          r7(j)=j
           wk1(j)=resp(j)
         END DO
         CALL psort2(wk1,n1,wk2,n1,ordrs)
-
+        DO j=1,n1
+          ordrs(j)=NINT(r7(j))
+        END DO
       END 
 
       ! *****************************************************************
