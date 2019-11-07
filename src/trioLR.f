@@ -29,23 +29,19 @@
 ! =======================================================================      
       
       SUBROUTINE myphxxz(delta,idx,covs,np,n1,nsep,ntr,logl,beta,strata,
-     #                   reject)
+     #                   reject,wud1,wud3,bmax)
       IMPLICIT none
-        ! parameters
-          INTEGER LGCbetaMAX
-          PARAMETER (LGCbetaMAX =  55)
         ! i/o
-          INTEGER n1,nsep,ntr,zolala,np,reject
+          INTEGER n1,nsep,ntr,zolala,np,reject,bmax
           INTEGER delta(n1),idx(n1),strata(n1)
           DOUBLE PRECISION beta(nsep+ntr),logl,covs(n1*(nsep+ntr))
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*5),wud3(n1*(bmax+bmax*bmax))
         ! local
           DOUBLE PRECISION ologl,nlogl,alpha,pp,alphap1,alphap2,prec
-          DOUBLE PRECISION nbeta(LGCbetaMAX),grad(LGCbetaMAX)
-          DOUBLE PRECISION hess(LGCbetaMAX,LGCbetaMAX)
+          DOUBLE PRECISION nbeta(bmax),grad(bmax)
+          DOUBLE PRECISION hess(bmax,bmax)
           INTEGER i,iter
-        IF(nsep+ntr.GT.LGCbetaMAX)THEN
-           CALL REXIT("Too many parameters.")
-        END IF
 
           DO i=1,np
              beta(i)=0.
@@ -59,14 +55,25 @@
           DO WHILE(iter.LT.10 .AND. pp.GT.prec .AND. alpha.GT.alphap2)
             iter=iter+1
             CALL mygradphz(grad,hess,beta,delta,idx,covs,np,n1,ologl,
-     #           strata,LGCbetaMAX)
+     #           strata,bmax,
+     #                 wud1(1:n1),
+     #                 wud1((n1+1):(2*n1)),
+     #                 wud1((2*n1+1):(3*n1)),
+     #                 wud1((3*n1+1):(4*n1)),
+     #                 wud1((4*n1+1):(5*n1)),
+     #                 wud3(1:(n1*bmax)),
+     #                 wud3((n1*bmax+1):(n1*(bmax+bmax*bmax))))
             DO i=1,np
               IF(hess(i,i).LT.1.0e-10 .AND. hess(i,i).GT.-1.0e-10) THEN
-                CALL mypllxxz(logl,beta,delta,idx,covs,np,n1,strata)
+                CALL mypllxxz(logl,beta,delta,idx,covs,np,n1,strata,
+     #                 wud1(1:n1),
+     #                 wud1((n1+1):(2*n1)),
+     #                 wud1((2*n1+1):(3*n1)),
+     #                 wud1((3*n1+1):(4*n1)))
                 GOTO 1234
               END IF
             END DO
-            CALL lusolveph(hess,grad,np,reject,LGCbetaMAX)
+            CALL lusolveph(hess,grad,np,reject,bmax)
             IF(reject.eq.1)RETURN
             alpha=1
             zolala = 0
@@ -76,7 +83,11 @@
               DO i=1,np
                 nbeta(i)=beta(i)+alpha*grad(i)
               END DO
-              CALL mypllxxz(nlogl,nbeta,delta,idx,covs,np,n1,strata)
+              CALL mypllxxz(nlogl,nbeta,delta,idx,covs,np,n1,strata,
+     #                 wud1(1:n1),
+     #                 wud1((n1+1):(2*n1)),
+     #                 wud1((2*n1+1):(3*n1)),
+     #                 wud1((3*n1+1):(4*n1)))
               IF(nlogl.LT.ologl) alpha=alpha/2.
             END DO
             IF(alpha.GT.alphap1) THEN
@@ -90,42 +101,40 @@
             END IF
           END DO
           CALL mygradphz(grad,hess,beta,delta,idx,covs,np,n1,logl,
-     #         strata,LGCbetaMAX)
+     #           strata,bmax,
+     #                 wud1(1:n1),
+     #                 wud1((n1+1):(2*n1)),
+     #                 wud1((2*n1+1):(3*n1)),
+     #                 wud1((3*n1+1):(4*n1)),
+     #                 wud1((4*n1+1):(5*n1)),
+     #                 wud3(1:(n1*bmax)),
+     #                 wud3((n1*bmax+1):(n1*(bmax+bmax*bmax))))
 1234      CONTINUE
       END
       ! *****************************************************************
       ! *****************************************************************
       SUBROUTINE mygradphz(grad,hess,beta,delta,idx,covs,np,n1,logl,
-     #           strata,np6)
+     #           strata,bmax,ff,s1s,gg,ff2,s0,s1,s2)
       IMPLICIT none
-          INTEGER LGCn1MAX,LGCbetaMAX
-           PARAMETER (LGCn1MAX = 20000)
-           PARAMETER (LGCbetaMAX =  55)
         ! i/o
-          INTEGER n1,np,np6
+          INTEGER n1,np,bmax
           INTEGER delta(n1),idx(n1),strata(n1)
-          DOUBLE PRECISION beta(np),grad(np),covs(n1*np),hess(np6,np)
+          DOUBLE PRECISION beta(np),grad(np),covs(n1*np),hess(bmax,np)
           DOUBLE PRECISION logl
         ! local
-          DOUBLE PRECISION ff(LGCn1MAX),s1s(LGCn1MAX),gg(LGCn1MAX)
-          DOUBLE PRECISION ff2(LGCn1MAX),s0(LGCn1MAX),myexp,mylog
-          DOUBLE PRECISION s1(LGCbetaMAX,LGCn1MAX),s1r,u,z
-          DOUBLE PRECISION s2(LGCbetaMAX*LGCbetaMAX,LGCn1MAX)
+          DOUBLE PRECISION ff(n1),s1s(n1),gg(n1)
+          DOUBLE PRECISION ff2(n1),s0(n1),myexp,mylog
+          DOUBLE PRECISION s1(bmax*n1),s1r,u,z
+          DOUBLE PRECISION s2(bmax*bmax*n1)
           INTEGER i,i2,j,k,r,s,it,sx
-        IF(n1.GT.LGCn1MAX)THEN
-           CALL REXIT("Too many binary variables.")
-        END IF
-        IF(np.GT.LGCbetaMAX)THEN
-           CALL REXIT("Too many parameters.")
-        END IF
           u=0
           DO i=1,n1
             s0(i)=0
             ff(i)=0.
             DO k=1,np
-              s1(k,i)=0
+              s1((k-1)*n1+i)=0
               DO j=1,np
-                s2((k-1)*np+j,i)=0
+                s2(((k-1)*np+j-1)*n1+i)=0
               END DO
               ff(i)=ff(i)+beta(k)*covs(i+n1*(k-1))
             END DO
@@ -148,22 +157,23 @@
             s0(sx)=s0(sx)+ff2(i)
             DO r=1,np
               s1r=ff2(i)*covs(j+n1*(r-1))
-              s1(r,sx)=s1(r,sx)+s1r
+              s1((r-1)*n1+sx)=s1((r-1)*n1+sx)+s1r
               it=(r-1)*np
               DO s=r,np
-                s2(it+s,sx)=s2(it+s,sx)+s1r*covs(j+n1*(s-1))
+                s2((it+s-1)*n1+sx)=s2((it+s-1)*n1+sx)
+     #                               +s1r*covs(j+n1*(s-1))
               END DO
             END DO
             IF(delta(idx(i)).EQ.1) THEN
               DO r=1,np
-                s1s(r)=s1(r,sx)/s0(sx)
+                s1s(r)=s1((r-1)*n1+sx)/s0(sx)
               END DO
               DO r=1,np
                 it=(r-1)*np
                 grad(r)=grad(r)+covs(idx(i)+n1*(r-1))-s1s(r)
                 DO s=r,np
                    hess(r,s)=hess(r,s)-s1s(r)*s1s(s)
-     #                       +s2(it+s,sx)/s0(sx)
+     #                       +s2((it+s-1)*n1+sx)/s0(sx)
                 END DO
               END DO
               z=ff2(i)/s0(sx)
@@ -181,21 +191,17 @@
       END 
       ! *****************************************************************
       ! *****************************************************************
-      SUBROUTINE mypllxxz(logl,beta,delta,idx,covs,np,n1,strata)
+      SUBROUTINE mypllxxz(logl,beta,delta,idx,covs,np,n1,strata,ff,
+     #          ff2,gg,s0)
       IMPLICIT none
-          INTEGER LGCn1MAX
-           PARAMETER (LGCn1MAX = 20000)
         ! i/o
           INTEGER n1,np
           INTEGER delta(n1),idx(n1),strata(n1)
           DOUBLE PRECISION beta(np),covs(n1*np),logl
         ! local
           INTEGER i,k,sx
-          DOUBLE PRECISION z,ff(LGCn1MAX),ff2(LGCn1MAX),gg(LGCn1MAX)
-          DOUBLE PRECISION s0(LGCn1MAX),myexp,mylog
-        IF(n1.GT.LGCn1MAX)THEN
-           CALL REXIT("Too many binary variables.")
-        END IF
+          DOUBLE PRECISION z,ff(n1),ff2(n1),gg(n1)
+          DOUBLE PRECISION s0(n1),myexp,mylog
           logl=0.
           DO i=1,n1
             ff(i)=0.
@@ -225,32 +231,25 @@
       ! *****************************************************************
 
       SUBROUTINE triofitting(prtr,rsp,dchp,ordrs,weight,n1,ntr,
-     #               nop,wh,nsep,seps,score,betas,reject)
+     #               nop,wh,nsep,seps,score,betas,reject,
+     #               wud1,covsf,wud3,strata,idx,delta,bmax)
       IMPLICIT NONE
 
-        ! parameters
-          INTEGER LGCn1MAX,LGCbetaMAX
-           PARAMETER (LGCn1MAX = 20000)
-           PARAMETER (LGCbetaMAX =  55)
         ! arguments in
-          INTEGER n1,nop,nsep,ntr,wh,reject
+          INTEGER n1,nop,nsep,ntr,wh,reject,bmax
           INTEGER dchp(n1),ordrs(n1)
           REAL rsp(n1),weight(n1),seps(nsep,n1)
           INTEGER prtr(n1,ntr)
+        ! workspaces
+          DOUBLE PRECISION wud1(5*n1),wud3(n1*(bmax+bmax*bmax))
         ! local
           INTEGER i,j,k,l,m,nnf(2)
           INTEGER myausfahrt,myausfahrt0,myausfahrt1,myicheck
-          INTEGER strata(LGCn1MAX),idx(LGCn1MAX),delta(LGCn1MAX)
-          DOUBLE PRECISION loglf,betaf(LGCbetaMAX)
-          DOUBLE PRECISION covsf(LGCn1MAX*LGCbetaMAX)
+          INTEGER strata(n1),idx(n1),delta(n1)
+          DOUBLE PRECISION loglf,betaf(bmax)
+          DOUBLE PRECISION covsf(n1*bmax)
         ! arguments out
           REAL score(3),betas(0:(nsep+ntr)),r
-        IF(n1.GT.LGCn1MAX)THEN
-           CALL REXIT("Too many binary variables.")
-        END IF
-        IF(nsep+ntr.GT.LGCbetaMAX)THEN
-           CALL REXIT("Too many parameters.")
-        END IF
         DO i=1,n1
            IF((dchp(i).NE.0).and.(dchp(i).NE.1)) THEN
               CALL REXIT("Response not correctly specified.")
@@ -338,7 +337,7 @@
 
       ! calculate partial likelihood
          CALL myphxxz(delta,idx,covsf,nnf(1),n1,nsep,ntr,
-     #                loglf,betaf,strata,reject)
+     #           loglf,betaf,strata,reject,wud1,wud3,bmax)
 
          r=n1
          score(1)=REAL(-loglf/r)

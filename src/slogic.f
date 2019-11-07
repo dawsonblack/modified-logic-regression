@@ -33,33 +33,36 @@
      #                     ehm,msz,nsep,seps,cnc,score,betas,
      #                     ssize,dcph,ordrs,nfcnt,penalty,resp,mtm,
      #                     mcmc,hyperpars,rd1,rd2,rd3,rd4,bout,
-     #                     iearly,rearly)
+     #                     iearly,rearly,wud1,wud2,rsp,wui1,prtr,bmax,
+     #                     mat,jmax)
       IMPLICIT NONE
 
         ! parameters
-          INTEGER LGCnknMAX,LGCntrMAX,LGCn1MAX,LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER LGCnknMAX,LGCntrMAX,LGCbetaMAX
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
 
         ! arguments in
-          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,mtm
+          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,mtm,bmax
           INTEGER cnc(3),dcph(n1),ordrs(n1),storage(2*ntr*nkn*n1) 
           REAL tstr,tend,tint,slprbc(25),weight(n1),rd2(*),rd3(*)
           REAL resp(n1),seps(nsep,n1)
           REAL penalty,hyperpars(10)
-          INTEGER datri(n2,n1),mcmc,rd1(*),rd4(*),bout
+          INTEGER datri(n2,n1),mcmc,rd1(*),rd4(*),bout,jmax
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          INTEGER wui1(3*n1),mat((n1+2),jmax)
         ! local
           INTEGER i,j,accept,fcnt,hm,nac,nop,npertemp,tcnt,nrj,nde
           INTEGER nac2,ntot,npckmv(6,LGCntrMAX)
           INTEGER pickmv(6,LGCnknMAX,LGCntrMAX),nsame,nsame2
-          REAL acr,sco,temp,rsp(LGCn1MAX)
+          REAL acr,sco,temp,rsp(n1)
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
         
           INTEGER earlyup
-          INTEGER prtr(LGCn1MAX,LGCntrMAX)
+          INTEGER prtr(n1,bmax)
           REAL cbetas(0:LGCbetaMAX),xtxsep(LGCbetaMAX+1,LGCbetaMAX+1)
           INTEGER visit(2+ntr*nkn),new
           REAL lvisit(2)
@@ -81,8 +84,8 @@
       DO i=1,(2+ntr*nkn)
          visit(i)=0
       END DO
-      DO i=1,LGCn1MAX
-         DO j=1,LGCntrMAX
+      DO i=1,n1
+         DO j=1,bmax
             prtr(i,j)=0
          END DO
       END DO
@@ -99,10 +102,11 @@
       END DO
       ! carry out an initial simulated annealing step
       CALL annealing_init(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
-     #                    storage,datri,rsp,weight,npckmv,
-     #                    pickmv,score,betas,ssize,nsep,seps,
-     #                    nop,dcph,ordrs,penalty,prtr,cbetas,xtxsep,
-     #                    mtm,mcmc,hyperpars)
+     #                 storage,datri,rsp,weight,npckmv,
+     #                 pickmv,score,betas,ssize,nsep,seps,
+     #                 nop,dcph,ordrs,penalty,prtr,cbetas,xtxsep,
+     #                 mtm,mcmc,hyperpars,wud1,wud2,wui1,bmax,
+     #                 mat,jmax)
         IF (msz.EQ.0) THEN
            IF(ehm.GE.0)THEN
               CALL stringprint2()
@@ -139,7 +143,8 @@
      #                            weight,msz,nsep,seps,cnc,score,
      #                            betas,ssize,nop,dcph,ordrs,accept,
      #                            penalty,iearly,rearly,earlyup,prtr,
-     #                            cbetas,xtxsep,mtm,mcmc,hyperpars)
+     #                            cbetas,xtxsep,mtm,mcmc,hyperpars,
+     #                            wud1,wud2,wui1,bmax)
               IF(accept.LT.0)score(1)=sco
               IF(accept.LT.0)nrj=nrj+1
               IF(accept.EQ.0)nde=nde+1
@@ -180,7 +185,8 @@
      #                            weight,msz,nsep,seps,cnc,score,
      #                            betas,ssize,nop,dcph,ordrs,accept,
      #                            penalty,iearly,rearly,earlyup,prtr,
-     #                            cbetas,xtxsep,mtm,mcmc,hyperpars)
+     #                            cbetas,xtxsep,mtm,mcmc,hyperpars,
+     #                            wud1,wud2,wui1,bmax)
               IF(accept.LT.0)score(1)=sco
               IF(accept.LT.0)nrj=nrj+1
               IF(accept.GT.0)THEN
@@ -234,7 +240,8 @@
      #                          nsep,seps,cnc,score,betas,ssize,nop,
      #                          dcph,ordrs,accept,penalty,iearly,
      #                          rearly,earlyup,prtr,cbetas,xtxsep,mtm,
-     #                          mcmc,hyperpars)
+     #                          mcmc,hyperpars,
+     #                            wud1,wud2,wui1,bmax)
              IF(accept.LT.0)score(1)=sco
              IF(accept.LT.0)nrj=nrj+1
              IF(accept.GT.0)THEN
@@ -281,11 +288,12 @@
      #                          storage,datri,rsp,weight,npckmv,
      #                          pickmv,score,betas,ssize,nsep,
      #                          seps,nop,dcph,ordrs,penalty,prtr,cbetas,
-     #                          xtxsep,mtm,mcmc,hyperpars)
+     #                          xtxsep,mtm,mcmc,hyperpars,
+     #                          wud1,wud2,wui1,bmax,mat,jmax)
       IMPLICIT NONE
 
       ! arguments in
-        INTEGER n1,n2,mdl,nkn,nsep,ntr,dcph(n1),ordrs(n1),mtm
+        INTEGER n1,n2,mdl,nkn,nsep,ntr,dcph(n1),ordrs(n1),mtm,bmax
         INTEGER conc(nkn,ntr,3),mcmc
         INTEGER negs(nkn,ntr,3)
         INTEGER pick(nkn,ntr,3)
@@ -294,6 +302,10 @@
         INTEGER prtr(n1,ntr),datri(n2,n1)
         REAL rsp(n1),weight(n1),hyperpars(10)
         REAL seps(nsep,n1),cbetas(0:(nsep+ntr)),xtxsep(0:nsep,0:nsep)
+      ! workspaces
+        DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+        INTEGER jmax
+        INTEGER wui1(n1*3),mat((n1+2),jmax)
       ! local
         INTEGER j,i,k,wh
         REAL penalty,pp
@@ -334,10 +346,11 @@
         CALL storing(nkn,ntr,conc,pick,npckmv,pickmv,ssize,nop)
         DO wh=1,ntr
           CALL evaluate_first(wh,n1,n2,nkn,ntr,conc,term,negs,pick,
-     #                        datri,prtr)
+     #                        datri,prtr,mat,jmax)
         END DO
         CALL scoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,mdl,nop,
-     #               wh,nsep,seps,score,cbetas,reject,xtxsep,mtm,0)
+     #     wh,nsep,seps,score,cbetas,reject,xtxsep,mtm,0,
+     #     wud1,wud2,wui1,bmax)
         DO j=0,(nsep+ntr)
           betas(1,j)=cbetas(j)
         END DO
@@ -376,13 +389,13 @@
      #                          nsep,seps,cnc,score,betas,ssize,nop,
      #                          dcph,ordrs,accept,penalty,iearly,rearly,
      #                          earlyup,prtr,cbetas,xtxsep,mtm,mcmc,
-     #                          hyperpars)
+     #                          hyperpars,wud1,wud2,wui1,bmax)
       IMPLICIT NONE
         ! parameters
           INTEGER LGCnknMAX
           PARAMETER (LGCnknMAX  =   128)
         ! arguments in
-          INTEGER n1,n2,msz,mdl,nkn,nsep,ntr,mtm
+          INTEGER n1,n2,msz,mdl,nkn,nsep,ntr,mtm,bmax
           INTEGER cnc(3),mcmc
           INTEGER dcph(n1),ordrs(n1)
           INTEGER npckmv(6,ntr)
@@ -401,6 +414,9 @@
           REAL seps(nsep,n1)
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2),earlyup
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          INTEGER wui1(3*n1)
         ! local
           INTEGER j,l1,l2,letter,neg,opper
           INTEGER knt,mtp,nwkv,reject,wh
@@ -449,7 +465,8 @@
         CALL evaluating(wh,knt,mtp,n1,n2,nkn,ntr,conc,term,negs,
      #                  datri,prtr,storage,nwkv,wkv)
         CALL scoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,mdl,nop,wh,
-     #            nsep,seps,score,cbetas,reject,xtxsep,mtm,nopold)
+     #            nsep,seps,score,cbetas,reject,xtxsep,mtm,nopold,
+     #            wud1,wud2,wui1,bmax)
 
       ! take care that the there is real convergence
           l1=0 
@@ -533,7 +550,8 @@
               CALL evaluating(wh,knt,mtp,n1,n2,nkn,ntr,conc,term,negs,
      #                        datri,prtr,storage,nwkv,wkv)
               CALL scoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,mdl,nop,wh,
-     #                     nsep,seps,xsc,cbetas,xrej,xtxsep,mtm,1000)
+     #                     nsep,seps,xsc,cbetas,xrej,xtxsep,mtm,1000,
+     #                     wud1,wud2,wui1,bmax)
               CALL recording(accept,wh,nkn,ntr,nsep,score,betas,
      #                       conc,negs,pick,term,mcmc)
               CALL restoring(accept,wh,n1,nkn,ntr,storage,nwkv,wkv)
@@ -672,16 +690,13 @@
      #                    slprbc,datri,weight,tstr,tend,tint,ehm,msz,
      #                    nsep,seps,cnc,score,betas,ssize,dcph,
      #                    nfcnt,seed,resp,rnumsrr,mtm,ltree,ioscores,
-     #                    datritt,iearly,rearly)
+     #                    datritt,iearly,rearly,
+     #                    wud1,wud2,wui1,wur1,bmax,mat,jmax,sepstt)
       IMPLICIT NONE
 
-        ! parameters
-          INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
-          PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
-          INTEGER dcph(n1),seed
+          INTEGER dcph(n1),seed,bmax
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1) ,mtm
           REAL seps(nsep,n1),resp(n1),rnumsrr(n1)
@@ -694,8 +709,12 @@
           INTEGER term(nkn,ntr,3)
           INTEGER ssize,storage(2*ntr*nkn*n1)
           REAL score(3),betas(3,0:(nsep+ntr)),ioscores(*)
+        ! workspaces 
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          REAL wur1(n1*(bmax+6))
+          INTEGER wui1((8+bmax)*n1),jmax,mat(n1+2,jmax)
         ! local
-          REAL sepstt(LGCbetaMAX,LGCn1MAX)
+          REAL sepstt(bmax,n1)
           INTEGER datritt(n2,n1)
 
         CALL crossval(kfold,n1,n2,mdl,
@@ -703,7 +722,20 @@
      #                    slprbc,datri,weight,tstr,tend,tint,ehm,msz,
      #                    nsep,seps,cnc,score,betas,ssize,dcph,
      #                    nfcnt,seed,sepstt,datritt,resp,rnumsrr,mtm,
-     #                    ltree,ioscores,iearly,rearly)
+     #                    ltree,ioscores,iearly,rearly,
+     #                    wud1,wud2,wui1(1:(3*n1)),
+     #                    wur1(1:n1),
+     #                    wur1((n1+1):(2*n1)),
+     #                    wur1((2*n1+1):(3*n1)),
+     #                    wur1((3*n1+1):(4*n1)),
+     #                    wur1((4*n1+1):(5*n1)),
+     #                    wur1((5*n1+1):(6*n1)),
+     #                    wui1((3*n1+1):(4*n1)),
+     #                    wui1((4*n1+1):(5*n1)),
+     #                    wui1((5*n1+1):(6*n1)),
+     #                    wui1((6*n1+1):(7*n1)),
+     #                    wui1((7*n1+1):((7+bmax)*n1)), bmax,
+     #                    mat,jmax)
         END
 
 
@@ -714,19 +746,20 @@
       ! last modification 06/05/03
 
       SUBROUTINE crossval(kfold,n1,n2,mdl,
-     #                    nkn,ntr,conc,negs,pick,term,storage,
-     #                    slprbc,datri,weight,tstr,tend,tint,ehm,msz,
-     #                    nsep,seps,cnc,score,betas,ssize,dcph,
-     #                    nfcnt,seed,sepstt,datritt,resp,rnumsrr,mtm,
-     #                    ltree,ioscores,iearly,rearly)
+     #               nkn,ntr,conc,negs,pick,term,storage,
+     #               slprbc,datri,weight,tstr,tend,tint,ehm,msz,
+     #               nsep,seps,cnc,score,betas,ssize,dcph,
+     #               nfcnt,seed,sepstt,datritt,resp,rnumsrr,mtm,
+     #               ltree,ioscores,iearly,rearly,
+     #               wud1,wud2,wui1,rsp,
+     #               datrtokentt,resptt,r7,rnumsr,weighttt,
+     #               dcphtt,dummy,rnumsi,ordrstt,prtr,bmax,
+     #               mat,jmax)
       IMPLICIT NONE
 
-        ! parameters
-          INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
         ! arguments in
           INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
-          INTEGER dcph(n1),seed,mtm
+          INTEGER dcph(n1),seed,mtm,bmax
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1) 
           REAL seps(nsep,n1),resp(n1),rnumsrr(n1)
@@ -738,17 +771,21 @@
           INTEGER pick(nkn,ntr,3)
           INTEGER term(nkn,ntr,3)
           INTEGER ssize,storage(2*ntr*nkn*n1)
-          REAL score(3),betas(3,0:(nsep+ntr)),ioscores(*)
+          REAL score(3),betas(3,0:(nsep+ntr)),ioscores(*) 
+        ! workspaces 
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          INTEGER jmax
+          INTEGER wui1(n1*3),prtr(n1,bmax),mat(n1+2,jmax)
         ! local
+          REAL datrtokentt(n1),resptt(n1),r7(n1),rsp(n1)
           INTEGER hmpg,hmlo,ngrp,hmpgx,ngrpx
-          INTEGER i,j,k,l,cnt,cnt2,dummy(LGCn1MAX),rnumsi(LGCn1MAX)
+          INTEGER i,j,k,l,cnt,cnt2,dummy(n1),rnumsi(n1)
           INTEGER ngrphere,hmpghere
-          REAL cvscore(4),rnumsr(LGCn1MAX)
-          REAL weighttt(LGCn1MAX)
+          REAL cvscore(4),rnumsr(n1)
+          REAL weighttt(n1)
           INTEGER datritt(n2,n1)
-          INTEGER dcphtt(LGCn1MAX),mcmc
-          INTEGER ordrstt(LGCn1MAX),rd1(2),rd4(2),bout
-          REAL datrtokentt(LGCn1MAX),resptt(LGCn1MAX),r7(LGCn1MAX)
+          INTEGER dcphtt(n1),mcmc
+          INTEGER ordrstt(n1),rd1(2),rd4(2),bout
           REAL sepstt(nsep,n1),penalty,rdummy(10),rd2(2),rd3(2)
           CHARACTER (LEN=125) astring
         ! cvscore: cross-validation scores (tr,travg,test,testavg)
@@ -785,7 +822,7 @@
              DO k=1,n1
                 r7(k)=rnumsi(k)
              END DO
-             CALL psort2(rnumsr,n1,dummy,n1,r7)
+             CALL clksort(rnumsr,n1,dummy,r7)
              DO k=1,n1
                 rnumsi(k)=NINT(r7(k))
              END DO
@@ -839,7 +876,7 @@
              DO l=1,ngrphere
                 r7(l)=ordrstt(l)
              END DO
-              CALL psort2(datrtokentt,ngrphere,dummy,ngrphere,r7)
+              CALL clksort(datrtokentt,ngrphere,dummy,r7)
              DO l=1,ngrphere
                 ordrstt(l)=NINT(r7(l))
              END DO
@@ -849,7 +886,9 @@
      #                     tend,tint,ehm,msz,nsep,sepstt,cnc,score,
      #                     betas,ssize,dcphtt,ordrstt,nfcnt,penalty,
      #                     resptt,mtm,mcmc,rdummy,rd1,rd2,rd3,rd4,bout,
-     #                     iearly,rearly)
+     #                     iearly,rearly,wud1,wud2,rsp,wui1(1:(3*n1)),
+     #                     prtr,bmax,mat,jmax)
+
             cvscore(1)=score(3)
             cvscore(2)=(REAL(k-1)*cvscore(2)+cvscore(1))/REAL(k)
             DO j=1,n1
@@ -874,14 +913,15 @@
              DO l=1,ngrphere
                 r7(l)=ordrstt(l)
              END DO
-              CALL psort2(datrtokentt,ngrphere,dummy,ngrphere,r7)
+              CALL clksort(datrtokentt,ngrphere,dummy,r7)
              DO l=1,ngrphere
                 ordrstt(l)=NINT(r7(l))
              END DO
             END IF
             CALL testsetx(hmpghere,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                   betas,datritt,weighttt,dcphtt,ordrstt,
-     #                   nsep,sepstt,score,resptt)
+     #                   nsep,sepstt,score,resptt,wud1,rsp,prtr,bmax,
+     #                   mat,jmax)
             cvscore(3)=score(1)
             cvscore(4)=(REAL(k-1)*cvscore(4)+cvscore(3))/REAL(k)
 
@@ -971,12 +1011,11 @@
       ! last modification 10/16/02
 
       SUBROUTINE evaluate_first(wh,n1,n2,nkn,ntr,conc,term,negs,pick,
-     #                          datri,prtr)
+     #                          datri,prtr,mat,jmax)
       IMPLICIT NONE
 
         ! parameters
-          INTEGER LGCnknMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER LGCnknMAX
           PARAMETER (LGCnknMAX  =   128)
         ! arguments in
           INTEGER n1,n2,nkn,ntr,wh
@@ -987,7 +1026,8 @@
           INTEGER datri(n2,n1)
         ! local
           INTEGER dim,dp,i,j,k,pc,shuffle,rank(LGCnknMAX),iterm
-          INTEGER mat(LGCn1MAX+2,LGCnknMAX)
+          INTEGER jmax
+          INTEGER mat(n1+2,jmax)
         ! arguments out
           INTEGER prtr(n1,ntr)
 
@@ -1760,16 +1800,17 @@
       ! LAST MODIFICATION 10/16/02
       SUBROUTINE slogreg(n1,n2,nsep,intpars,rpars,seps,dcph,orders,resp,
      #                   weight,datri,iotrees,iocoef,ioscores,
-     #            ntrx,nknx,storage,storage3,storage4,storage2,rd4)
+     #            ntrx,nknx,storage,storage3,storage4,storage2,rd4,
+     #            wud1,wud2,wur1,wui1,bmax,mat,jmax,wui3,jtmax)
 
-      INTEGER LGCnknMAX,LGCntrMAX,LGCn1MAX,LGCn2MAX,LGCbetaMAX
-      PARAMETER (LGCn1MAX   = 40000)
+      INTEGER LGCnknMAX,LGCntrMAX,LGCn2MAX,LGCbetaMAX
       PARAMETER (LGCn2MAX   =  2000)
       PARAMETER (LGCbetaMAX =    55)
       PARAMETER (LGCnknMAX  =   128)
       PARAMETER (LGCntrMAX  =     5)
+      INTEGER mat(n1+2,jmax)
       INTEGER n1,n2,nsep,cnc(3),mdl,msz,nkn,ehm,mszlo,mszup,ntrx,nknx
-      INTEGER storage2(n2,n1),storage(*)
+      INTEGER storage2(n2,n1),storage(*),bmax
       INTEGER storage3(0:6,ntrx,0:nknx,n2,0:1,2)
       REAL storage4(0:6,ntrx,0:nknx,n2,0:1,2)
       INTEGER ntrlo,ntrup,seed,kfold,nrep,choice,nfcnt,mtm
@@ -1781,6 +1822,9 @@
       INTEGER negs(LGCnknMAX,LGCntrMAX,3),i,j,k
       INTEGER pick(LGCnknMAX,LGCntrMAX,3)
       INTEGER term(LGCnknMAX,LGCntrMAX,3)
+      DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+      REAL wur1(n1*(2*bmax+8))
+      INTEGER wui1(n1*(8+3*bmax)),wui3(n1*jtmax),jtmax
 
       DO i=1,LGCnknMAX
          DO j=1,LGCntrMAX
@@ -1836,7 +1880,6 @@
          nfcnt=intpars(14)
          bout=intpars(16)
       END IF
-      CALL xstopper(LGCn1MAX,n1,"LGCn1MAX  ",xstop,0,17)
       CALL xstopper(LGCn2MAX,n2,"LGCn2MAX  ",xstop,0,4)
       CALL xstopper(LGCnknMAX,nkn+1,"LGCnknMAX ",xstop,0,7)
       CALL xstopper(LGCntrMAX,ntr,"LGCntrMAX ",xstop,0,7)
@@ -1847,20 +1890,27 @@
      #                  choice,nfcnt,penalty,mtm,seps,dcph,orders,
      #                  resp,weight,datri,iotrees,ltree,iocoef,
      #                  ioscores,conc,negs,pick,term,hyperpars,rd4,bout,
-     #                  storage,storage2,storage3,storage4)
+     #                  storage,storage2,storage3,storage4,
+     #                  wud1,wud2,wur1((2*n1+1):(n1*(8+2*bmax))),
+     #                  wui1(1:((8+bmax)*n1)),
+     #                  wur1(1:n1),wur1((n1+1):(2*n1)),
+     #                  wui1(((8+bmax)*n1+1):((8+2*bmax)*n1)),
+     #                  wui1(((8+2*bmax)*n1+1):((8+3*bmax)*n1)),
+     #                  bmax,mat,jmax,wui3,jtmax)
       intpars(1)=ltree
       ELSE
          intpars(1)=-999
       ENDIF
       END
       
-
       SUBROUTINE logreg(mdl,msz,n1,n2,nkn,ntr,cnc,nsep,tstr,tend,tint,
      #                  ehm,mszlo,mszup,ntrlo,ntrup,seed,kfold,
      #                  nrep,choice,nfcnt,penalty,mtm,seps,dcph,
      #                  ordrs,resp,weight,datri,iotree,iosclast,iocoef,
      #                  ioscores,conc,negs,pick,term,hyperpars,rd4,
-     #                  bout,storage,datritt,iearly,rearly)
+     #                  bout,storage,datritt,iearly,rearly,
+     #                  wud1,wud2,wur1,wui1,rnumsrr,rsp,prtr,prtr2,bmax,
+     #                  mat,jmax,wui3,jtmax)
       IMPLICIT NONE
         
         ! parameters to be determined by the user
@@ -1875,9 +1925,8 @@
         ! how many selection probabilities/relations:
   
         ! parameters
-          INTEGER LGCn1MAX,LGCnknMAX,LGCntrMAX,ltree,iotree(*)
+          INTEGER LGCnknMAX,LGCntrMAX,ltree,iotree(*)
           INTEGER LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 40000)
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
@@ -1885,26 +1934,30 @@
           INTEGER i,j,ssize,ehm,seed,nfcnt,error,nsp,k,rd4(*),bout
           INTEGER choice,kfold,mdl,msz,n1,n2,nkn,nsep,ntr
           INTEGER ntrnew,mszlo,mszup,nrep,ntrlo,ntrup
-          INTEGER cnc(3),mtm
+          INTEGER cnc(3),mtm,jmax
+          INTEGER mat(n1+2,jmax)
           INTEGER dcph(n1),ordrs(n1)
           INTEGER conc(nkn,ntrup,3)
           INTEGER negs(nkn,ntrup,3)
           INTEGER pick(nkn,ntrup,3)
           INTEGER term(nkn,ntrup,3)
           INTEGER storage(2*ntr*nkn*n1),datritt(n2,n1)
-          INTEGER sseed(3)
+          INTEGER sseed(3),jtmax,bmax
           REAL tstr,tend,tint,score(3),slprbc(25),penalty,hyperpars(10)
           REAL weight(n1),betas(3,0:LGCbetaMAX),resp(n1),iocoef(*)
           INTEGER datri(n2,n1),mcmc
-          REAL seps(nsep,n1),rnumsrr(LGCn1MAX),ioscores(n1),myrand
+          REAL seps(nsep,n1),rnumsrr(n1),ioscores(n1),myrand
           INTEGER mszmax,iolast,iosclast
-          INTEGER prtr(LGCn1MAX,LGCntrMAX)
+          INTEGER prtr(n1,bmax),prtr2(n1,bmax)
           REAL cbetas(0:LGCbetaMAX),xtxsep(LGCbetaMAX+1,LGCbetaMAX+1)
           INTEGER npckmv(6,LGCntrMAX)
           INTEGER pickmv(6,LGCnknMAX,LGCntrMAX)
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
           CHARACTER (LEN=125) astring
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          REAL wur1(n1*(2*bmax+6)),rsp(n1)
+          INTEGER wui1((8+bmax)*n1),wui3(n1*jtmax)
           
         ! betas: the parameter estimates in the model - current/stored/best
         ! choice: which type of logic regression
@@ -1917,7 +1970,7 @@
         ! negs: indicator (complement 0/1) in the logic trees
         ! nrep: number of permutations in the randomization test
         ! pick: indicator (taken 0/1) in the logic trees
-        ! score: scores of current/stored/best model,resp(LGCn1MAX)
+        ! score: scores of current/stored/best model,resp(n1)
         ! seps: separate variables to condition on
         ! ssize: size of the current model
         ! slprbc: cumulative selection probabilities
@@ -1941,9 +1994,10 @@
           END DO
         END DO
       ! read in data, weights, selection probabilities, etc
-        DO i=1,LGCn1MAX
-           DO j=1,LGCntrMAX
+        DO i=1,n1
+           DO j=1,bmax
               prtr(i,j)=0
+              prtr2(i,j)=0
            END DO
         END DO
         error=0
@@ -1969,8 +2023,9 @@
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   msz,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
-     #                   iocoef,ioscores,rd4,bout,
-     #                   iearly,rearly)
+     #                   iocoef,ioscores,rd4,bout,iearly,rearly,
+     #                   wud1,wud2,rsp,wui1(1:(3*n1)),prtr2,bmax,
+     #                   mat,jmax)
           DO j=0,(nsep+ntr)
              iolast=iolast+1
              iocoef(iolast)=betas(3,j)
@@ -1996,8 +2051,9 @@
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   msz,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
-     #                   iocoef,ioscores,rd4,bout,
-     #                   iearly,rearly)
+     #                   iocoef,ioscores,rd4,bout,iearly,rearly,
+     #                   wud1,wud2,rsp,wui1(1:(3*n1)),prtr2,bmax,
+     #                   mat,jmax)
 
       ! find multiple models -----------------------------------------
         ELSE IF (choice.EQ.6) THEN
@@ -2009,12 +2065,13 @@
               CALL annealing_init(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #        storage,datri,resp,weight,npckmv,pickmv,
      #        score,betas,ssize,nsep,seps,ntrnew,dcph,ordrs,penalty,
-     #        prtr,cbetas,xtxsep,mtm,mcmc,hyperpars)
+     #        prtr,cbetas,xtxsep,mtm,mcmc,hyperpars,
+     #        wud1,wud2,wui1(1:(3*n1)),bmax,mat,jmax)
             ELSE
               CALL greedyonestep(nkn,ntr,conc,negs,pick,term,n1,n2,
      #        storage,prtr,datri,nsep,seps,cbetas,xtxsep,mdl,
      #        ntrnew,ordrs,dcph,resp,weight,score(1),mtm,cnc,
-     #        penalty)
+     #        penalty,wud1,wud2,wui1,bmax)
               IF(ntr.LT.0)THEN
                 IF(ehm.GE.0)THEN
                   astring(1:32)="No further improvement possible"
@@ -2107,8 +2164,9 @@
      #                       storage,slprbc,datri,weight,tstr,tend,tint,
      #                       ehm,msz,nsep,seps,cnc,score,betas,ssize,
      #                       dcph,ordrs,nfcnt,penalty,resp,mtm,
-     #                       mcmc,hyperpars,iotree,
-     #                       iocoef,ioscores,rd4,bout,iearly,rearly)
+     #                       mcmc,hyperpars,iotree,iocoef,ioscores,
+     #                       rd4,bout,iearly,rearly,wud1,wud2,
+     #                       rsp,wui1(1:(3*n1)),prtr2,bmax,mat,jmax)
 
                 IF (ehm.EQ.0) THEN
                   astring(1:20)="The best model with "
@@ -2198,8 +2256,10 @@
      #                     pick,term,storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,score,
      #                     betas,ssize,dcph,nfcnt,seed,resp,
-     #                     rnumsrr,mtm,ltree,ioscores,datritt,
-     #                     iearly,rearly)
+     #                     rnumsrr,mtm,ltree,ioscores,datritt,iearly,
+     #                     rearly,wud1,wud2,wui1,wur1(1:(n1*(6+bmax))),
+     #                     bmax,mat,jmax,
+     #                     wur1((n1*(6+bmax)+1):(n1*(6+2*bmax))))
               ENDIF
             END DO
           END DO
@@ -2210,13 +2270,17 @@
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   0,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
-     #                   iocoef,ioscores,rd4,bout,iearly,rearly)
+     #                   iocoef,ioscores,rd4,bout,iearly,rearly,
+     #                   wud1,wud2,rsp,wui1(1:(3*n1)),prtr2,bmax,
+     #                   mat,jmax)
           ioscores(1)=score(1)
           CALL annealing(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   msz,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
-     #                   iocoef,ioscores,rd4,bout,iearly,rearly)
+     #                   iocoef,ioscores,rd4,bout,iearly,rearly,
+     #                   wud1,wud2,rsp,wui1(1:(3*n1)),prtr2,bmax,
+     #                   mat,jmax)
           ioscores(2)=score(3)
           IF (ehm.EQ.0) THEN
             CALL stringprint2()
@@ -2226,10 +2290,11 @@
           END IF
           DO j=1,nrep
             CALL nullmodelx(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
-     #                     storage,slprbc,datri,weight,
-     #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,
-     #                     score,betas,ssize,dcph,ordrs,nfcnt,resp,mtm,
-     #                     iearly,rearly)
+     #                storage,slprbc,datri,weight,
+     #                tstr,tend,tint,ehm,msz,nsep,seps,cnc,
+     #                score,betas,ssize,dcph,ordrs,nfcnt,resp,mtm,
+     #                iearly,rearly,wud1,wud2,wur1(1:(n1*(6+bmax))),
+     #                wui1,bmax,mat,jmax)
             ioscores(j+2)=score(3)
             IF (ehm.GE.0) THEN  
               astring(1:18)="Permutation number"
@@ -2249,13 +2314,17 @@
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                 msz,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
-     #                   iocoef,ioscores,rd4,bout,iearly,rearly)
+     #                   iocoef,ioscores,rd4,bout,iearly,rearly,
+     #                   wud1,wud2,rsp,wui1(1:(3*n1)),prtr2,bmax,
+     #                   mat,jmax)
           ioscores(2)=score(3)
           CALL annealing(n1,n2,mdl,nkn,ntrup,conc,negs,pick,term,
      #                   storage,slprbc,datri,weight,tstr,tend,tint,ehm,
      #                   0,nsep,seps,cnc,score,betas,ssize,dcph,ordrs,
      #                   nfcnt,penalty,resp,mtm,mcmc,hyperpars,iotree,
-     #                   iocoef,ioscores,rd4,bout,iearly,rearly)
+     #                   iocoef,ioscores,rd4,bout,iearly,rearly,
+     #                   wud1,wud2,rsp,wui1(1:(3*n1)),prtr2,bmax,
+     #                   mat,jmax)
           ioscores(1)=score(1)
           ltree=0
           DO ntr=ntrlo,ntrup
@@ -2302,7 +2371,9 @@
      #                            pick,term,storage,slprbc,datri,weight,
      #                            tstr,tend,tint,ehm,mszmax,nsep,seps,
      #                            cnc,score,betas,ssize,dcph,ordrs,
-     #                            nfcnt,resp,mtm,iearly,rearly)
+     #                            nfcnt,resp,mtm,iearly,rearly,
+     #                            wud1,wud2,wur1(1:(n1*(6+bmax))),
+     #                            wui1,bmax,mat,jmax)
                   ELSE
                     CALL randomizationx(n1,n2,mdl,nkn,ntrnew,
      #                             conc,negs,pick,term,storage,
@@ -2310,7 +2381,9 @@
      #                             tint,ehm,msz,nsep,seps,cnc,score,
      #                             betas,ssize,dcph,ordrs,iotree,
      #                             nfcnt,ntrup,error,resp,mtm,
-     #                             iearly,rearly)
+     #                             iearly,rearly,wud1,wud2,
+     #                             wur1(1:(n1*(6+bmax))),wui1,prtr2,
+     #                             bmax,mat,jmax,wui3,jtmax)
                   END IF
                   IF(error.eq.1)THEN
                     astring(1:23)="No data for model size "
@@ -2861,26 +2934,25 @@
       ! last modification 10/17/02
 
       SUBROUTINE nullmodelx(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
-     #                     storage,slprbc,datri,weight,
-     #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,
-     #                     score,betas,ssize,dcph,ordrs,nfcnt,resp,mtm,
-     #                     iearly,rearly)
+     #                      storage,slprbc,datri,weight,tstr,tend,
+     #                      tint,ehm,msz,nsep,seps,cnc,score,betas,
+     #                      ssize,dcph,ordrs,nfcnt,resp,mtm,iearly,
+     #                      rearly,wud1,wud2,wur1,wui1,bmax,
+     #                      mat,jmax)
       IMPLICIT NONE
 
-        ! parameters
-          INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
-          PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
-          INTEGER dcph(n1),ordrs(n1),mtm
+          INTEGER dcph(n1),ordrs(n1),mtm,bmax
           REAL tstr,tend,tint,weight(n1),slprbc(25)
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
-          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
+          INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2),jmax
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
-        ! local
-          REAL rseps(LGCbetaMAX,LGCn1MAX)
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          REAL wur1(n1*(6*bmax))
+          INTEGER wui1(n1*(8+bmax)),prtr2(n1,bmax),mat(n1+2,jmax)
         ! arguments out
           INTEGER ssize,conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
@@ -2892,8 +2964,21 @@
         CALL nullmodel(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                     storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,score,
-     #                     betas,ssize,dcph,ordrs,nfcnt,rseps,resp,mtm,
-     #                     iearly,rearly)
+     #                     betas,ssize,dcph,ordrs,nfcnt,resp,mtm,
+     #                     iearly,rearly,wud1,wud2,wui1(1:(3*n1)),
+     #                    wur1(1:n1),
+     #                    wur1((n1+1):(2*n1)),
+     #                    wur1((2*n1+1):(3*n1)),
+     #                    wur1((3*n1+1):(4*n1)),
+     #                    wur1((4*n1+1):(5*n1)),
+     #                    wur1((5*n1+1):(6*n1)),
+     #                    wur1((6*n1+1):((6+bmax)*n1)),
+     #                    wui1((3*n1+1):(4*n1)),
+     #                    wui1((4*n1+1):(5*n1)),
+     #                    wui1((5*n1+1):(6*n1)),
+     #                    wui1((6*n1+1):(7*n1)),
+     #                    wui1((7*n1+1):(8*n1)),
+     #                    wui1((8*n1+1):((8+bmax)*n1)),bmax,mat,jmax)
 
         END
 
@@ -2909,17 +2994,20 @@
       SUBROUTINE nullmodel(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
      #                     storage,slprbc,datri,weight,
      #                     tstr,tend,tint,ehm,msz,nsep,seps,cnc,score,
-     #                     betas,ssize,dcph,ordrs,nfcnt,rseps,resp,mtm,
-     #                     iearly,rearly)
+     #                     betas,ssize,dcph,ordrs,nfcnt,resp,mtm,
+     #                     iearly,rearly,wud1,wud2,wui1,datrtoken,
+     #                     rnumsr,rrsp,rwgt,rsp,r7,rseps,dummy,inums,
+     #                     rdcph,rnumsi,sordrs,prtr,bmax,mat,jmax)
       IMPLICIT NONE
 
-        ! parameters
-          INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
+        ! workspaces
+          INTEGER bmax,jmax,n1
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          INTEGER wui1(3*n1),prtr(n1,bmax),mat(n1+2,jmax)
         ! random number generator
           REAL myrand               ! Declare the type of the rand() function
         ! arguments in
-          INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
+          INTEGER ehm,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),ordrs(n1),mtm
           REAL tstr,tend,tint,weight(n1),slprbc(25)
           INTEGER datri(n2,n1)
@@ -2927,10 +3015,10 @@
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
         ! local
-          INTEGER i,j,dummy(LGCn1MAX),inums(LGCn1MAX),rdcph(LGCn1MAX)
-          INTEGER rnumsi(LGCn1MAX),sordrs(LGCn1MAX)
-          REAL datrtoken(LGCn1MAX),rnumsr(LGCn1MAX),rrsp(LGCn1MAX)
-          REAL rwgt(LGCn1MAX),rseps(nsep,n1),penalty
+          INTEGER i,j,dummy(n1),inums(n1),rdcph(n1)
+          INTEGER rnumsi(n1),sordrs(n1)
+          REAL datrtoken(n1),rnumsr(n1),rrsp(n1)
+          REAL rwgt(n1),rseps(nsep,n1),penalty
         ! arguments out
           INTEGER ssize,conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
@@ -2938,7 +3026,7 @@
           INTEGER term(nkn,ntr,3)
           INTEGER storage(2*ntr*nkn*n1),mcmc,rd1(2)
           REAL score(3),betas(0:(nsep+ntr),3),rdummy(10),rd2(2),rd3(2)
-          REAL r7(LGCn1MAX)
+          REAL r7(n1),rsp(n1)
           INTEGER rd4(2),bout
 
         mcmc=0
@@ -2950,7 +3038,7 @@
           r7(j)=j
           rnumsr(j)=myrand(0)
         END DO
-        CALL psort2(rnumsr,n1,dummy,n1,r7)
+        CALL clksort(rnumsr,n1,dummy,r7)
         DO j=1,n1
           rnumsi(j)=NINT(r7(j))
           rrsp(j)=resp(j)
@@ -2972,7 +3060,7 @@
             END DO
           END DO
         END IF
-        CALL psort2(datrtoken,n1,inums,n1,r7)
+        CALL clksort(datrtoken,n1,inums,r7)
         DO j=1,n1
           ordrs(j)=NINT(r7(j))
         END DO
@@ -2981,7 +3069,8 @@
      #                 storage,slprbc,datri,rwgt,tstr,tend,tint,ehm,
      #                 msz,nsep,rseps,cnc,score,betas,ssize,rdcph,ordrs,
      #                 nfcnt,penalty,resp,mtm,mcmc,rdummy,rd1,rd2,rd3,
-     #                 rd4,bout,iearly,rearly)
+     #                 rd4,bout,iearly,rearly,wud1,wud2,rsp,
+     #                 wui1(1:(3*n1)),prtr,bmax,mat,jmax)
         DO j=1,n1
           resp(j)=rrsp(j)
           ordrs(j)=sordrs(j)
@@ -2997,29 +3086,29 @@
       ! last modification 10/17/02
 
       SUBROUTINE randomizationx(n1,n2,mdl,nkn,ntr,conc,negs,pick,
-     #                         term,storage,slprbc,datri,weight,tstr,
-     #                         tend,tint,ehm,msz,nsep,seps,cnc,score,
-     #                         betas,ssize,dcph,ordrs,iotrees,nfcnt,
-     #                         ntrup,error,resp,mtm,iearly,rearly)
+     #                       term,storage,slprbc,datri,weight,tstr,
+     #                       tend,tint,ehm,msz,nsep,seps,cnc,score,
+     #                       betas,ssize,dcph,ordrs,iotrees,nfcnt,
+     #                       ntrup,error,resp,mtm,iearly,rearly,
+     #                       wud1,wud2,wur1,wui1,prtr2,bmax,mat,
+     #                       jmax,wui3,jtmax)
       IMPLICIT NONE
 
-        ! parameters
-          INTEGER LGCbetaMAX,LGCn1MAX,LGCntrMAX,LGCn2MAX
-          PARAMETER (LGCn1MAX   = 40000)
-          PARAMETER (LGCn2MAX   =  2000)
-          PARAMETER (LGCbetaMAX =    55)
-          PARAMETER (LGCntrMAX  =     5)
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt
           INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm,iotrees(*)
           REAL tstr,tend,tint,slprbc(25),weight(n1)
-          INTEGER datri(n2,n1)
+          INTEGER datri(n2,n1),bmax,jmax
           REAL seps(nsep,n1),resp(n1)
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          REAL wur1(n1*(6+bmax))
+          INTEGER jtmax
+          INTEGER wui1((8+bmax)*n1),prtr2(n1,bmax),mat(n1+2,jmax)
+          INTEGER wui3(n1*jtmax)
         ! local
-          REAL rseps(LGCbetaMAX,LGCn1MAX)
-          INTEGER prtr(LGCn1MAX,LGCntrMAX)
           INTEGER i,j
         ! arguments out
           INTEGER ssize,conc(nkn,ntr,3)
@@ -3029,17 +3118,22 @@
           INTEGER storage(2*ntr*nkn*n1)
           REAL score(3),betas(0:(nsep+ntr),3)
 
-        DO i=1,LGCn1MAX
-           DO j=1,LGCntrMAX
-              prtr(i,j)=0
-           END DO
-        END DO
             CALL randomization(n1,n2,mdl,nkn,ntr,conc,negs,pick,
-     #                         term,storage,slprbc,datri,weight,tstr,
-     #                         tend,tint,ehm,msz,nsep,seps,cnc,score,
-     #                         betas,ssize,dcph,ordrs,iotrees,nfcnt,
-     #                         ntrup,error,rseps,prtr,resp,mtm,
-     #                         iearly,rearly)
+     #                       term,storage,slprbc,datri,weight,tstr,
+     #                       tend,tint,ehm,msz,nsep,seps,cnc,score,
+     #                       betas,ssize,dcph,ordrs,iotrees,nfcnt,
+     #                       ntrup,error,resp,mtm,
+     #                       iearly,rearly,wud1,wud2,
+     #                    wur1(1:n1),
+     #                    wur1((n1+1):(2*n1)),
+     #                    wur1((2*n1+1):(3*n1)),
+     #                    wur1((3*n1+1):(5*n1)),
+     #                    wur1((5*n1+1):((5+nsep)*n1)), bmax,
+     #                    wui1(1:(2*n1)),
+     #                    wui1((2*n1+1):(3*n1)),
+     #                    wui1((3*n1+1):(4*n1)),
+     #                    wui1((4*n1+1):((4+bmax)*n1)),
+     #                    prtr2,mat,jmax,wui3,jtmax)
 
         END
 
@@ -3051,31 +3145,37 @@
       ! last modification 10/17/02
 
       SUBROUTINE randomization(n1,n2,mdl,nkn,ntr,conc,negs,pick,
-     #                         term,storage,slprbc,datri,weight,tstr,
-     #                         tend,tint,ehm,msz,nsep,seps,cnc,score,
-     #                         betas,ssize,dcph,ordrs,iotrees,nfcnt,
-     #                         ntrup,error,rseps,prtr,resp,mtm,
-     #                         iearly,rearly)
+     #                       term,storage,slprbc,datri,weight,tstr,
+     #                       tend,tint,ehm,msz,nsep,seps,cnc,score,
+     #                       betas,ssize,dcph,ordrs,iotrees,nfcnt,
+     #                       ntrup,error,resp,mtm,
+     #                       iearly,rearly,wud1,wud2,rwgt,
+     #                       rresp,rsp,wur1,rseps,bmax,wui1,rdcp,
+     #                    rordrs,prtr,prtr2,mat,jmax,prdcl,jtmax)
       IMPLICIT NONE
 
         ! parameters
-          INTEGER LGCn1MAX,LGCntrMAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER LGCntrMAX
           PARAMETER (LGCntrMAX  =     5)
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,iotrees(*),nfcnt
-          INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm
+          INTEGER cnc(3),dcph(n1),ordrs(n1),ntrup,mtm,bmax
           REAL tstr,tend,tint,slprbc(25),weight(n1)
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          REAL wur1(2*n1)
+          INTEGER jmax,jtmax
+          INTEGER wui1(2*n1),prtr2(n1,bmax),mat(n1+2,jmax)
         ! local
-          INTEGER j,k,l,wh,ncl,msznew,rdcp(LGCn1MAX)
-          INTEGER prtr(n1,ntr),rordrs(LGCn1MAX)
-          INTEGER nprdcl(2**LGCntrMAX),prdcl(LGCn1MAX,2**LGCntrMAX)
-          REAL rwgt(LGCn1MAX),rseps(nsep,n1)
-          REAL penalty,rresp(LGCn1MAX)
+          INTEGER j,k,l,wh,ncl,msznew,rdcp(n1)
+          INTEGER prtr(n1,bmax),rordrs(n1)
+          INTEGER nprdcl(2**LGCntrMAX),prdcl(n1,jtmax)
+          REAL rwgt(n1),rseps(nsep,n1),rsp(n1)
+          REAL penalty,rresp(n1)
         ! arguments out
           INTEGER ssize,conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3),error
@@ -3086,6 +3186,12 @@
           INTEGER rd4(2),bout
 
           mcmc=0
+        DO k=1,n1
+           DO j=1,bmax
+              prtr(k,j)=0
+              prtr2(k,j)=0
+           END DO
+        END DO
 
       ! read and evaluate
         DO j=1,nkn
@@ -3106,7 +3212,7 @@
         END DO
         DO wh=1,ntr
           CALL evaluate_first(wh,n1,n2,nkn,ntr,conc,term,negs,pick,
-     #                        datri,prtr)
+     #                        datri,prtr,mat,jmax)
         END DO
         DO j=1,nkn
           DO k=1,ntr
@@ -3139,12 +3245,15 @@
       ! randomization
         CALL ident_prdcl(n1,ntr,prtr,ncl,nprdcl,prdcl)
         CALL rand_prdcl(n1,nsep,rresp,rwgt,rseps,
-     #                  ncl,nprdcl,prdcl,rdcp,rordrs)
+     #                  ncl,nprdcl,prdcl,rdcp,rordrs,
+     #                  wur1(1:n1),wur1((n1+1):(2*n1)),
+     #                  wui1(1:n1),wui1((n1+1):(2*n1)))
         CALL annealing(n1,n2,mdl,nkn,ntrup,conc,negs,pick,term,
      #                storage,slprbc,datri,rwgt,tstr,tend,tint,ehm,
      #                msznew,nsep,rseps,cnc,score,betas,ssize,rdcp,
      #                rordrs,nfcnt,penalty,rresp,mtm,mcmc,dummy,rd1,rd2,
-     #                rd3,rd4,bout,iearly,rearly)
+     #                rd3,rd4,bout,iearly,rearly,
+     #                wud1,wud2,rsp,wui1(1:(3*n1)),prtr2,bmax,mat,jmax)
 
       END 
 
@@ -3193,13 +3302,10 @@
       ! this subroutine randomizes the prediction classes
       ! last modification 10/17/02
 
-      SUBROUTINE rand_prdcl(n1,nsep,resp,rwgt,rseps,
-     #                      ncl,nprdcl,prdcl,rdcp,ordrs)
+      SUBROUTINE rand_prdcl(n1,nsep,resp,rwgt,rseps,ncl,nprdcl,
+     #                  prdcl,rdcp,ordrs,wk1,r7,rnumsi,wk2)
       IMPLICIT NONE
 
-        ! parameters
-          INTEGER LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
         ! random number generator
           REAL myrand               ! declare the type of the rand() function
         ! arguments in
@@ -3211,8 +3317,8 @@
         ! local
           INTEGER j,k,l
           INTEGER nn
-          INTEGER rnumsi(LGCn1MAX),wk2(LGCn1MAX)
-          REAL wk1(LGCn1MAX),r7(LGCn1MAX)
+          INTEGER rnumsi(n1),wk2(n1)
+          REAL wk1(n1),r7(n1)
         ! arguments out
 
       ! randomize the prediction classes
@@ -3225,7 +3331,7 @@
               r7(k)=k
               wk1(k)=myrand(0) 
             END DO
-            CALL psort2(wk1,nn,wk2,nn,r7)
+            CALL clksort(wk1,nn,wk2,r7)
             DO k=1,nn
               rnumsi(k)=NINT(r7(k))
               wk1(k)=resp(prdcl(k,j))
@@ -3261,7 +3367,7 @@
           r7(j)=j
           wk1(j)=resp(j)
         END DO
-        CALL psort2(wk1,n1,wk2,n1,ordrs)
+        CALL clksort(wk1,n1,wk2,r7)
         DO j=1,n1
           ordrs(j)=NINT(r7(j))
         END DO
@@ -3416,18 +3522,22 @@
       ! last modification 10/17/02
 
       SUBROUTINE scoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,mdl,nop,wh,
-     #               nsep,seps,score,betas,reject,xtxsep,mtm,nopold)
+     #               nsep,seps,score,betas,reject,xtxsep,mtm,nopold,
+     #               wud1,wud2,wui1,bmax)
       IMPLICIT NONE
 
         ! parameters
           INTEGER LGCbetaMAX,mtm
           PARAMETER (LGCbetaMAX = 55)
         ! arguments in
-          INTEGER mdl,n1,nop,nsep,ntr,wh
+          INTEGER mdl,n1,nop,nsep,ntr,wh,bmax
           INTEGER dcph(n1),ordrs(n1),nopold
-          INTEGER prtr(n1,ntr)
+          INTEGER prtr(n1,bmax)
           REAL rsp(n1),weight(n1)
           REAL seps(nsep,n1),xtxsep(0:nsep,0:nsep)
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+          INTEGER wui1(3*n1)
         ! local
           INTEGER j,oops
           REAL smbetas(0:LGCbetaMAX)
@@ -3463,14 +3573,21 @@
        ! the next few lines are here only for Holger Schwender's TRIO package
           ELSE IF (mdl.EQ.9)THEN
             CALL triofitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,
-     #                     nop,wh,nsep,seps,score(1),smbetas,reject)
+     #                  nop,wh,nsep,seps,score(1),smbetas,reject,
+     #                 wud1(1:(5*n1)),
+     #                 wud1((5*n1+1):(n1*(bmax+5))),
+     #                 wud1(((bmax+5)*n1+1):(n1*(bmax+6+bmax*bmax))),
+     #                 wui1(1:n1),wui1((n1+1):(2*n1)),
+     #                 wui1((2*n1+1):(3*n1)),bmax)
+            j=0
             DO j=0,(nsep+ntr)
               betas(j)=smbetas(j)
             END DO           
        ! the previous lines are here only for Holger Schwender's TRIO package
           ELSE IF (mdl.EQ.5)THEN
             CALL expofit(prtr,rsp,dcph,weight,n1,ntr,
-     #                        nop,nsep,seps,score(1),smbetas,reject)
+     #                nop,nsep,seps,score(1),smbetas,reject,
+     #                wud2(1:16384),wud2(16385:(2*16384)))
             DO j=0,(nsep+ntr)
               betas(j)=smbetas(j)
             END DO 
@@ -3493,10 +3610,20 @@
             END IF
           ELSE IF (mdl.EQ.3) THEN
             CALL calcdev(n1,nop,ntr,prtr,nsep,seps,rsp,weight,
-     #                   betas,score,reject)
+     #                betas,score,reject,
+     #                   wud1(1:n1),
+     #                   wud1((n1+1):(2*n1)),
+     #                   wud1((2*n1+1):(3*n1)),
+     #                   wud1((3*n1+1):(4*n1)),
+     #                   wud1((4*n1+1):(5*n1)),
+     #                   wud1((5*n1+1):(6*n1)),
+     #                   wud1((6*n1+1):(7*n1)),
+     #                   wud1((7*n1+1):((bmax+8)*n1)),
+     #                   wud1(((bmax+8)*n1+1):((2*bmax+9)*n1)),
+     #                   bmax)
           ELSE IF (mdl.EQ.4) THEN
             CALL calcplcph(nop,n1,ntr,betas,prtr,nsep,seps,weight,
-     #                   dcph,ordrs,score,oops)
+     #                   dcph,ordrs,score,oops,wud1,bmax)
           END IF
         END IF
 
@@ -3862,26 +3989,26 @@
       ! last modification 10/17/02
 
       SUBROUTINE calcdev(n1,nop,ntr,prtr,nsep,seps,rsp,weight,betas,
-     #                   score,reject)
+     #                   score,reject,dldmu,eta,n,p,w,winv,y,x,dmudb,
+     #                   bmax)
       IMPLICIT NONE
 
         ! parameters
-          INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER LGCbetaMAX
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
-          INTEGER n1,nop,nsep,ntr,prtr(n1,ntr)
+          INTEGER n1,nop,nsep,ntr,prtr(n1,ntr),bmax
           REAL rsp(n1),weight(n1),seps(nsep,n1)
         ! local
           INTEGER j,k,conv,iter,info,job,ipvt(LGCbetaMAX+1)
           INTEGER n1tmp,nu
           REAL eps
-          DOUBLE PRECISION dldmu(LGCn1MAX),eta(LGCn1MAX),n(LGCn1MAX)
-          DOUBLE PRECISION p(LGCn1MAX),w(LGCn1MAX),winv(LGCn1MAX)
+          DOUBLE PRECISION dldmu(n1),eta(n1),n(n1)
+          DOUBLE PRECISION p(n1),w(n1),winv(n1)
           DOUBLE PRECISION beta(LGCbetaMAX+1),beta_new(LGCbetaMAX+1),det
           DOUBLE PRECISION work(LGCbetaMAX+1),sco(LGCbetaMAX+1)
-          DOUBLE PRECISION y(LGCn1MAX),x(LGCn1MAX,LGCbetaMAX+1)
-          DOUBLE PRECISION dmudb(LGCn1MAX,LGCbetaMAX+1),loglik
+          DOUBLE PRECISION y(n1),x(n1,bmax+1)
+          DOUBLE PRECISION dmudb(n1,bmax+1),loglik
           DOUBLE PRECISION d2mat(LGCbetaMAX+1,LGCbetaMAX+1),loglik_old
           DOUBLE PRECISION prb,mylog,prb2
         ! arguments out
@@ -3889,8 +4016,9 @@
           REAL betas(0:(nsep+ntr)),score(3)
 
         n1tmp=n1
+        nu=0
         IF(nsep+ntr.LT.10)THEN
-        CALL redater(nu,x,y,n,prtr,seps,rsp,weight,n1,nop,nsep,LGCn1MAX)
+        CALL redater(nu,x,y,n,prtr,seps,rsp,weight,n1,nop,nsep,bmax)
         IF(nu.NE.0)n1tmp=nu
         END IF
 
@@ -3932,7 +4060,7 @@
         DO WHILE (iter.LT.20.AND.conv.EQ.0)
           iter=iter+1
           CALL lgtderiv(n1tmp,nsep+nop+1,n,x,y,beta,sco,d2mat,eta,p,w,
-     #                  winv,dldmu,dmudb,loglik,LGCn1MAX,LGCbetaMAX+1)
+     #                  winv,dldmu,dmudb,loglik,n1,LGCbetaMAX+1)
           CALL dgefa(d2mat,LGCbetaMAX+1,nsep+nop+1,ipvt,info)
           IF(info.GT.0)THEN
             reject=1
@@ -3986,20 +4114,23 @@
       ! last modification 10/17/02
 
       SUBROUTINE calcplcph(nop,n1,ntr,betas,prtr,nsep,seps,weight,
-     #                     dcph,ordrs,score,oops)
+     #                     dcph,ordrs,score,oops,
+     #                     wud1,bmax)
       IMPLICIT NONE
 
         ! parameters
-          INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER LGCbetaMAX
+          INTEGER bmax
           PARAMETER (LGCbetaMAX =    55)
         ! arguments in
           INTEGER n1,nop,nsep,ntr,dcph(n1),ordrs(n1),prtr(n1,ntr)
           REAL weight(n1),seps(nsep,n1)
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax))
         ! local
           INTEGER i,j,k,nnf(2)
           DOUBLE PRECISION loglf,betaf(LGCbetaMAX)
-          DOUBLE PRECISION covsf(LGCn1MAX*LGCbetaMAX)
+          DOUBLE PRECISION covsf(n1*bmax)
         ! arguments out
           REAL score(3),betas(0:(nsep+ntr)),r
           INTEGER oops
@@ -4038,7 +4169,7 @@
         
       ! calculate partial likelihood
         CALL myphxx(dcph,ordrs,covsf,nnf(1),n1,nsep,ntr,loglf,betaf,
-     #              oops,weight)
+     #              oops,weight,wud1(1:(5*n1)))
         r=n1
         if(oops.ne.1)score(1)=REAL(-loglf)
         betas(0)=0.0
@@ -4133,17 +4264,21 @@
       ! last modification 10/17/02
 
       SUBROUTINE testsetx(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,betas,
-     #                   datri,weight,dcph,ordrs,nsep,seps,score,resp)
+     #                   datri,weight,dcph,ordrs,nsep,seps,score,resp,
+     #                   wud1,rsp,prtr,bmax,mat,jmax)
       IMPLICIT NONE
 
         ! parameters 
-          INTEGER LGCnknMAX,LGCntrMAX,LGCn1MAX,LGCbetaMAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER LGCnknMAX,LGCntrMAX,LGCbetaMAX,bmax
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
           PARAMETER (LGCbetaMAX =    55)
+        ! workspaces
+          INTEGER n1,jmax
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax))
+          INTEGER mat(n1+2,jmax)
         ! arguments in
-          INTEGER n1,n2,mdl,nkn,ntr,nsep,dcph(n1),ordrs(n1)
+          INTEGER n2,mdl,nkn,ntr,nsep,dcph(n1),ordrs(n1)
           INTEGER conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
           INTEGER pick(nkn,ntr,3)
@@ -4153,13 +4288,13 @@
           REAL seps(nsep,n1),resp(n1)
         ! local
           INTEGER pickmv(6,LGCnknMAX,LGCntrMAX)
-          INTEGER prtr(LGCn1MAX,LGCntrMAX)
+          INTEGER prtr(n1,bmax)
           INTEGER npckmv(6,LGCntrMAX),i,j
-          REAL rsp(LGCn1MAX),smbetas(0:LGCbetaMAX)
+          REAL rsp(n1),smbetas(0:LGCbetaMAX)
         ! arguments out
           REAL score(3)
-        DO i=1,LGCn1MAX
-           DO j=1,LGCntrMAX
+        DO i=1,n1
+           DO j=1,bmax
               prtr(i,j)=0
            END DO
         END DO
@@ -4168,7 +4303,8 @@
         END DO
         CALL testset(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,smbetas,
      #                   datri,weight,dcph,ordrs,nsep,seps,score,
-     #                   pickmv,prtr,rsp,npckmv,resp)
+     #                   pickmv,prtr,rsp,npckmv,resp,wud1,bmax,
+     #                   mat,jmax)
 
         END
 
@@ -4179,11 +4315,12 @@
 
       SUBROUTINE testset(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,betas,
      #                   datri,weight,dcph,ordrs,nsep,seps,score,
-     #                   pickmv,prtr,rsp,npckmv,resp)
+     #                   pickmv,prtr,rsp,npckmv,resp,wud1,bmax,
+     #                   mat,jmax)
       IMPLICIT NONE
 
         ! arguments in
-          INTEGER n1,n2,mdl,nkn,ntr,nsep,dcph(n1),ordrs(n1)
+          INTEGER n1,n2,mdl,nkn,ntr,nsep,dcph(n1),ordrs(n1),bmax
           INTEGER conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
           INTEGER pick(nkn,ntr,3)
@@ -4191,9 +4328,13 @@
           REAL betas(0:(nsep+ntr)),weight(n1)
           INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1)
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax))
+          INTEGER jmax
+          INTEGER mat(n1+2,jmax)
         ! local
           INTEGER wh,i,j,nop,ssize,npckmv(6,ntr)
-          INTEGER pickmv(6,nkn,ntr),prtr(n1,ntr)
+          INTEGER pickmv(6,nkn,ntr),prtr(n1,bmax)
           REAL rsp(n1)
         ! arguments out
           REAL score(3)
@@ -4209,7 +4350,7 @@
         CALL storing(nkn,ntr,conc,pick,npckmv,pickmv,ssize,nop)
         DO wh=1,ntr
           CALL evaluate_first(wh,n1,n2,nkn,ntr,conc,term,negs,pick,
-     #                        datri,prtr)
+     #                        datri,prtr,mat,jmax)
         END DO
 
       ! choose scoring function for model type
@@ -4236,7 +4377,10 @@
      #                  weight,betas,score)
         ELSE IF (mdl.EQ.4) THEN
           CALL scorepll(n1,nop,ntr,nsep,seps,prtr,betas,dcph,ordrs,
-     #                  score,weight)
+     #                  score,weight,
+     #                 wud1(1:(3*n1)),
+     #                 wud1((3*n1+1):(n1*(bmax+3))),
+     #                 bmax)
         ELSE IF (mdl.EQ.5) THEN 
            CALL exposcore(prtr,rsp,dcph,weight,n1,ntr,nop,
      #                         nsep,seps,score(1),betas)
@@ -4309,20 +4453,21 @@
       ! last modification 10/17/02
 
       SUBROUTINE scorepll(n1,nop,ntr,nsep,seps,prtr,betas,dcph,ordrs,
-     #                    score,weight)
+     #                    score,weight,wud1,covsf,bmax)
       IMPLICIT NONE
 
         ! parameters 
-          INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER LGCbetaMAX
           PARAMETER (LGCbetaMAX=    55)
         ! arguments in
-          INTEGER n1,nop,ntr,nsep,dcph(n1),ordrs(n1),prtr(n1,ntr)
+          INTEGER n1,nop,ntr,nsep,dcph(n1),ordrs(n1),prtr(n1,ntr),bmax
           REAL betas(0:(nsep+ntr)),seps(nsep,n1),weight(n1)
+        ! workspaces
+          DOUBLE PRECISION wud1(3*n1)
         ! local
           INTEGER j,k,nnf(2)
           DOUBLE PRECISION loglf,betaf(LGCbetaMAX)
-          DOUBLE PRECISION covsf(LGCn1MAX*LGCbetaMAX)
+          DOUBLE PRECISION covsf(n1*bmax)
         ! arguments out
           REAL score(3),r
 
@@ -4350,7 +4495,8 @@
           betaf(j)=betas(j)
         END DO
         j=nsep+nop
-        CALL mypllxx(loglf,betaf,dcph,ordrs,covsf,j,n1,weight)
+        CALL mypllxx(loglf,betaf,dcph,ordrs,covsf,j,n1,weight,
+     #             wud1(1:n1),wud1((n1+1):(2*n1)),wud1((2*n1+1):(3*n1)))
         r=n1
         score(1)=REAL(-loglf)
 
@@ -4363,7 +4509,7 @@
       ! Last modified 10/17/02
 
       SUBROUTINE myphxx(delta,idx,covs,np,n1,nsep,ntr,logl,beta,
-     #                   oops,weight)
+     #                   oops,weight,wud1)
       IMPLICIT none
         ! parameters 
           INTEGER LGCbetaMAX
@@ -4373,6 +4519,8 @@
           DOUBLE PRECISION beta(nsep+ntr),covs(n1*(nsep+ntr))
           DOUBLE PRECISION logl
           REAL weight(n1)
+        ! workspaces
+          DOUBLE PRECISION wud1(n1*5)
         ! local
           DOUBLE PRECISION ologl,nlogl,alpha,pp,alphap1,alphap2,prec
           DOUBLE PRECISION nbeta(LGCbetaMAX),grad(LGCbetaMAX)
@@ -4392,10 +4540,18 @@
           DO WHILE((iter.LT.10).AND.(pp.GT.prec).AND.(alpha.GT.alphap2))
             iter=iter+1
             CALL mygradph(grad,hess,beta,delta,idx,covs,np,n1,ologl,
-     #                    LGCbetaMAX,weight)
+     #                    LGCbetaMAX,weight,
+     #                   wud1(1:n1),
+     #                   wud1((n1+1):(2*n1)),
+     #                   wud1((2*n1+1):(3*n1)),
+     #                   wud1((3*n1+1):(4*n1)),
+     #                   wud1((4*n1+1):(5*n1)))
             DO i=1,np
               IF((hess(i,i).LT.1.0e-10).AND.(hess(i,i).GT.-1.0e-10))THEN
-                CALL mypllxx(logl,beta,delta,idx,covs,np,n1,weight)
+                CALL mypllxx(logl,beta,delta,idx,covs,np,n1,weight,
+     #                   wud1(1:n1),
+     #                   wud1((n1+1):(2*n1)),
+     #                   wud1((2*n1+1):(3*n1)))
                 GOTO 1234
               END IF
             END DO
@@ -4410,7 +4566,10 @@
               DO i=1,np
                 nbeta(i)=beta(i)+alpha*grad(i)
               END DO
-              CALL mypllxx(nlogl,nbeta,delta,idx,covs,np,n1,weight)
+              CALL mypllxx(nlogl,nbeta,delta,idx,covs,np,n1,weight,
+     #                   wud1(1:n1),
+     #                   wud1((n1+1):(2*n1)),
+     #                   wud1((2*n1+1):(3*n1)))
               IF(nlogl.LT.ologl) alpha=alpha/2
             END DO
             IF(alpha.GT.alphap1) THEN
@@ -4424,7 +4583,12 @@
             END IF
           END DO
           CALL mygradph(grad,hess,beta,delta,idx,covs,np,n1,logl,
-     #                  LGCbetaMAX,weight)
+     #                    LGCbetaMAX,weight,
+     #                   wud1(1:n1),
+     #                   wud1((n1+1):(2*n1)),
+     #                   wud1((2*n1+1):(3*n1)),
+     #                   wud1((3*n1+1):(4*n1)),
+     #                   wud1((4*n1+1):(5*n1)))
 1234      CONTINUE
 
       END 
@@ -4436,20 +4600,18 @@
       ! Last modified 10/17/02
 
       SUBROUTINE mygradph(grad,hess,beta,delta,idx,covs,np,n1,logl,lda,
-     #                    weight)
+     #                    weight,ff,s1,s1s,gg,ff2)
       IMPLICIT none
         ! parameters 
-          INTEGER LGCbetaMAX,LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER LGCbetaMAX
           PARAMETER (LGCbetaMAX=    55)
         ! i/o
           INTEGER n1,np,delta(n1),idx(n1),lda
           DOUBLE PRECISION beta(np),grad(np),covs(n1*np),hess(lda,np)
-          DOUBLE PRECISION logl
+          DOUBLE PRECISION logl,ff(n1),s1(n1),s1s(n1),gg(n1),ff2(n1)
           REAL weight(n1)
         ! local
-          DOUBLE PRECISION ff(LGCn1MAX),s1(LGCn1MAX),s1s(LGCn1MAX)
-          DOUBLE PRECISION gg(LGCn1MAX),ff2(LGCn1MAX),myexp,mylog
+          DOUBLE PRECISION myexp,mylog
           DOUBLE PRECISION s0,s1r,u,z,s2(LGCbetaMAX*LGCbetaMAX)
           INTEGER i,i2,j,k,r,s,it
 
@@ -4518,16 +4680,17 @@
       ! This routine computes the partial likelihood
       ! Last modified 10/17/02
 
-      SUBROUTINE mypllxx(logl,beta,delta,idx,covs,np,n1,weight)
+      SUBROUTINE mypllxx(logl,beta,delta,idx,covs,np,n1,weight,
+     #                   ff,ff2,gg)
       IMPLICIT none
         ! i/o
-          INTEGER n1,np,delta(n1),idx(n1),LGCn1MAX
-          PARAMETER (LGCn1MAX   = 40000)
+          INTEGER n1,np,delta(n1),idx(n1)
           DOUBLE PRECISION beta(np),covs(n1*np),logl,myexp,mylog
+          DOUBLE PRECISION ff(n1),ff2(n1),gg(n1)
           REAL weight(n1)
         ! local
           INTEGER i,k
-          DOUBLE PRECISION z,s0,ff(LGCn1MAX),ff2(LGCn1MAX),gg(LGCn1MAX)
+          DOUBLE PRECISION z,s0
           logl=0.
           DO i=1,n1
             ff(i)=0.
@@ -5174,9 +5337,10 @@
       END IF
       END IF
       END 
-      SUBROUTINE redater(ii,x,y,w,prtr,seps,resp,wt,n1,ntr,nsep,ln)
-      INTEGER n1,ntr,nsep,ii,prtr(n1,ntr)
-      DOUBLE PRECISION y(ln),w(ln),x(ln,nsep+n1+1)
+      SUBROUTINE redater(ii,x,y,w,prtr,seps,resp,wt,n1,ntr,nsep,bmax)
+      IMPLICIT NONE
+      INTEGER n1,ntr,nsep,ii,prtr(n1,ntr),bmax
+      DOUBLE PRECISION y(n1),w(n1),x(n1,bmax)
       REAL wt(n1),seps(nsep,n1),resp(n1)
       INTEGER i,j,k,l,i2,j2
       REAL rt
@@ -5269,9 +5433,9 @@
       SUBROUTINE greedyonestep(nkn,ntr,conc,negs,pick,term,n1,n2,
      #           storage,prtr,datri,nsep,seps,cbetas,xtxsep,mdl,
      #           nop,orders,dcph,rsp,weight,bestscore,mtm,cnc,
-     #           penalty)
+     #           penalty,wud1,wud2,wui1,bmax)
       IMPLICIT NONE
-      INTEGER nkn,ntr,n1,n2,nsep,mdl,nop,mtm,cnc(3)
+      INTEGER nkn,ntr,n1,n2,nsep,mdl,nop,mtm,cnc(3),bmax
       INTEGER conc(nkn,ntr,3)
       INTEGER negs(nkn,ntr,3)
       INTEGER pick(nkn,ntr,3)
@@ -5280,6 +5444,10 @@
       INTEGER prtr(n1,ntr),datri(n2,n1)
       REAL seps(nsep,n1),cbetas(0:(nsep+ntr)),xtxsep(0:nsep,0:nsep)
       REAL rsp(n1),weight(n1),bestscore,penalty
+      ! workspaces
+      DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+      INTEGER wui1((8+bmax)*n1)
+     
 
       INTEGER mtp,wh,knt,letter,op,neg,sng,dbl,improve,bestmove(3)
       INTEGER yes,l2
@@ -5308,7 +5476,8 @@
                       CALL evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,
      #                     n2,wh,knt,storage,datri,prtr,mdl,nsep,dcph,
      #                     orders,mtm,rsp,weight,seps,cbetas,xtxsep,nop,
-     #                     bestscore,improve,0,bestmove,penalty)
+     #                     bestscore,improve,0,bestmove,penalty,
+     #                     wud1,wud2,wui1,bmax)
                     END IF
                     CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
                   END DO
@@ -5328,7 +5497,8 @@
                       CALL evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,
      #                     n2,wh,knt,storage,datri,prtr,mdl,nsep,dcph,
      #                     orders,mtm,rsp,weight,seps,cbetas,xtxsep,nop,
-     #                     bestscore,improve,0,bestmove,penalty)
+     #                     bestscore,improve,0,bestmove,penalty,
+     #                     wud1,wud2,wui1,bmax)
                       CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
                     END DO
                   END DO
@@ -5352,7 +5522,8 @@
                 CALL evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,
      #                     n2,wh,knt,storage,datri,prtr,mdl,nsep,dcph,
      #                     orders,mtm,rsp,weight,seps,cbetas,xtxsep,nop,
-     #                     bestscore,improve,0,bestmove,penalty)
+     #                     bestscore,improve,0,bestmove,penalty,
+     #                     wud1,wud2,wui1,bmax)
                 CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
               END IF
             END IF
@@ -5369,7 +5540,8 @@
             CALL evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,
      #                     n2,wh,knt,storage,datri,prtr,mdl,nsep,dcph,
      #                     orders,mtm,rsp,weight,seps,cbetas,xtxsep,nop,
-     #                     bestscore,improve,0,bestmove,penalty)
+     #                     bestscore,improve,0,bestmove,penalty,
+     #                     wud1,wud2,wui1,bmax)
             CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
          END DO
       END IF
@@ -5381,7 +5553,8 @@
         CALL evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,
      #                     n2,wh,knt,storage,datri,prtr,mdl,nsep,dcph,
      #                     orders,mtm,rsp,weight,seps,cbetas,xtxsep,nop,
-     #                     bestscore,improve,1,bestmove,penalty)
+     #                     bestscore,improve,1,bestmove,penalty,
+     #                     wud1,wud2,wui1,bmax)
         CALL copytree(ntr,nkn,conc,negs,pick,term,-1,1,2)
         CALL copytree(ntr,nkn,conc,negs,pick,term,-1,1,3)
       ELSE
@@ -5434,9 +5607,10 @@
           END
  
         SUBROUTINE evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,n2,wh,
-     #                      knt,storage,datri,prtr,mdl,nsep,dcph,ordrs,
-     #                      mtm,rsp,weight,seps,cbetas,xtxsep,nop,
-     #                      bestscore,improve,oncemore,bestmove,penalty)
+     #                    knt,storage,datri,prtr,mdl,nsep,dcph,ordrs,
+     #                    mtm,rsp,weight,seps,cbetas,xtxsep,nop,
+     #                    bestscore,improve,oncemore,bestmove,penalty,
+     #                    wud1,wud2,wui1,bmax)
 
       IMPLICIT NONE
         INTEGER LGCnknMAX
@@ -5446,11 +5620,14 @@
         INTEGER negs(nkn,ntr,3)
         INTEGER pick(nkn,ntr,3)
         INTEGER term(nkn,ntr,3)
-        INTEGER storage(2*ntr*nkn*n1)
+        INTEGER storage(2*ntr*nkn*n1),bmax
         INTEGER prtr(n1,ntr),datri(n2,n1),bestmove(3)
         INTEGER mdl,nsep,dcph(n1),ordrs(n1),mtm,improve,oncemore
         REAL seps(nsep,n1),cbetas(0:(nsep+ntr)),xtxsep(0:nsep,0:nsep)
         REAL weight(n1),bestscore,rsp(n1),penalty
+      ! workspaces
+        DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
+        INTEGER wui1((8+bmax)*n1)
       ! local
 
         REAL score(3)
@@ -5462,7 +5639,8 @@
      #                  datri,prtr,storage,nwkv,wkv)
         reject=0
         CALL scoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,mdl,nop,wh,
-     #          nsep,seps,score,cbetas,reject,xtxsep,mtm,nopold)
+     #          nsep,seps,score,cbetas,reject,xtxsep,mtm,nopold,
+     #          wud1,wud2,wui1(1:(3*n1)),bmax)
 
        !   take care that the there is real convergence
         l1=0 
@@ -5571,7 +5749,7 @@ c       CALL RANDOM_NUMBER(score)
       ! *****************************************************************
       ! this routine fits exponential survival models
       SUBROUTINE expofit(prtr,rsp,dcph,weight,n1,ntr,nop,
-     #                          nsep,seps,score,betas,reject)
+     #                  nsep,seps,score,betas,reject,nn,mm)
 
       IMPLICIT NONE
 
@@ -5584,7 +5762,7 @@ c       CALL RANDOM_NUMBER(score)
         ! local
           INTEGER j,vv,pow2(20),uu,i,zz,k,i2,l,m
           DOUBLE PRECISION s1,s2, nn(16384),phi(2,14)
-          DOUBLE PRECISION dd(2,14),eps,phio(2)
+          DOUBLE PRECISION dd(2,14),eps,phio(2),mm(16384)
         ! arguments out
           INTEGER reject
           REAL score
@@ -5658,7 +5836,7 @@ c       CALL RANDOM_NUMBER(score)
            DO j=1,uu
               phio(1)=phi(1,j)
               phio(2)=phi(2,j)
-              CALL upphi(phi,dd,nn,j,uu,pow2)
+              CALL upphi(phi,dd,nn,j,uu,pow2,mm)
               s1 = phi(1,j)-phio(1)
               s2 = phi(2,j)-phio(2)
               eps=eps+SQRT(s1*s1)+SQRT(s2*s2)
@@ -5709,7 +5887,7 @@ c       CALL RANDOM_NUMBER(score)
       ! *****************************************************************
       ! *****************************************************************
       ! utility for fiting exponential survival models
-      SUBROUTINE upphi(phi,dd,nn,j,uu,pow2)
+      SUBROUTINE upphi(phi,dd,nn,j,uu,pow2,mm)
       IMPLICIT NONE
       DOUBLE PRECISION nn(16384),dd(2,14),phi(2,14),mm(16384)
       INTEGER j,uu,pow2(20)

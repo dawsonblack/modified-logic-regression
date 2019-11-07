@@ -6,16 +6,16 @@
    Check these declarations against the C/Fortran source code.
 */
 
-/* .Fortran calls */
-extern void F77_NAME(slogreg)(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
+/* .C calls */
+extern void clogreg(void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *, void *);
 
-static const R_FortranMethodDef FortranEntries[] = {
-    {"slogreg", (DL_FUNC) &F77_NAME(slogreg), 21},
+static const R_CMethodDef CEntries[] = {
+    {"clogreg", (DL_FUNC) &clogreg, 15},
     {NULL, NULL, 0}
 };
 
 void R_init_LogicReg(DllInfo *dll)
 {
-    R_registerRoutines(dll, NULL, NULL, FortranEntries, NULL);
+    R_registerRoutines(dll, CEntries, NULL, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

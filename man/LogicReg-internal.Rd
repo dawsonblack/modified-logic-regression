@@ -1,6 +1,6 @@
 \name{LogicReg-internal}
 \title{Internal logic regression functions}
-\alias{slogreg}
+\alias{clogreg}
 \description{Internal logic regression functions}
 \author{Charles Kooperberg}
 \details{These are not intended for use by users.}

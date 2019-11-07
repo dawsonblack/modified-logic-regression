@@ -1268,7 +1268,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       xtree <- c(xtree, rep(n100, 4 * nkn * 10))
    }
    ip4 <- 2*ipars[4]+1
-   fit <- .Fortran("slogreg",
+   fit <- .C("clogreg",
       as.integer(n1),
       as.integer(n2),
       as.integer(nsep),
@@ -1283,12 +1283,12 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
       trees = as.integer(xtree),
       coef = as.single(rep(n100, nb)),
       scores = as.single(rep(n100, nc)),
-      as.integer(ipars[6]),
-      as.integer(ip4),
-      as.integer(rep(0,2*ipars[6]*ip4*n1)),
-      as.integer(rep(0,7*ipars[6]*(ip4+1)*n2*4)),
-      as.single(rep(0,7*ipars[6]*(ip4+1)*n2*4)),
-      as.integer(t(bin)),
+#     as.integer(ipars[6]),
+#     as.integer(ip4),
+#     as.integer(rep(0,2*ipars[6]*ip4*n1)),
+#     as.integer(rep(0,7*ipars[6]*(ip4+1)*n2*4)),
+#     as.single(rep(0,7*ipars[6]*(ip4+1)*n2*4)),
+#     as.integer(t(bin)), 
       rd4 = as.integer(rep(0, nxx)),
       PACKAGE="LogicReg")
    if(fit$ip[1]<(-900))stop("fatal declaration error - reduce problem or recompile package")

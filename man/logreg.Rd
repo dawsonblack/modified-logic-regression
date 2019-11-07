@@ -443,7 +443,6 @@ far the code is.
 As Logic Regression is written in Fortran 77 some parameters had to be
 hard coded in. The default values of these parameters are
 
-maximum sample size: 20000\cr
 maximum number of columns in the input file: 1000\cr
 maximum number of leaves in a logic tree: 128\cr
 maximum number of logic trees: 5\cr
@@ -454,7 +453,6 @@ If these parameters are not large enough (an error message will let you
 know this), you need to reset them in \bold{slogic.f} and recompile.
 In particular, the statements defining these parameters are 
 
-\code{PARAMETER (LGCn1MAX   = 20000)}\cr
 \code{PARAMETER (LGCn2MAX   =  1000)}\cr
 \code{PARAMETER (LGCnknMAX  =   128)}\cr 
 \code{PARAMETER (LGCntrMAX  =     5)}\cr 

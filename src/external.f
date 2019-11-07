@@ -951,123 +951,59 @@ c        include 'prot_params.inc'
         return
         end
 ************************************************************************
-C     ALGORITHM 410 COLLECTED ALGORITHMS FROM ACM.
-C     ALGORITHM APPEARED IN COMM. ACM, VOL. 15, NO. 05,
-C     P. 357.
-      SUBROUTINE PSORT2(A,N,IND,NI,B)
-        IMPLICIT NONE
-C PARAMETERS TO PSORT HAVE THE FOLLOWING MEANING
-C A     ARRAY TO BE SORTED
-C N     NUMBER OF ELEMENTS IN A
-C IND   ARRAY OF INDICES IN ASCENDING ORDER
-C NI    NUMBER OF ELEMENTS IN IND
-      INTEGER I,J,K,L,M,IJ,JL,JU,N,NI
-      REAL A(N)
-      INTEGER IND(NI)
-      REAL B(NI)
-      INTEGER   INDU(16),INDL(16)
-      INTEGER IU(16),IL(16)
-      INTEGER P
-      REAL TT,TT2,T,T2
+      SUBROUTINE CLKSORT(RA,N,IA,RB)
+      IMPLICIT NONE
+      INTEGER N
+      REAL RA(N),IA(N),RB(N)
 
-      JL=1
-      JU=NI
-      INDL(1)=1
-      INDU(1)=NI
-C ARRAYS INDL, INDU KEEP ACCOUNT OF THE PORTION OF IND RELATED TO THE
-C CURRENT SEGMENT OF DATA BEING ORDERED.
-      I=1
-      J=N
-      M=1
-5     IF(I.GE.J) GO TO 70
-C FIRST ORDER A(I),A(J),A((I+J)/2), AND USE MEDIAN TO SPLIT THE DATA
-10    K=I
-      IJ=(I+J)/2
-      T=A(IJ)
-      T2=B(IJ)
-      IF(A(I).LE.T) GO TO 20
-      A(IJ)=A(I)
-      A(I)=T
-      T=A(IJ)
-      B(IJ)=B(I)
-      B(I)=T2
-      T2=B(IJ)
-20    L=J
-      IF(A(J).GE.T) GO TO 40
-      A(IJ)=A(J)
-      A(J)=T
-      T=A(IJ)
-      B(IJ)=B(J)
-      B(J)=T2
-      T2=B(IJ)
-      IF(A(I).LE.T) GO TO 40
-      A(IJ)=A(I)
-      A(I)=T
-      T=A(IJ)
-      B(IJ)=B(I)
-      B(I)=T2
-      T2=B(IJ)
-      GO TO 40
-30    A(L)=A(K)
-      A(K)=TT
-      B(L)=B(K)
-      B(K)=TT2
-40    L=L-1
-      IF(A(L).GT.T) GO TO 40
-      TT=A(L)
-      TT2=B(L)
-C SPLIT THE DATA INTO A(I TO L).LT.T, A(K TO J).GT.T
-50    K=K+1
-      IF(A(K).LT.T) GO TO 50
-      IF(K.LE.L) GO TO 30
-      INDL(M)=JL
-      INDU(M)=JU
-      P=M
-      M=M+1
-C SPLIT THE LARGER OF THE SEGMENTS
-      IF(L-I.LE.J-K) GO TO 60
-      IL(P)=I
-      IU(P)=L
-      I=K
-C SKIP ALL SEGMENTS NOT CORRESPONDING TO AN ENTRY IN IND
-55    IF(JL.GT.JU) GO TO 70
-      IF(IND(JL).GE.I) GO TO 58
-      JL=JL+1
-      GO TO 55
-58    INDU(P)=JL-1
-      GO TO 80
-60    IL(P)=K
-      IU(P)=J
-      J=L
-65    IF(JL.GT.JU) GO TO 70
-      IF(IND(JU).LE.J) GO TO 68
-      JU=JU-1
-      GO TO 65
-68    INDL(P)=JU+1
-      GO TO 80
-70    M=M-1
-      IF(M.EQ.0) RETURN
-      I=IL(M)
-      J=IU(M)
-      JL=INDL(M)
-      JU=INDU(M)
-      IF(JL.GT.JU) GO TO 70
-80    IF(J-I.GT.10) GO TO 10
-      IF(I.EQ.1) GO TO 5
-      I=I-1
-90    I=I+1
-      IF(I.EQ.J) GO TO 70
-      T=A(I+1)
-      T2=B(I+1)
-      IF(A(I).LE.T) GO TO 90
-      K=I
-100   A(K+1)=A(K)
-      B(K+1)=B(K)
-      K=K-1
-      IF(T.LT.A(K)) GO TO 100
-      A(K+1)=T
-      B(K+1)=T2
-      GO TO 90
+      INTEGER L,IR,IIA,I,J
+      REAL RRA,RRB
+      L=N/2+1
+      IR=N
+10    continue
+      if(L.GT.1)then
+         L=L-1
+         RRA=RA(L)
+         RRB=RB(L)
+         IIA=IA(L)
+      else
+         RRA=RA(IR)
+         RRB=RB(IR)
+         IIA=IA(IR)
+         RA(IR)=RA(1)
+         RB(IR)=RB(1)
+         IA(IR)=IA(1)
+         IR=IR-1
+         if(IR.eq.1)then
+            RA(1)=RRA
+            RB(1)=RRB
+            IA(1)=IIA
+            return
+         end if
+      end if
+      I=L
+      J=L+L
+20    if(J.le.IR)then
+         if(J.LT.IR)then
+            if(RA(J).lt.RA(J+1))then
+               J=J+1
+            end if
+         end if
+         if(RRA < RA(J))then
+            RA(I)=RA(J)
+            RB(I)=RB(J)
+            IA(I)=IA(J)
+            I=J
+            J=J+J
+         else
+            J=IR+1
+         end if
+         goto 20
+      end if
+      RA(I)=RRA
+      RB(I)=RRB
+      IA(I)=IIA
+      goto 10
       END
       SUBROUTINE DGESL(A,LDA,N,IPVT,B,JOB)
         IMPLICIT NONE
