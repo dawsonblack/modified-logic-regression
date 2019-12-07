@@ -1808,7 +1808,7 @@
       PARAMETER (LGCbetaMAX =    55)
       PARAMETER (LGCnknMAX  =   128)
       PARAMETER (LGCntrMAX  =     5)
-      INTEGER mat(n1+2,jmax)
+      INTEGER mat(n1+2,jmax),jmax
       INTEGER n1,n2,nsep,cnc(3),mdl,msz,nkn,ehm,mszlo,mszup,ntrx,nknx
       INTEGER storage2(n2,n1),storage(*),bmax
       INTEGER storage3(0:6,ntrx,0:nknx,n2,0:1,2)
@@ -2952,7 +2952,7 @@
         ! workspaces
           DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
           REAL wur1(n1*(6*bmax))
-          INTEGER wui1(n1*(8+bmax)),prtr2(n1,bmax),mat(n1+2,jmax)
+          INTEGER wui1(n1*(8+bmax)),mat(n1+2,jmax)
         ! arguments out
           INTEGER ssize,conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
@@ -3108,8 +3108,6 @@
           INTEGER jtmax
           INTEGER wui1((8+bmax)*n1),prtr2(n1,bmax),mat(n1+2,jmax)
           INTEGER wui3(n1*jtmax)
-        ! local
-          INTEGER i,j
         ! arguments out
           INTEGER ssize,conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3),error

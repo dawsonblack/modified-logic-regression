@@ -26,7 +26,7 @@
 
 eval.logreg <- function(ltree, data)
 {
-   if(class(ltree) == "logregtree") {
+   if(class(ltree)[1] == "logregtree") {
       ltree <- ltree$trees
       nn <- matrix(1, ncol = length(ltree[, 1]), nrow = length(data[ , 1]))
       for(i in 1:length(ltree[, 1])) {
@@ -50,7 +50,7 @@ eval.logreg <- function(ltree, data)
       nn[, 1]
    }
    else {
-      if(class(ltree) == "logregmodel") {
+      if(class(ltree)[1] == "logregmodel") {
          n1 <- eval.logreg(ltree$trees[[1]], data)
          if(ltree$ntrees[1] > 1)
             for(i in 2:ltree$ntrees[1])
@@ -64,7 +64,7 @@ eval.logreg <- function(ltree, data)
 }
 frame.logreg <- function(fit, msz, ntr, newbin, newresp, newsep, newcens, newweight)
 {
-   if(class(fit) != "logreg")
+   if(class(fit)[1] != "logreg")
       stop("fit not of class logreg")
    if(missing(newbin)) {
       outframe <- data.frame(y = fit$response)
@@ -226,7 +226,7 @@ logregtree <- function()
 }
 plot.logreg <- function(x, pscript = FALSE, title = TRUE, ...)
 {
-   if(class(x) != "logreg")
+   if(class(x)[1] != "logreg")
       stop("x not of class logreg")
    logregtmp <- hist(1:10, plot = FALSE)
    if(length(logregtmp$mids) > 0)
@@ -423,7 +423,7 @@ plot.logreg <- function(x, pscript = FALSE, title = TRUE, ...)
 }
 plot.logregmodel <- function(x, pscript = FALSE, title = TRUE, nms, ...)
 {
-   if(class(x) != "logregmodel")
+   if(class(x)[1] != "logregmodel")
       stop("x not of class logregmodel")
    logregtmp <- hist(1:10, plot = FALSE)
    if(length(logregtmp$mids) > 0)
@@ -456,7 +456,7 @@ plot.logregtree <- function(x, nms, full = TRUE, and.or.cx = 1.0, leaf.sz = 1.0,
    leaf.txt.cx = 1.0, coef.cx = 1.0, indents = rep(0, 4), coef = TRUE, coef.rd = 4, ...)
 {
    ltree <- x
-   if(class(ltree) != "logregtree")
+   if(class(ltree)[1] != "logregtree")
       stop("ltree is not of class logregtree")
    ntchx1 <- indents[2]
    ntchy1 <- indents[1]
@@ -563,7 +563,7 @@ plot.logregtree <- function(x, nms, full = TRUE, and.or.cx = 1.0, leaf.sz = 1.0,
 
 predict.logreg <- function(object, msz, ntr, newbin, newsep, ...) 
 {
-    if(class(object) != "logreg") 
+    if(class(object)[1] != "logreg") 
         stop("object not of class logreg")
     if(object$choice > 2 && object$choice !=6) 
         stop("object$choice needs to be 1, 2, or 6")
@@ -690,7 +690,7 @@ predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
 }
 print.logreg <- function(x, nms, notnms, pstyle = 1, ...)
 {
-   if(class(x) != "logreg")
+   if(class(x)[1] != "logreg")
       stop("x not of class logreg")
    inn <- 2
    if(missing(notnms))
@@ -765,7 +765,7 @@ print.logreg <- function(x, nms, notnms, pstyle = 1, ...)
 }
 print.logregmodel <- function(x, nms, notnms, pstyle = 1, ...)
 {
-   if(class(x) != "logregmodel")
+   if(class(x)[1] != "logregmodel")
       stop("x not of class logregmodel")
    inn <- 2
    if(missing(notnms))
@@ -817,7 +817,7 @@ print.logregmodel <- function(x, nms, notnms, pstyle = 1, ...)
 }
 print.logregtree <- function(x, nms, notnms, pstyle = 1, ...)
 {
-   if(class(x) == "logregtree")
+   if(class(x)[1] == "logregtree")
       x <- x$trees
    tree <- x
    tree <- matrix(c(unlist(tree)), ncol = 5)
@@ -906,7 +906,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
    miss.mc <- 1 * (missing(mc.control))
    miss.binnames <- 1
    if(!missing(oldfit)) {
-      if(class(oldfit) != "logreg")
+      if(class(oldfit)[1] != "logreg")
          stop("oldfit is not of class logreg")
       if(missing(resp) && length(oldfit$response) > 0)
          resp <- oldfit$response

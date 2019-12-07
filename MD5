@@ -1,7 +1,7 @@
-c520a5177c23b2a0c966216b68ccd20d *DESCRIPTION
+0b4bfa81396fc129f4d81c64c307e841 *DESCRIPTION
 d981a4cb4499bdf145b8b14a5f39813c *INDEX
 43f15b11ff2582e0d1cb31d6d934d921 *NAMESPACE
-efa59713605c71cfc6d306e51819e99f *R/LogicReg.R
+f63761c436d2b497254ae7f2ea2b4a54 *R/LogicReg.R
 5e0053f6aa1cf5497c660babc1991eb9 *data/logreg.savefit1.RData
 b5561de7d3e78103ead3189a5b0a19e9 *data/logreg.savefit2.RData
 bb5c8496d460b905c7ce6146475384cf *data/logreg.savefit3.RData
@@ -32,9 +32,9 @@ ec26d3448faea1617f12ed014b4ee773 *man/print.logreg.Rd
 666476c63dc96a6081be5030f4025753 *man/print.logregmodel.Rd
 06351d6e2f6d3ce59e4d44ad8fe8cc9c *man/print.logregtree.Rd
 9adb5061501a1bf7c0429a1da43cc925 *src/My_own_scoring.f
-3250d511e316b10f7fb76cba78c876fd *src/clogic.c
-065db2f39889ed058de972f0a652bf7c *src/external.f
+04280342d27db8a93eec691c837c3e11 *src/clogic.c
+bd37dabb73df78194b908d33e9bfa611 *src/external.f
 e8117cf4cd150b1765bf07d7944dd436 *src/registerDynamicSymbol.c
-939f4606b53d1b80021656b346e6a747 *src/slogic.f
+798e2b96c6262a04b2724cefbc2ab9c6 *src/slogic.f
 6ff3987edd9fa3a554c1f9ffbc3b32c8 *src/swrite.c
 29ea051e35105b6821506e58c277f41d *src/trioLR.f

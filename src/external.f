@@ -951,12 +951,12 @@ c        include 'prot_params.inc'
         return
         end
 ************************************************************************
-      SUBROUTINE CLKSORT(RA,N,IA,RB)
+      SUBROUTINE clksort(RA,N,IA,RB)
       IMPLICIT NONE
       INTEGER N
-      REAL RA(N),IA(N),RB(N)
+      REAL RA(N),RB(N)
 
-      INTEGER L,IR,IIA,I,J
+      INTEGER L,IR,IIA,I,J,IA(N)
       REAL RRA,RRB
       L=N/2+1
       IR=N

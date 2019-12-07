@@ -5,7 +5,7 @@
 
 void F77_NAME(slogreg)(int *, int *, int *, int *, 
    float *, float *, int *, int *, float *,
-   float *, float *, int *, float *, float *,
+   float *, int *, int *, float *, float *,
    int *, int *, int *, int *,
    float *, int *, int*, 
    double *, double *, float *, int *, int *, int *, int *, int *, int *);
@@ -16,8 +16,8 @@ static double *dlvector();
 
 void clogreg(n1,n2,nsep,intpars,rpars,seps,dcph,orders,resp,weight,
   datri,iotrees,iocoef,ioscores,rd4)
-   int *n1,*n2,*nsep,*intpars,*dcph,*orders,*iotrees,*rd4;
-   float *rpars,*seps,*resp,*weight,*datri,*iocoef,*ioscores;
+   int *n1,*n2,*nsep,*intpars,*dcph,*orders,*iotrees,*rd4,*datri;
+   float *rpars,*seps,*resp,*weight,*iocoef,*ioscores;
 {
    int *ntrx,*nknx,*storage,*storage2,*storage3,bmax,jmax,tmax;
    float *storage4,*wur1;
