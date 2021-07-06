@@ -1,4 +1,4 @@
-0b4bfa81396fc129f4d81c64c307e841 *DESCRIPTION
+8828a031a20881d78dd40388fa0c9eac *DESCRIPTION
 d981a4cb4499bdf145b8b14a5f39813c *INDEX
 43f15b11ff2582e0d1cb31d6d934d921 *NAMESPACE
 f63761c436d2b497254ae7f2ea2b4a54 *R/LogicReg.R
@@ -35,6 +35,7 @@ ec26d3448faea1617f12ed014b4ee773 *man/print.logreg.Rd
 04280342d27db8a93eec691c837c3e11 *src/clogic.c
 bd37dabb73df78194b908d33e9bfa611 *src/external.f
 e8117cf4cd150b1765bf07d7944dd436 *src/registerDynamicSymbol.c
-798e2b96c6262a04b2724cefbc2ab9c6 *src/slogic.f
+5e8bb430a8c56b3adc0b3fe71c0642e8 *src/sextra.f
+0a12494e157e499c71e67435341b2c65 *src/slogic.f
 6ff3987edd9fa3a554c1f9ffbc3b32c8 *src/swrite.c
 29ea051e35105b6821506e58c277f41d *src/trioLR.f

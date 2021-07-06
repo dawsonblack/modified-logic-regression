@@ -2761,6 +2761,7 @@
 
         ! arguments in
           INTEGER knt,n2,nkn,ntr,wh,r1,r2,r3
+          INTEGER l1,l2,l3,l4,l5,l6,l7
           INTEGER cnc(3)
           INTEGER conc(nkn,ntr,3)
           INTEGER negs(nkn,ntr,3)
@@ -2772,6 +2773,13 @@
         ! arguments out
 
       ! move leaf and create operator
+        l1=conc(2*knt,wh,1)
+        l2=term(2*knt,wh,1)
+        l3=negs(2*knt,wh,1)
+        l4=pick(2*knt,wh,1)
+        l5=term(knt,wh,1)
+        l6=negs(knt,wh,1)
+        l7=conc(knt,wh,1)
         conc(2*knt,wh,1)=3
         term(2*knt,wh,1)=term(knt,wh,1)
         negs(2*knt,wh,1)=negs(knt,wh,1)
@@ -2784,6 +2792,13 @@
           letter=r1
           IF (letter.EQ.term(2*knt,wh,1))THEN
             r1= -1
+            conc(2*knt,wh,1)=l1
+            term(2*knt,wh,1)=l2
+            negs(2*knt,wh,1)=l3
+            pick(2*knt,wh,1)=l4
+            term(knt,wh,1)=l5
+            negs(knt,wh,1)=l6
+            conc(knt,wh,1)=l7
             GOTO 599
           END IF
           neg=r3
@@ -5419,7 +5434,7 @@
          i4=ntr
       END IF
       DO i1=1,nkn
-        DO i2=1,i4
+        DO i2=i3,i4
           conc(i1,i2,iout)=conc(i1,i2,iin)
           negs(i1,i2,iout)=negs(i1,i2,iin)
           pick(i1,i2,iout)=pick(i1,i2,iin)
@@ -5445,8 +5460,6 @@
       ! workspaces
       DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
       INTEGER wui1((8+bmax)*n1)
-     
-
       INTEGER mtp,wh,knt,letter,op,neg,sng,dbl,improve,bestmove(3)
       INTEGER yes,l2
       improve=-1
@@ -5470,7 +5483,6 @@
                       l2=letter
                       CALL altlf(knt,n2,nkn,ntr,wh,negs,term,l2,neg)
                       IF(l2.LT.0)GOTO 391
-                    
                       CALL evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,
      #                     n2,wh,knt,storage,datri,prtr,mdl,nsep,dcph,
      #                     orders,mtm,rsp,weight,seps,cbetas,xtxsep,nop,
@@ -5479,7 +5491,8 @@
                     END IF
                     CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
                   END DO
-391               CONTINUE
+391               CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
+                  CONTINUE
                 END DO
               END IF
               IF(mtp.EQ.4.OR.mtp.EQ.5)THEN
@@ -5500,7 +5513,8 @@
                       CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
                     END DO
                   END DO
-394               CONTINUE
+394               CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
+                  CONTINUE
                 END DO
               END IF
               IF(mtp.EQ.2.OR.mtp.EQ.3.OR.mtp.EQ.6)THEN
@@ -5622,7 +5636,7 @@
         INTEGER prtr(n1,ntr),datri(n2,n1),bestmove(3)
         INTEGER mdl,nsep,dcph(n1),ordrs(n1),mtm,improve,oncemore
         REAL seps(nsep,n1),cbetas(0:(nsep+ntr)),xtxsep(0:nsep,0:nsep)
-        REAL weight(n1),bestscore,rsp(n1),penalty
+        REAL weight(n1),bestscore,rsp(n1),penalty,safecoef(0:500)
       ! workspaces
         DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
         INTEGER wui1((8+bmax)*n1)
@@ -5630,7 +5644,10 @@
 
         REAL score(3)
         INTEGER ssize,nopold,reject
-        INTEGER nwkv,wkv(LGCnknMAX),l1,l2
+        INTEGER nwkv,wkv(LGCnknMAX),l1,l2,i
+        DO i=0,(nsep+ntr)
+           IF(i.lt.501)safecoef(i)=cbetas(i)
+        END DO
         nopold=nop
         CALL gstoring(nkn,ntr,conc,pick,ssize,nop)
         CALL evaluating(wh,knt,mtp,n1,n2,nkn,ntr,conc,term,negs,
@@ -5643,7 +5660,6 @@
        !   take care that the there is real convergence
         l1=0 
         l2=0
-        
         IF(cbetas(1).GT. -10000.)l1=1
         IF(cbetas(1).LT. 10000.)l2=1
         IF(l1+l2.EQ.0)reject=1
@@ -5669,7 +5685,14 @@
           CALL gstoring(nkn,ntr,conc,pick,ssize,nop)
         END IF
         ELSE
+          CALL restoring(0,wh,n1,nkn,ntr,storage,nwkv,wkv)
+          CALL gstoring(nkn,ntr,conc,pick,ssize,nop)
           CALL copytree(ntr,nkn,conc,negs,pick,term,-1,3,1)
+        END IF
+        IF(reject.NE.0.OR.improve.NE.1)THEN
+           DO i=0,(nsep+ntr)
+              IF(i.lt.501)cbetas(i)=safecoef(i)
+           END DO
         END IF
         END
       ! *****************************************************************
