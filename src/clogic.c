@@ -1,6 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include "R.h"
+#include "clogic.h"
 #define Salloc(n, t)  (t *)R_alloc((long)(n), (int)sizeof(t))
 
 void F77_NAME(slogreg)(int *, int *, int *, int *, 
@@ -10,14 +11,13 @@ void F77_NAME(slogreg)(int *, int *, int *, int *,
    float *, int *, int*, 
    double *, double *, float *, int *, int *, int *, int *, int *, int *);
 
-static int *ilvector();
-static float *flvector();
-static double *dlvector();
+static int *ilvector(int l);
+static float *flvector(int l);
+static double *dlvector(int l);
 
-void clogreg(n1,n2,nsep,intpars,rpars,seps,dcph,orders,resp,weight,
-  datri,iotrees,iocoef,ioscores,rd4)
-   int *n1,*n2,*nsep,*intpars,*dcph,*orders,*iotrees,*rd4,*datri;
-   float *rpars,*seps,*resp,*weight,*iocoef,*ioscores;
+void clogreg(int *n1,int *n2,int *nsep,int *intpars,float *rpars,float *seps,
+	int *dcph,int* orders,float *resp,float *weight,
+  int *datri,int *iotrees,float *iocoef,float *ioscores,int *rd4)
 {
    int *ntrx,*nknx,*storage,*storage2,*storage3,bmax,jmax,tmax;
    float *storage4,*wur1;
@@ -56,8 +56,7 @@ void clogreg(n1,n2,nsep,intpars,rpars,seps,dcph,orders,resp,weight,
 }
 /******************************************************************************/
 
-static int *ilvector(l)
-int l;
+static int *ilvector(int l)
 /* allocate an int vector with subscript range v[0...(l-1)] */
 {
    int *v,i;
@@ -66,8 +65,7 @@ int l;
    return v;
 }
 /******************************************************************************/
-static float *flvector(l)
-int l;
+static float *flvector(int l)
 /* allocate a double vector with subscript range v[0...(l-1)] */
 {
    float *v;
@@ -77,8 +75,7 @@ int l;
    return v;
 }
 /******************************************************************************/
-static double *dlvector(l)
-int l;
+static double *dlvector(int l)
 /* allocate a double vector with subscript range v[0...(l-1)] */
 {
    double *v;

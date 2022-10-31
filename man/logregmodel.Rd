@@ -35,8 +35,9 @@ Kooperberg C, Ruczinski I, LeBlanc ML, Hsu L (2001). Sequence Analysis
 using Logic Regression, \emph{Genetic Epidemiology}, \bold{21},
 S626-S631.
 
-Selected chapters from the dissertation of Ingo Ruczinski, available
-from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}
+Selected chapters from the dissertation of Ingo Ruczinski, available from
+\url{https://research.fredhutch.org/content/dam/stripe/kooperberg/ingophd-logic.pdf}}
+
 
 
 \author{

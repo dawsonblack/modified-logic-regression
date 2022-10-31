@@ -62,7 +62,7 @@
         ! seps     array of the above variables - this is a single
         !          precision matrix of size n1 times nsep
        
-      ! For My_own_fitting: 
+      ! For Myownfitting: 
 
         ! You are allowed to change the values of dcph, weight and
         ! ordrs     not of any of the other variables
@@ -86,7 +86,7 @@
         !           to converge (0 = move is OK ; 1 = reject move)
         !           set this one to 0 if there is no such condition
        
-      ! For My_own_scoring: 
+      ! For Myownscoring: 
 
         ! Additional input is 
         !
@@ -103,15 +103,15 @@
       ! Note: both subroutines should work if nop and or nsep is zero.
       ! while we try to prevent that models are singular, it is possible
       ! that for your model a single or degenerate model is passed on
-      ! for evaluation. For My_own_fitting you can pass the model
-      ! back with reject=1, for My_own_scoring you can pass it on with
+      ! for evaluation. For Myownfitting you can pass the model
+      ! back with reject=1, for Myownscoring you can pass it on with
       ! a very large value for score.
 
         ! Below are the frames to put these scoring functions in. 
         ! currently they just yield random numbers as the fitted models.
 
 
-      SUBROUTINE My_own_scoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,
+      SUBROUTINE Myownscoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,
      #                          nop,wh,nsep,seps,score,betas)
 
       IMPLICIT NONE
@@ -133,7 +133,7 @@
         score=0.
 
       END 
-      SUBROUTINE My_own_fitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,nop,
+      SUBROUTINE Myownfitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,nop,
      #                          wh,nsep,seps,score,betas,reject)
 
       IMPLICIT NONE

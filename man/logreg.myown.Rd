@@ -16,12 +16,12 @@ be useful if you have a model other than those which we already
 programmed in.
 
 Essentially you need to provide two routines in the file
-\bold{My\_own\_scoring.f}:\cr
-(i) A routine \emph{My\_own\_fitting} which fits your model: it
+\bold{Myownscoring.f}:\cr
+(i) A routine \emph{Myownfitting} which fits your model: it
 provides a coefficient (beta) for each of the logic trees and provides
 a score of how good the model is. Low scores are good. (So add a minus
 sign if your score is a log-likelihood.)\cr
-(ii) A routine \emph{My\_own\_scoring} which - given the betas -
+(ii) A routine \emph{Myownscoring} which - given the betas -
 provides the score of your model. [If you don't use cross-validation,
 this second routine is not needed, though some dummy routine to
 satisfy the compiler should still be provided.]
@@ -96,7 +96,7 @@ size \code{nsep} times \code{n1}. Note that \code{seps} and
 \code{prtr} are stored in different directions.
 
 
-For \emph{My\_own\_fitting} you should return:\cr
+For \emph{Myownfitting} you should return:\cr
 \code{betas}:\cr 
 a vector of parameters of the model that you fit.  \code{betas(0)}
 should be the parameter for the intercept \code{betas(1:nsep)} should
@@ -117,7 +117,7 @@ one to 0 if there is no such condition.
 
 You are allowed to change the values of dcph, and weight.
 
-For \emph{My\_own\_scoring} additional input is:\cr
+For \emph{Myownscoring} additional input is:\cr
 \code{betas}:
 the coefficients
 
@@ -129,9 +129,9 @@ simply return a very large number.
 
 While we try to prevent that models are singular, it is possible that
 for your model a single or degenerate model is passed on for
-evaluation. For My\_own\_fitting you can pass the model back with
-\code{reject = 1}, for My\_own\_scoring you can pass it on with a very large
-value for \code{score}.  Currently My\_own\_scoring.f contains empty frames for
+evaluation. For Myownfitting you can pass the model back with
+\code{reject = 1}, for Myownscoring you can pass it on with a very large
+value for \code{score}.  Currently Myownscoring.f contains empty frames for
 the scoring functions; condlogic.ff contains an example with
 conditional logistic regression.
 
@@ -169,7 +169,7 @@ by its controls. Cases with a negative response are put in a stratum
 -1, which is not used in any computations.  This has implications for
 cross-validation. See below.
 
-In \emph{My\_own\_fitting} and \emph{My\_own\_scoring} we first allocate
+In \emph{Myownfitting} and \emph{Myownscoring} we first allocate
 various vectors (strata, index, censoring variable) that are local, as
 well as some work arrays that are used by our fitting routines.  (We
 need to set some of the parameters for that, see the help page of
@@ -179,9 +179,9 @@ vectors.  We use slightly modified versions of the proportional
 hazards routines that are already used otherwise in the Logic
 Regression program, to include stratification. After the model is
 fitted, we assign minus the partial likelihood to \code{score(1)} and
-(for \emph{My\_own\_fitting}) we pass on the betas.
+(for \emph{Myownfitting}) we pass on the betas.
 
-Recompile after replacing \emph{My\_own\_scoring.f} by
+Recompile after replacing \emph{Myownscoring.f} by
 \emph{condlogic.ff}
 
 The permutation and null model versions are not directly usable (we
@@ -214,9 +214,8 @@ Kooperberg C, Ruczinski I, LeBlanc ML, Hsu L (2001). Sequence Analysis
 using Logic Regression, \emph{Genetic Epidemiology}, \bold{21},
 S626-S631.
 
-Selected chapters from the dissertation of Ingo Ruczinski, available
-from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}
-
+Selected chapters from the dissertation of Ingo Ruczinski, available from
+\url{https://research.fredhutch.org/content/dam/stripe/kooperberg/ingophd-logic.pdf}}
 
 
 \author{

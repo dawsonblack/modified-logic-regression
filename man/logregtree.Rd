@@ -105,9 +105,8 @@ methods and software.  \emph{Proceedings of the MSRI workshop on
 Nonlinear Estimation and Classification} (Eds: D. Denison, M. Hansen,
 C. Holmes, B. Mallick, B. Yu), Springer: New York, 333-344.
 
-Selected chapters from the dissertation of Ingo Ruczinski, available
-from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}
-
+Selected chapters from the dissertation of Ingo Ruczinski, available from
+\url{https://research.fredhutch.org/content/dam/stripe/kooperberg/ingophd-logic.pdf}}
 
 \author{
 Ingo Ruczinski \email{ingo@jhu.edu} and

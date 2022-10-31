@@ -2,7 +2,7 @@
       ! proportional hazards model
       ! last modification 06/20/01
 
-      SUBROUTINE My_own_scoring(prtr,rsp,dchp,ordrs,weight,n1,
+      SUBROUTINE Myownscoring(prtr,rsp,dchp,ordrs,weight,n1,
      #                        ntr,nop,wh,nsep,seps,
      #                        score,betas)
 
@@ -26,12 +26,12 @@
         ! arguments out
           REAL score(3),r
         IF(n1.GT.LGCn1MAX)THEN
-           CALL stringprint("LGCn1MAX too small in My_own_scoring",36)
+           CALL stringprint("LGCn1MAX too small in Myownscoring",36)
            CALL stringprint("fix and recompile",18)
            CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
         IF(nsep+ntr.GT.LGCbetaMAX)THEN
-           CALL stringprint("LGCbetaMAX too small in My_own_scoring",38)
+           CALL stringprint("LGCbetaMAX too small in Myownscoring",38)
            CALL stringprint("fix and recompile",18)
            CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
@@ -296,7 +296,7 @@
       ! cox proportional hazards model
       ! last modification 06/21/01
 
-      SUBROUTINE My_own_fitting(prtr,rsp,dchp,ordrs,weight,n1,ntr,
+      SUBROUTINE Myownfitting(prtr,rsp,dchp,ordrs,weight,n1,ntr,
      #               nop,wh,nsep,seps,score,betas,reject)
       IMPLICIT NONE
 
@@ -317,12 +317,12 @@
         ! arguments out
           REAL score(3),betas(0:(nsep+ntr)),r
         IF(n1.GT.LGCn1MAX)THEN
-           CALL stringprint("LGCn1MAX too small in My_own_fitting",36)
+           CALL stringprint("LGCn1MAX too small in Myownfitting",36)
            CALL stringprint("fix and recompile",18)
            CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF
         IF(nsep+ntr.GT.LGCbetaMAX)THEN
-           CALL stringprint("LGCbetaMAX too small in My_own_fitting",38)
+           CALL stringprint("LGCbetaMAX too small in Myownfitting",38)
            CALL stringprint("fix and recompile",18)
            CALL stringprint("PROGRAM **WILL** CRASH",23)
         END IF

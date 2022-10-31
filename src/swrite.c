@@ -1,7 +1,5 @@
 #include <stdio.h>
-void cwrite_(lvisit,visit,k)
-float *lvisit;
-int *visit,*k;
+void cwrite_(float *lvisit,int *visit, int *k)
 {
    FILE *ff;
    int i;
@@ -11,7 +9,7 @@ int *visit,*k;
    fprintf(ff,"\n");
    fclose(ff);
 }
-void ciwrite_()
+void ciwrite_(void)
 {
    FILE *ff;
    ff=fopen("slogiclisting.tmp","w");

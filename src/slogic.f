@@ -20,7 +20,7 @@
 ! Journal of Computational and Graphical Statistics, 12, 475-511
 ! Other references can be found on our homepages
 ! http://www.biostat.jhsph.edu/~iruczins/
-! http://kooperberg.fhcrc.org
+! https://research.fredhutch.org/kooperberg
 ! You can contact us at ingo@jhu.edu and clk@fredhutch.org
 ! =======================================================================
 
@@ -3578,7 +3578,7 @@
         END IF
         IF (reject.EQ.0) THEN
           IF (mdl.EQ.0)THEN
-            CALL My_own_fitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,
+            CALL Myownfitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,
      #                        nop,wh,nsep,seps,score(1),smbetas,reject)
             DO j=0,(nsep+ntr)
               betas(j)=smbetas(j)
@@ -4398,7 +4398,7 @@
            CALL exposcore(prtr,rsp,dcph,weight,n1,ntr,nop,
      #                         nsep,seps,score(1),betas)
         ELSE 
-           CALL My_own_scoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,nop,
+           CALL Myownscoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,nop,
      #                         wh,nsep,seps,score(1),betas)
         END IF
 

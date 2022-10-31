@@ -481,9 +481,8 @@ S626-S631.
 Kooperberg C, Ruczinki I (2005). Identifying interacting SNPs using
 Monte Carlo Logic Regression, \emph{Genetic Epidemiology}, \bold{28}, 157-170.
 
-Selected chapters from the dissertation of Ingo Ruczinski, available
-from \url{http://kooperberg.fhcrc.org/logic/documents/ingophd-logic.pdf}}
-
+Selected chapters from the dissertation of Ingo Ruczinski, available from
+\url{https://research.fredhutch.org/content/dam/stripe/kooperberg/ingophd-logic.pdf}}
 
 \author{
 Ingo Ruczinski \email{ingo@jhu.edu} and

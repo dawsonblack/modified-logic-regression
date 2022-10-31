@@ -20,7 +20,7 @@
 # Journal of Computational and Graphical Statistics, 12, 475-511.
 # Other references can be found on our homepages
 # http://www.biostat.jhsph.edu/~iruczins/
-# http://kooperberg.fhcrc.org/~clk
+# https://research.fredhutch.org/kooperberg/
 # You can contact us at ingo@jhu.edu and clk@fredhutch.org
 # =======================================================================
 
