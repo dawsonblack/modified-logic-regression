@@ -1,4 +1,4 @@
-51312259de9f1e88622fa907f613ace4 *DESCRIPTION
+1a606810d5e583b7e1f4dcaebc9b63dc *DESCRIPTION
 d981a4cb4499bdf145b8b14a5f39813c *INDEX
 43f15b11ff2582e0d1cb31d6d934d921 *NAMESPACE
 fe9b805080fd32cdd922d677711112a8 *R/LogicReg.R
@@ -34,9 +34,9 @@ ec26d3448faea1617f12ed014b4ee773 *man/print.logreg.Rd
 beee15fcb4c07aeeda3c8c2ff4375f69 *src/Myownscoring.f
 6abe5037c3657108688c641113937ca9 *src/clogic.c
 faa9c30c41b48779971dd1b7cf9fa59a *src/clogic.h
-bd37dabb73df78194b908d33e9bfa611 *src/external.f
+3382337e407c03e714426a7d6133ab11 *src/external.f
 d5e154d2b627742a38c69d8163cff08b *src/registerDynamicSymbol.c
-5e8bb430a8c56b3adc0b3fe71c0642e8 *src/sextra.f
-c31572eb13c18ac39ec989cb112ea9df *src/slogic.f
+f4ff7089358d75850f44a23295553b42 *src/sextra.f
+07e9511e1109013c293f779091736c1a *src/slogic.f
 9165a3797abfec3d321537c5180b956b *src/swrite.c
-29ea051e35105b6821506e58c277f41d *src/trioLR.f
+dbf5474b8b7a5fbde988cefa7055592c *src/trioLR.f

@@ -1124,7 +1124,7 @@ C
       RETURN
       END
 
-      ! *****************************************************************
+      ! **************************************************************
       ! Against overflow
       DOUBLE PRECISION FUNCTION mylog(x)
       IMPLICIT none

@@ -1,9 +1,9 @@
-      ! *****************************************************************
+      ! ********************************************************
       ! utility for debugging - printing model
       SUBROUTINE dprintmodel(nkn,ntr,nsep,conc,negs,pick,term,
      #    betas,score,k2,m2,kk)
       IMPLICIT NONE
-      INTEGER nkn,ntr,k2,i,j,k,m2,nsep,j2,kk
+      INTEGER nkn,ntr,k2,i,m2,nsep,j2,kk
       INTEGER conc(nkn,ntr,3)
       INTEGER negs(nkn,ntr,3)
       INTEGER pick(nkn,ntr,3)
@@ -78,7 +78,7 @@
        
       SUBROUTINE prtrprint(prtr,i,aax,l,n1,ntr)
       IMPLICIT NONE
-      INTEGER i,l,n1,ntr,j1,j2
+      INTEGER i,l,n1,ntr,j1
       INTEGER prtr(n1,ntr)
       CHARACTER (LEN=l) aax
       CHARACTER (LEN=125) aa
@@ -91,7 +91,7 @@
 
       SUBROUTINE storprint(stor,aax,l,n1)
       IMPLICIT NONE
-      INTEGER l,n1,ntr,j1,j2
+      INTEGER l,n1,j1
       INTEGER stor(n1)
       CHARACTER (LEN=l) aax
       CHARACTER (LEN=125) aa
@@ -104,7 +104,7 @@
 
       SUBROUTINE emprint(aax,l,n1,n2,n3,n4,n5,n6,n7,n8)
       IMPLICIT NONE
-      INTEGER l,n1,n2,n3,n4,n5,n6,n7,n8,i
+      INTEGER l,n1,n2,n3,n4,n5,n6,n7,n8
       CHARACTER (LEN=l) aax
       CHARACTER (LEN=125) aa
       aa(1:l)=aax

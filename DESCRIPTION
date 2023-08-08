@@ -1,6 +1,6 @@
 Package: LogicReg
-Version: 1.6.5
-Date: 2022-10-31
+Version: 1.6.6
+Date: 2023-07-24
 Title: Logic Regression
 Author: Charles Kooperberg <clk@fredhutch.org> and Ingo Ruczinski <ingo@jhu.edu>
 Maintainer: Charles Kooperberg <clk@fredhutch.org>
@@ -12,6 +12,6 @@ Description: Routines for fitting Logic Regression models. Logic Regression is d
         Carlo Logic Regression is described in and Kooperberg and Ruczinski (2005)
         <DOI:10.1002/gepi.20042>.
 NeedsCompilation: yes
-Packaged: 2022-10-31 23:51:52 UTC; clk
+Packaged: 2023-07-24 22:00:09 UTC; clk
 Repository: CRAN
-Date/Publication: 2022-11-01 00:32:47 UTC
+Date/Publication: 2023-08-08 23:10:10 UTC
