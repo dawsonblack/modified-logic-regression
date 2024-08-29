@@ -59,7 +59,7 @@
       CALL makerstring(l+1,l+14,aa,r,9,4)
       CALL stringprint(aa,l+14)
       END
-       
+
       SUBROUTINE betaprint(sc,b,aax,l)
       IMPLICIT NONE
       REAL sc,b(0:4)
@@ -75,7 +75,7 @@
       CALL makerstring(l+71,l+84,aa,b(4),9,4)
       CALL stringprint(aa,l+84)
       END
-       
+
       SUBROUTINE prtrprint(prtr,i,aax,l,n1,ntr)
       IMPLICIT NONE
       INTEGER i,l,n1,ntr,j1

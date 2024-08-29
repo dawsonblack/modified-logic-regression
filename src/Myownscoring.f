@@ -57,44 +57,44 @@
         ! wh       the index of the tree that has been edited in the
         !          last move - i.e. the column of prtr that has
         !          changes since the last call
-        ! nsep     number of varaibles that get fit a separate 
-        !          parameter 
+        ! nsep     number of varaibles that get fit a separate
+        !          parameter
         ! seps     array of the above variables - this is a single
         !          precision matrix of size n1 times nsep
-       
-      ! For Myownfitting: 
+
+      ! For Myownfitting:
 
         ! You are allowed to change the values of dcph, weight and
         ! ordrs     not of any of the other variables
         ! You should return
         ! betas     a vector of parameters of the model that you
-        !           fit. 
+        !           fit.
         !           betas(0) should be the parameter for the intercept
         !           betas(1:nsep) should be the parameters for the
         !                   continuous variables in seps
-        !           betas((nsep+1):(nsep+nop)) should be the 
+        !           betas((nsep+1):(nsep+nop)) should be the
         !                   parameters for the binary trees in prtr
         !           if you have more parameters, use dcph, weight or
         !           orders ==> these variables will not be printed
         !           however.
-        ! score     whatever score you assign to your model  
+        ! score     whatever score you assign to your model
         !           small should be good (i.e. deviance or
         !           -log.likelihood)
-        ! reject    an indicator whether or not to reject the proposed 
+        ! reject    an indicator whether or not to reject the proposed
         !           move *regardless* of the score (for example when an
         !           iteration necessary to determine the score failed
         !           to converge (0 = move is OK ; 1 = reject move)
         !           set this one to 0 if there is no such condition
-       
-      ! For Myownscoring: 
 
-        ! Additional input is 
+      ! For Myownscoring:
+
+        ! Additional input is
         !
         ! betas     the coefficients
         !
         ! You should return
         !
-        ! score     whatever score you assign to your model  
+        ! score     whatever score you assign to your model
         !           small should be good (i.e. deviance or
         !           -log.likelihood)
         !           If the model "crashes", you should simply return a
@@ -107,7 +107,7 @@
       ! back with reject=1, for Myownscoring you can pass it on with
       ! a very large value for score.
 
-        ! Below are the frames to put these scoring functions in. 
+        ! Below are the frames to put these scoring functions in.
         ! currently they just yield random numbers as the fitted models.
 
 
@@ -132,7 +132,7 @@
       ! for now, the score is 0
         score=0.
 
-      END 
+      END
       SUBROUTINE Myownfitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,nop,
      #                          wh,nsep,seps,score,betas,reject)
 

@@ -22,12 +22,12 @@
 ! The main reference for Trio Logic Regression is
 ! Li Q, Fallin MD, Louis TA, Lasseter VK, McGrath JA, Avramopoulos D,
 ! Wolyniec PS, Valle D, Liang KY, Pulver AE, Ruczinski I (2010).
-! Detection of SNP-SNP Interactions in Trios of Parents with 
+! Detection of SNP-SNP Interactions in Trios of Parents with
 ! Schizophrenic Children. Genetic Epdemiology, 34, 396-406.
 
 ! Contact: ingo@jhu.edu
-! =======================================================================      
-      
+! =======================================================================
+
       SUBROUTINE myphxxz(delta,idx,covs,np,n1,nsep,ntr,logl,beta,strata,
      #                   reject,wud1,wud3,bmax)
       IMPLICIT none
@@ -188,7 +188,7 @@
             END DO
           END DO
           logl=u
-      END 
+      END
       ! ***********************************************************
       ! ***********************************************************
       SUBROUTINE mypllxxz(logl,beta,delta,idx,covs,np,n1,strata,ff,
@@ -226,7 +226,7 @@
             END IF
             END IF
           END DO
-      END 
+      END
       ! ********************************************************
       ! ********************************************************
 
@@ -344,9 +344,9 @@
          DO i=1,(nsep+nop)
             betas(i)=REAL(betaf(i))
          END DO
-         
+
          IF (myausfahrt.EQ.1) THEN
             reject=1
          END IF
 
-      END 
+      END

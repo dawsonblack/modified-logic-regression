@@ -259,7 +259,7 @@ plot.logreg <- function(x, pscript = FALSE, title = TRUE, ...)
             tmp5 <- outer(tmp/sum(tmp),tmp)
             image(tmp3,tmp3,tmp2/tmp5,main="observed/expected ratio of jointly being in model",...)
 
-            
+
           }
        }
     }
@@ -331,7 +331,7 @@ plot.logreg <- function(x, pscript = FALSE, title = TRUE, ...)
       data2 <- cbind(data2, vrb)
       rng.ts2 <- range(c(data2[, 3] + hmse * data2[, 4], data2[,
          3] - hmse * data2[, 4]))
-      plot(rng, rng.ts2, type = "n", xlab = "model size", ylab = 
+      plot(rng, rng.ts2, type = "n", xlab = "model size", ylab =
          "test scores +/- one standard error")
       for(j in rng.ntr[1]:rng.ntr[2]) {
          which <- (1:dim(data2)[1])[data2[, 1] == j]
@@ -452,7 +452,7 @@ plot.logregmodel <- function(x, pscript = FALSE, title = TRUE, nms, ...)
    }
 }
 
-plot.logregtree <- function(x, nms, full = TRUE, and.or.cx = 1.0, leaf.sz = 1.0, 
+plot.logregtree <- function(x, nms, full = TRUE, and.or.cx = 1.0, leaf.sz = 1.0,
    leaf.txt.cx = 1.0, coef.cx = 1.0, indents = rep(0, 4), coef = TRUE, coef.rd = 4, ...)
 {
    ltree <- x
@@ -548,7 +548,7 @@ plot.logregtree <- function(x, nms, full = TRUE, and.or.cx = 1.0, leaf.sz = 1.0,
          }
       }
       for(k in 1:max.p) {
-         if((ceiling(log(k)/log(2)) < level) & (2 * k < max.p)) 
+         if((ceiling(log(k)/log(2)) < level) & (2 * k < max.p))
             {
             if((data$pick[k] == 1) & (data$pick[2 * k] == 1)) {
                lines(data$x[c(k, 2 * k)], c(data$ y[k] - 0.2, data$y[2 * k] + 0.2))
@@ -561,55 +561,55 @@ plot.logregtree <- function(x, nms, full = TRUE, and.or.cx = 1.0, leaf.sz = 1.0,
 }
 
 
-predict.logreg <- function(object, msz, ntr, newbin, newsep, ...) 
+predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
 {
-    if(class(object)[1] != "logreg") 
+    if(class(object)[1] != "logreg")
         stop("object not of class logreg")
-    if(object$choice > 2 && object$choice !=6) 
+    if(object$choice > 2 && object$choice !=6)
         stop("object$choice needs to be 1, 2, or 6")
     if(!missing(newbin)) {
-        if(missing(msz) && missing(ntr) && missing(newsep)) 
+        if(missing(msz) && missing(ntr) && missing(newsep))
             y <- frame.logreg(fit = object, newbin = newbin)
-        if(missing(msz) && missing(ntr) && (missing(newsep) == FALSE)) 
+        if(missing(msz) && missing(ntr) && (missing(newsep) == FALSE))
             y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep)
-        if(missing(msz) && (missing(ntr) == FALSE) && missing(newsep)) 
+        if(missing(msz) && (missing(ntr) == FALSE) && missing(newsep))
             y <- frame.logreg(fit = object, newbin = newbin, ntr = ntr)
-        if(missing(msz) && (missing(ntr) == FALSE) && (missing(newsep) == FALSE)) 
+        if(missing(msz) && (missing(ntr) == FALSE) && (missing(newsep) == FALSE))
             y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, ntr = ntr)
-        if((missing(msz) == FALSE) && missing(ntr) && missing(newsep)) 
+        if((missing(msz) == FALSE) && missing(ntr) && missing(newsep))
             y <- frame.logreg(fit = object, newbin = newbin, msz = msz)
-        if((missing(msz) == FALSE) && missing(ntr) && (missing(newsep) == FALSE)) 
+        if((missing(msz) == FALSE) && missing(ntr) && (missing(newsep) == FALSE))
             y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, msz = msz)
-        if((missing(msz) == FALSE) && (missing(ntr) == FALSE) && missing(newsep)) 
+        if((missing(msz) == FALSE) && (missing(ntr) == FALSE) && missing(newsep))
             y <- frame.logreg(fit = object, newbin = newbin, ntr = ntr, msz = msz)
-        if((missing(msz) == FALSE) && (missing(ntr) == FALSE) && (missing(newsep) == FALSE)) 
+        if((missing(msz) == FALSE) && (missing(ntr) == FALSE) && (missing(newsep) == FALSE))
             y <- frame.logreg(fit = object, newbin = newbin, newsep = newsep, ntr = ntr, msz = msz)
     }
     else {
-        if(missing(msz) && missing(ntr)) 
+        if(missing(msz) && missing(ntr))
             y <- frame.logreg(fit = object)[, -1]
-        if(missing(msz) && (missing(ntr) == FALSE)) 
+        if(missing(msz) && (missing(ntr) == FALSE))
             y <- frame.logreg(fit = object, ntr = ntr)[, -1]
-        if((missing(msz) == FALSE) && missing(ntr)) 
+        if((missing(msz) == FALSE) && missing(ntr))
             y <- frame.logreg(fit = object, msz = msz)[, -1]
-        if((missing(msz) == FALSE) && (missing(ntr) == FALSE)) 
+        if((missing(msz) == FALSE) && (missing(ntr) == FALSE))
             y <- frame.logreg(fit = object, ntr = ntr, msz = msz)[, -1]
     }
     iik <- 0
     if(missing(msz) && missing(ntr) && object$select == "greedy") iik <- 1
-    unstrip <- function(x) 
+    unstrip <- function(x)
     {
         dd <- dim(x)
         y <- x
         if(length(dd) == 2) {
             dd2 <- dd[2]
-            if(dd2 == 1) 
+            if(dd2 == 1)
                 y <- c(x[, 1])
-            if(dd2 == 2) 
+            if(dd2 == 2)
                 y <- cbind(c(x[, 1]), c(x[, 2]))
-            if(dd2 > 2) 
+            if(dd2 > 2)
                 y <- cbind(c(x[, 1]), c(x[, 2]), c(x[, 3]))
-            if(dd2 > 3) 
+            if(dd2 > 3)
                 for(i in 4:dd2)
                    y <- cbind(y, c(x[, i]))
             y
@@ -621,26 +621,26 @@ predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
         y
     }
     ly <- length(y[, 1])
-    if(is.matrix(y) == FALSE) 
+    if(is.matrix(y) == FALSE)
         y <- matrix(unstrip(y), nrow = ly)
     lly <- length(y[,1])
     y <- y[, -1]
     if(lly==1) y <- matrix(y, nrow=1)
-    if(object$type == "proportional.hazards") 
+    if(object$type == "proportional.hazards")
         y <- y[, -1]
     z <- NULL
-    if(length(y) == ly) 
+    if(length(y) == ly)
         y <- matrix(y, ncol = 1)
     y <- cbind(y, rep(1, ly))
     if(object$select == "single.model") {
         z <- rep(object$model$coef[1], length(y[, 1]))
-        for(i in 2:length(object$model$coef)) 
+        for(i in 2:length(object$model$coef))
             z <- z + object$model$coef[i] * y[, i - 1]
     }
     if(object$select == "multiple.models" |object$select == "greedy") {
-        if(missing(msz)) 
+        if(missing(msz))
             msz <- min(object$nleaves):max(object$nleaves)
-        if(missing(ntr)) 
+        if(missing(ntr))
             ntr <- min(object$ntrees):max(object$ntrees)
         z <- NULL
         if(object$nsep > 0) {
@@ -656,19 +656,19 @@ predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
                 if(ly==1)
                   y <- matrix(y, nrow = 1)
                 else{
-                   if(length(y) == ly) 
+                   if(length(y) == ly)
                      y <- matrix(y, ncol = 1)
                 }
                 y3 <- y[, (1:nt1)]
-                if(i != object$nmodels) 
+                if(i != object$nmodels)
                   y <- y[, - (1:nt1)]
-                if(nt1 == 1) 
+                if(nt1 == 1)
                   y3 <- matrix(y3, ncol = 1)
-                if(object$nsep > 0) 
+                if(object$nsep > 0)
                   y3 <- cbind(y1, y3)
                 cc <- object$alltrees[[i]]$coef
                 z2 <- cc[1]
-                if(length(cc) > 1) 
+                if(length(cc) > 1)
                   for(ii in 2:length(cc))
                      z2 <- z2 + cc[ii] * y3[, ii - 1]
                 str <- paste("tr", nt1, ".lf", ms1, sep = "")
@@ -682,9 +682,9 @@ predict.logreg <- function(object, msz, ntr, newbin, newsep, ...)
             }
         }
     }
-    if(object$type == "classification") 
+    if(object$type == "classification")
         z[z != 0] <- 1
-    if(object$type == "logistic") 
+    if(object$type == "logistic")
         z <- exp(z)/(1 + exp(z))
     z
 }
@@ -852,9 +852,9 @@ print.logregtree <- function(x, nms, notnms, pstyle = 1, ...)
          oper <- "or"
       cat("(")
       print.logregtree(tree[l3 == 2,  ], nms, notnms, pstyle)
-      if(pstyle == 1) 
+      if(pstyle == 1)
          cat(" ",oper," ",sep="")
-      else 
+      else
          cat(" ) ",oper," ( ",sep="")
       print.logregtree(tree[l3 == 3,  ], nms, notnms, pstyle)
       cat(")")
@@ -872,7 +872,7 @@ print.logregtree <- function(x, nms, notnms, pstyle = 1, ...)
 }
 logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, penalty,
    seed, kfold, nrep, oldfit, anneal.control, tree.control, mc.control)
-{ 
+{
    call <- match.call()
    logreg.binary <- function(x)
    {
@@ -1187,7 +1187,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
    if(xseed == 0)
       xseed <- floor(runif(1) * 1000000) + 1
    ipars <- c(mdl, msz[1:2], tree.control$treesize, ntr[1:2], tree.control$
-      opers, anneal.control$update, xseed, nrep, choice, 
+      opers, anneal.control$update, xseed, nrep, choice,
       anneal.control$earlyout, tree.control$minmass, mc.control$
       nburn, mc.control$niter, mc.control$output)
    rpars <- c(anneal.control$start, anneal.control$end, anneal.control$
@@ -1196,7 +1196,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
    orders <- order(rank(resp) + runif(n1)/1000000)
    nkn <- tree.control$treesize * 2 - 1
    nxx <- 2
-   
+
    if(choice == 1 || choice == 7) {
       na <- ntr[1] * (nkn * 4 + 3)
       nb <- nsep + ntr[1] + 1
@@ -1288,7 +1288,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
 #     as.integer(rep(0,2*ipars[6]*ip4*n1)),
 #     as.integer(rep(0,7*ipars[6]*(ip4+1)*n2*4)),
 #     as.single(rep(0,7*ipars[6]*(ip4+1)*n2*4)),
-#     as.integer(t(bin)), 
+#     as.integer(t(bin)),
       rd4 = as.integer(rep(0, nxx)),
       PACKAGE="LogicReg")
    if(fit$ip[1]<(-900))stop("fatal declaration error - reduce problem or recompile package")
@@ -1327,7 +1327,7 @@ logreg <- function(resp, bin, sep, wgt, cens, type, select, ntrees, nleaves, pen
    if(tree.control$opers == 3)
       tree.control$operators <- "or"
    m1 <- list(nsample = n1, nbinary = n2, nseparate = nsep, type = type,
-      select = chs, anneal.control = anneal.control, tree.control = 
+      select = chs, anneal.control = anneal.control, tree.control =
       tree.control, seed = seed, choice = choice)
    if(choice == 7) {
       m1$anneal.control <- NULL
@@ -1506,7 +1506,7 @@ logreg.mc.control <- function(nburn = 1000, niter = 25000, hyperpars = 0, update
       else nburn <- 1000
    }
    hyperpars <- c(hyperpars, rep(0, 4))[1:4]
-   list(nburn = nburn, niter = niter, hyperpars = hyperpars, update = 
+   list(nburn = nburn, niter = niter, hyperpars = hyperpars, update =
       update, output = output)
 }
 cumhaz <- function(y,d)

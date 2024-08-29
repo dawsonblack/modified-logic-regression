@@ -3,7 +3,7 @@
 #include <R_ext/Rdynload.h>
 #include "clogic.h"
 
-/* FIXME: 
+/* FIXME:
    Check these declarations against the C/Fortran source code.
 */
 

@@ -45,7 +45,7 @@
 
         ! arguments in
           INTEGER ehm,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,mtm,bmax
-          INTEGER cnc(3),dcph(n1),ordrs(n1),storage(2*ntr*nkn*n1) 
+          INTEGER cnc(3),dcph(n1),ordrs(n1),storage(2*ntr*nkn*n1)
           REAL tstr,tend,tint,slprbc(25),weight(n1),rd2(*),rd3(*)
           REAL resp(n1),seps(nsep,n1)
           REAL penalty,hyperpars(10)
@@ -60,7 +60,7 @@
           REAL acr,sco,temp,rsp(n1)
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
-        
+
           INTEGER earlyup
           INTEGER prtr(n1,bmax)
           REAL cbetas(0:LGCbetaMAX),xtxsep(LGCbetaMAX+1,LGCbetaMAX+1)
@@ -76,7 +76,7 @@
           REAL score(3),betas(3,0:(nsep+ntr))
           CHARACTER (LEN=125) astring
 
-        ! npckmv: how many available for a move of a particular type 
+        ! npckmv: how many available for a move of a particular type
         ! pickmv: which available for a move of a particular type
         ! prtr: logic trees predictions
 
@@ -98,7 +98,7 @@
          cbetas(j)=0
       END DO
       DO j=1,n1
-        rsp(j)=resp(j) 
+        rsp(j)=resp(j)
       END DO
       ! carry out an initial simulated annealing step
       CALL annealing_init(n1,n2,mdl,nkn,ntr,conc,negs,pick,term,
@@ -124,7 +124,7 @@
       !   carry out an annealing chain with defaults
       !   find starting temperature
           tstr=3
-          acr=1.0 
+          acr=1.0
           tcnt=0
           hm=100
           temp=(10.0**tstr)
@@ -134,7 +134,7 @@
             nsame=0
             nrj=0
             nde=0
-            DO j=1,hm        
+            DO j=1,hm
               sco=score(1)
               new=nac
               CALL annealing_step(n1,n2,mdl,nkn,ntr,conc,negs,
@@ -176,7 +176,7 @@
             nrj=0
             nde=0
             temp=(10.0**tstr)*(10.0**(-tcnt/20.0))
-            DO j=1,npertemp        
+            DO j=1,npertemp
               sco=score(1)
               new=nac
               CALL annealing_step(n1,n2,mdl,nkn,ntr,conc,negs,
@@ -276,7 +276,7 @@
      #                   betas,nac,nrj,nde,nsame)
         END IF
  2424   CONTINUE
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -339,7 +339,7 @@
             END DO
           END DO
         END IF
-            
+
 
       ! initialize and score the first model
         CALL initialize(n1,ntr,nkn,conc,term,negs,pick,storage,score)
@@ -425,7 +425,7 @@
         ! arguments out
           INTEGER accept,nop,ssize,mctry
           REAL betas(3,0:(nsep+ntr)),rr,rr2,rr3
-          
+
 
       ! carry out one annealing step
         hyperpars(8)=0.
@@ -469,7 +469,7 @@
      #            wud1,wud2,wui1,bmax)
 
       ! take care that the there is real convergence
-          l1=0 
+          l1=0
           l2=0
           zz2=0
           IF(cbetas(1).GT. -10000.)l1=1
@@ -493,10 +493,10 @@
           IF (reject.EQ.1) THEN
             accept=-1
             iearly(mtp,wh,knt,letter,neg,opper)=earlyup+2
-          ELSE 
+          ELSE
             IF(mdl.EQ.2)THEN
                score(1)=score(1)+penalty/(REAL(n1))*ssize
-            ELSE 
+            ELSE
                score(1)=score(1)+penalty*ssize
             END IF
             IF(mdl.EQ.1.and.mcmc.GT.0)THEN
@@ -561,8 +561,8 @@
             END IF
           END IF
         END IF
-           
-      END 
+
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -588,8 +588,8 @@
         t1=temp
         IF(t1.GT.0.0)  THEN
             t1=mylog(t1)/2.302585092994046
-        ELSE 
-            t1= -temp-1 
+        ELSE
+            t1= -temp-1
         END IF
         t2=REAL(t1)
         IF (ehm.GT.0) THEN
@@ -612,7 +612,7 @@
               CALL makeistring(54,59,astring,nrj,6)
               CALL stringprint(astring,59)
             END IF
-          ELSE 
+          ELSE
             IF (i.EQ.0) THEN
               CALL stringprint2()
               astring(1:26)="log-temp current score    "
@@ -677,12 +677,12 @@
           END IF
         END IF
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
 
-      ! this subroutine does the crossvalidation 
+      ! this subroutine does the crossvalidation
       ! last modification 10/16/02
 
       SUBROUTINE crossvalx(kfold,n1,n2,mdl,
@@ -709,7 +709,7 @@
           INTEGER term(nkn,ntr,3)
           INTEGER ssize,storage(2*ntr*nkn*n1)
           REAL score(3),betas(3,0:(nsep+ntr)),ioscores(*)
-        ! workspaces 
+        ! workspaces
           DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
           REAL wur1(n1*(bmax+6))
           INTEGER wui1((8+bmax)*n1),jmax,mat(n1+2,jmax)
@@ -742,7 +742,7 @@
       ! *****************************************************************
       ! *****************************************************************
 
-      ! this subroutine does the crossvalidation 
+      ! this subroutine does the crossvalidation
       ! last modification 06/05/03
 
       SUBROUTINE crossval(kfold,n1,n2,mdl,
@@ -761,7 +761,7 @@
           INTEGER ehm,kfold,n1,n2,mdl,msz,nkn,ntr,nsep,nfcnt,cnc(3)
           INTEGER dcph(n1),seed,mtm,bmax
           REAL tstr,tend,tint,slprbc(25),weight(n1)
-          INTEGER datri(n2,n1) 
+          INTEGER datri(n2,n1)
           REAL seps(nsep,n1),resp(n1),rnumsrr(n1)
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
           REAL rearly(0:6,ntr,0:nkn,n2,0:1,2)
@@ -771,8 +771,8 @@
           INTEGER pick(nkn,ntr,3)
           INTEGER term(nkn,ntr,3)
           INTEGER ssize,storage(2*ntr*nkn*n1)
-          REAL score(3),betas(3,0:(nsep+ntr)),ioscores(*) 
-        ! workspaces 
+          REAL score(3),betas(3,0:(nsep+ntr)),ioscores(*)
+        ! workspaces
           DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
           INTEGER jmax
           INTEGER wui1(n1*3),prtr(n1,bmax),mat(n1+2,jmax)
@@ -842,7 +842,7 @@
              astring(88:100)="     test-ave"
              CALL stringprint(astring,100)
           END IF
-          
+
           DO k=1,kfold
             cnt=0
             cnt2=0
@@ -962,7 +962,7 @@
             ltree=ltree+1
           END DO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -998,7 +998,7 @@
           IF (rnum.LT.crit) accept=1
         END IF
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -1047,11 +1047,11 @@
              iterm=term(i,wh,1)
               IF (negs(i,wh,1).EQ.0) THEN
                 DO dp=1,n1
-                  mat(dp,pc)=datri(iterm,dp)           
+                  mat(dp,pc)=datri(iterm,dp)
                 END DO
               ELSE
                 DO dp=1,n1
-                  mat(dp,pc)=(1-datri(iterm,dp))**2  
+                  mat(dp,pc)=(1-datri(iterm,dp))**2
                 END DO
               END IF
               mat(n1+1,pc)=i
@@ -1061,7 +1061,7 @@
           END IF
         END DO
         dim=pc-1
-      ! evaluate mat sequentially in the second argument 
+      ! evaluate mat sequentially in the second argument
       ! as good as possible
  1000   CONTINUE
         IF (dim.GT.1) THEN
@@ -1107,30 +1107,30 @@
               DO j=1,dim
                 IF (mat(n1+1,i).GT.mat(n1+1,j)) rank(i)=rank(i)+1
               END DO
-            END DO 
+            END DO
             DO i=1,dim
               DO j=1,(dim-1)
                 IF ((rank(j).EQ.i).AND.(i.NE.j)) THEN
                   DO k=1,n1+2
                     mat(k,dim+1)=mat(k,i)
                     mat(k,i)=mat(k,j)
-                    mat(k,j)=mat(k,dim+1)                    
+                    mat(k,j)=mat(k,dim+1)
                     mat(k,dim+1)=0
                   END DO
                   GOTO 2000
-                END IF 
+                END IF
               END DO
-            END DO 
+            END DO
           END DO
           GOTO 1000
-        END IF         
+        END IF
 
       ! write out tree prediction
         DO j=1,n1
           prtr(j,wh)=mat(j,1)
         END DO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -1185,7 +1185,7 @@
           END DO
         END DO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -1220,7 +1220,7 @@
           DO j=1,n1
             storage(j+pp)=datri(iterm,j)
           END DO
-        ELSE 
+        ELSE
           DO j=1,n1
             storage(j+pp)=1-datri(iterm,j)
           END DO
@@ -1268,7 +1268,7 @@
           DO j=1,n1
             storage(pp+j)=datri(iterm,j)
           END DO
-        ELSE 
+        ELSE
           DO j=1,n1
             storage(pp+j)=1-datri(iterm,j)
           END DO
@@ -1287,7 +1287,7 @@
             DO j=1,n1
               storage(pp+j)=storage(pp2+j)*storage(pp2b+j)
             END DO
-          ELSE  
+          ELSE
             DO j=1,n1
               storage(pp+j)=1-(1-storage(pp2+j))*(1-storage(pp2b+j))
             END DO
@@ -1335,7 +1335,7 @@
             DO j=1,n1
               storage(pp+j)=storage(pp2+j)*storage(pp2b+j)
             END DO
-          ELSE  
+          ELSE
             DO j=1,n1
               storage(pp+j)=1-(1-storage(pp2+j))*(1-storage(pp2b+j))
             END DO
@@ -1380,7 +1380,7 @@
           END DO
           nwkv=1
           wkv(nwkv)=1
-        ELSE 
+        ELSE
           knac=INT(REAL(knt)/2.0)
           IF (MOD(knt,2).EQ.0) THEN
             sibling=knt+1
@@ -1405,7 +1405,7 @@
                 DO j=1,n1
                   storage(pp+j)=storage(pp2+j)*storage(pp2b+j)
                 END DO
-              ELSE  
+              ELSE
                 DO j=1,n1
                   storage(pp+j)=1-(1-storage(pp2+j))*(1-storage(pp2b+j))
                 END DO
@@ -1414,10 +1414,10 @@
               wkv(nwkv)=knac
               knac=INT(REAL(knac)/2.0)
             ENDDO
-          ENDIF 
+          ENDIF
         ENDIF
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -1459,7 +1459,7 @@
                storage(pp+j)=datri(iterm,j)
             END IF
           END DO
-        ELSE 
+        ELSE
           DO j=1,n1
             storage(pp+j)=1-datri(iterm,j)
           END DO
@@ -1472,7 +1472,7 @@
           DO j=1,n1
             storage(pp+j)=datri(iterm,j)
           END DO
-        ELSE 
+        ELSE
           DO j=1,n1
             storage(pp+j)=1-datri(iterm,j)
           END DO
@@ -1491,7 +1491,7 @@
             DO j=1,n1
               storage(pp+j)=storage(pp2+j)*storage(pp2b+j)
             END DO
-          ELSE  
+          ELSE
             DO j=1,n1
               storage(pp+j)=1-(1-storage(pp2+j))*(1-storage(pp2b+j))
             END DO
@@ -1539,7 +1539,7 @@
           DO j=1,n1
             storage(pp+j)=datri(iterm,j)
           END DO
-        ELSE 
+        ELSE
           DO j=1,n1
             storage(pp+j)=1-datri(iterm,j)
           END DO
@@ -1553,7 +1553,7 @@
           DO j=1,n1
             storage(pp+j)=datri(iterm,j)
           END DO
-        ELSE 
+        ELSE
           DO j=1,n1
             storage(pp+j)=1-datri(iterm,j)
           END DO
@@ -1572,7 +1572,7 @@
              DO j=1,n1
                storage(pp+j)=datri(iterm,j)
              END DO
-           ELSE 
+           ELSE
              DO j=1,n1
                storage(pp+j)=1-datri(iterm,j)
              END DO
@@ -1592,7 +1592,7 @@
             DO j=1,n1
               storage(pp+j)=storage(pp2+j)*storage(pp2b+j)
             END DO
-          ELSE  
+          ELSE
             DO j=1,n1
               storage(pp+j)=1-(1-storage(pp2+j))*(1-storage(pp2b+j))
             END DO
@@ -1602,7 +1602,7 @@
           knac=INT(REAL(knac)/2.0)
         ENDDO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -1642,7 +1642,7 @@
           DO j=1,n1
             storage(pp+j)=datri(iterm,j)
           END DO
-        ELSE 
+        ELSE
           DO j=1,n1
             storage(pp+j)=1-datri(iterm,j)
           END DO
@@ -1656,7 +1656,7 @@
           DO j=1,n1
             storage(pp+j)=datri(iterm,j)
           END DO
-        ELSE 
+        ELSE
           DO j=1,n1
             storage(pp+j)=1-datri(iterm,j)
           END DO
@@ -1675,7 +1675,7 @@
             DO j=1,n1
               storage(pp+j)=storage(pp2+j)*storage(pp2b+j)
             END DO
-          ELSE  
+          ELSE
             DO j=1,n1
               storage(pp+j)=1-(1-storage(pp2+j))*(1-storage(pp2b+j))
             END DO
@@ -1755,7 +1755,7 @@
           INTEGER nsp,cnc(3)
         ! local
           INTEGER j,k
-          REAL denom,slprb(25)  
+          REAL denom,slprb(25)
         ! arguments out
           REAL slprbc(25)
 
@@ -1772,7 +1772,7 @@
         END IF
 
       ! compute cumulative selection probabilities
-        denom=0.0        
+        denom=0.0
         DO j=1,nsp
           denom=denom+slprb(j)
         END DO
@@ -1791,7 +1791,7 @@
         GOTO 2000
  2000   CONTINUE
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -1902,7 +1902,7 @@
          intpars(1)=-999
       ENDIF
       END
-      
+
       SUBROUTINE logreg(mdl,msz,n1,n2,nkn,ntr,cnc,nsep,tstr,tend,tint,
      #                  ehm,mszlo,mszup,ntrlo,ntrup,seed,kfold,
      #                  nrep,choice,nfcnt,penalty,mtm,seps,dcph,
@@ -1912,7 +1912,7 @@
      #                  wud1,wud2,wur1,wui1,rnumsrr,rsp,prtr,prtr2,bmax,
      #                  mat,jmax,wui3,jtmax)
       IMPLICIT NONE
-        
+
         ! parameters to be determined by the user
         ! INTEGER n1    number of subjects
         ! INTEGER n2    number of predictors
@@ -1923,7 +1923,7 @@
         ! INTEGER nsep  how many separate predictors
 
         ! how many selection probabilities/relations:
-  
+
         ! parameters
           INTEGER LGCnknMAX,LGCntrMAX,ltree,iotree(*)
           INTEGER LGCbetaMAX
@@ -1958,7 +1958,7 @@
           DOUBLE PRECISION wud1(n1*(6+bmax+bmax*bmax)),wud2(16384*2)
           REAL wur1(n1*(2*bmax+6)),rsp(n1)
           INTEGER wui1((8+bmax)*n1),wui3(n1*jtmax)
-          
+
         ! betas: the parameter estimates - current/stored/best
         ! choice: which type of logic regression
         ! cnc: specifies which operators will be considered
@@ -1974,7 +1974,7 @@
         ! seps: separate variables to condition on
         ! ssize: size of the current model
         ! slprbc: cumulative selection probabilities
-        ! storage: array that stores the values in the knots of the 
+        ! storage: array that stores the values in the knots of the
         !   logic trees
         ! term: predictors in the logic trees
         ! weight: case weights
@@ -2005,7 +2005,7 @@
         CALL selprob(nsp,cnc,slprbc)
 
       ! set random seed
-        
+
         IF(seed.NE.0)THEN
           sseed(1)=seed
           IF(sseed(1).LT.0)THEN
@@ -2296,7 +2296,7 @@
      #                iearly,rearly,wud1,wud2,wur1(1:(n1*(6+bmax))),
      #                wui1,bmax,mat,jmax)
             ioscores(j+2)=score(3)
-            IF (ehm.GE.0) THEN  
+            IF (ehm.GE.0) THEN
               astring(1:18)="Permutation number"
               CALL makeistring(19,23,astring,j,5)
               astring(24:31)="  out of"
@@ -2395,7 +2395,7 @@
                      ioscores((ltree-1)*(nrep+2)+3)= -1
                      GO TO 1299
                   END IF
-                  IF (ehm.GE.0) THEN  
+                  IF (ehm.GE.0) THEN
                      astring(1:18)="Permutation number"
                      CALL makeistring(19,23,astring,j,5)
                      astring(24:31)="  out of"
@@ -2416,7 +2416,7 @@
             END DO
           END DO
         END IF
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -2442,7 +2442,7 @@
         ! arguments out
           INTEGER knt,mtp,wh
 
-      ! randomly select tree 
+      ! randomly select tree
  1000   CONTINUE
         CALL copytree(ntr,nkn,conc,negs,pick,term,-1,2,1)
         rnum=myrand(0)
@@ -2480,7 +2480,7 @@
         wh=INT(REAL(ntr)*rnum)+1
         IF(wh.GT.nop+1)wh=nop+1
         IF (pick(1,wh,1).EQ.0) THEN
-          IF (ssize.EQ.msz) GOTO 1000 
+          IF (ssize.EQ.msz) GOTO 1000
           IF(mcmc.GT.0)mcmc=2
           CALL firstknot(n2,nkn,ntr,wh,conc,negs,pick,term,-1,-1)
           knt=0
@@ -2491,7 +2491,7 @@
      #                  knt,mtp,mcmc,mctry)
         END IF
 169     CONTINUE
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -2529,7 +2529,7 @@
         negs(1,wh,1)=neg
         pick(1,wh,1)=1
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -2622,7 +2622,7 @@
           astring(1:34)="PROGRAM MAY CRASH!!!!!!!!!!!!!!!!!"
           CALL stringprint(astring,34)
         END IF
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -2673,10 +2673,10 @@
           rnum=myrand(0)
           neg=INT(2.0*rnum)
         END IF
-        term(knt,wh,1)=letter         
+        term(knt,wh,1)=letter
         negs(knt,wh,1)=neg
 388     CONTINUE
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -2693,9 +2693,9 @@
         ! arguments out
 
       ! exchange operator
-        conc(knt,wh,1)=3-conc(knt,wh,1)       
+        conc(knt,wh,1)=3-conc(knt,wh,1)
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -2718,7 +2718,7 @@
           INTEGER head,sibling,token
         ! arguments out
 
-      ! delete the leaf 
+      ! delete the leaf
         IF (knt.EQ.1) THEN
           conc(knt,wh,1)=0
           term(knt,wh,1)=0
@@ -2743,10 +2743,10 @@
           conc(token,wh,1)=0
           term(token,wh,1)=0
           negs(token,wh,1)=0
-          pick(token,wh,1)=0 
+          pick(token,wh,1)=0
         END IF
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -2785,8 +2785,8 @@
         negs(2*knt,wh,1)=negs(knt,wh,1)
         pick(2*knt,wh,1)=1
         term(knt,wh,1)=0
-        negs(knt,wh,1)=0        
-      ! create the new leaf 
+        negs(knt,wh,1)=0
+      ! create the new leaf
         IF(r1.GE.0)THEN
           conc(knt,wh,1)=cnc(r2)
           letter=r1
@@ -2817,7 +2817,7 @@
         negs(2*knt+1,wh,1)=neg
         pick(2*knt+1,wh,1)=1
 599     CONTINUE
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -2860,11 +2860,11 @@
         conc(loc2,wh,1)=conc(loc1,wh,1)
         term(loc2,wh,1)=term(loc1,wh,1)
         negs(loc2,wh,1)=0
-      ! create the new leaf 
+      ! create the new leaf
         conc(2*knt+1,wh,1)=3
         pick(2*knt+1,wh,1)=1
         term(knt,wh,1)=0
-        negs(knt,wh,1)=0        
+        negs(knt,wh,1)=0
         IF(r1.LT.0)THEN
  500      CONTINUE
           rnum=myrand(0)
@@ -2912,7 +2912,7 @@
           INTEGER term(nkn,ntr,3)
         ! arguments out
 
-      ! move operator 
+      ! move operator
         loc1=dbl
         loc2=knt
         conc(loc2,wh,1)=conc(loc1,wh,1)
@@ -2940,7 +2940,7 @@
         negs(loc1,wh,1)=0
         pick(loc1,wh,1)=0
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -3091,7 +3091,7 @@
           ordrs(j)=sordrs(j)
         END DO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -3253,7 +3253,7 @@
         END DO
         ncl=2**ntr
         penalty=0
-         
+
 
       ! randomization
         CALL ident_prdcl(n1,ntr,prtr,ncl,nprdcl,prdcl)
@@ -3268,7 +3268,7 @@
      #                rd3,rd4,bout,iearly,rearly,
      #                wud1,wud2,rsp,wui1(1:(3*n1)),prtr2,bmax,mat,jmax)
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -3307,7 +3307,7 @@
           prdcl(nprdcl(cl),cl)=k
         END DO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -3342,7 +3342,7 @@
               wk2(k)=k
               rnumsi(k)=k
               r7(k)=k
-              wk1(k)=myrand(0) 
+              wk1(k)=myrand(0)
             END DO
             CALL clksort(wk1,nn,wk2,r7)
             DO k=1,nn
@@ -3351,7 +3351,7 @@
             END DO
             DO k=1,nn
               resp(prdcl(k,j))=wk1(rnumsi(k))
-            END DO 
+            END DO
             DO k=1,nn
               wk1(k)=rwgt(prdcl(k,j))
               wk2(k)=rdcp(prdcl(k,j))
@@ -3359,7 +3359,7 @@
             DO k=1,nn
               rwgt(prdcl(k,j))=wk1(rnumsi(k))
               rdcp(prdcl(k,j))=wk2(rnumsi(k))
-            END DO 
+            END DO
             IF (nsep.GT.0) THEN
               DO l=1,nsep
                 DO k=1,nn
@@ -3369,7 +3369,7 @@
                   rseps(l,prdcl(k,j))=wk1(rnumsi(k))
                 END DO
               END DO
-            END IF 
+            END IF
           END IF
         END DO
 
@@ -3384,7 +3384,7 @@
         DO j=1,n1
           ordrs(j)=NINT(r7(j))
         END DO
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -3430,7 +3430,7 @@
         END DO
         IF(error.EQ.-1)error=1
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -3486,7 +3486,7 @@
           score(1)=score(2)
         END IF
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -3582,7 +3582,7 @@
      #                        nop,wh,nsep,seps,score(1),smbetas,reject)
             DO j=0,(nsep+ntr)
               betas(j)=smbetas(j)
-            END DO 
+            END DO
        ! the next lines are here for Holger Schwender's TRIO package
           ELSE IF (mdl.EQ.9)THEN
             CALL triofitting(prtr,rsp,dcph,ordrs,weight,n1,ntr,
@@ -3595,7 +3595,7 @@
             j=0
             DO j=0,(nsep+ntr)
               betas(j)=smbetas(j)
-            END DO           
+            END DO
        ! the previous lines are here only for Holger Schwender's TRIO package
           ELSE IF (mdl.EQ.5)THEN
             CALL expofit(prtr,rsp,dcph,weight,n1,ntr,
@@ -3603,7 +3603,7 @@
      #                wud2(1:16384),wud2(16385:(2*16384)))
             DO j=0,(nsep+ntr)
               betas(j)=smbetas(j)
-            END DO 
+            END DO
           ELSE IF (mdl.EQ.1) THEN
             score(1)=0.0
             DO j=1,n1
@@ -3613,13 +3613,13 @@
             CALL calcbetarss(n1,nop,ntr,prtr,nsep,seps,rsp,weight,
      #                       smbetas,oops,xtxsep)
             IF(oops.EQ.1)THEN
-               reject=1   
+               reject=1
             ELSE
               CALL calcrss(nop,n1,ntr,smbetas,prtr,nsep,seps,rsp,
      #                     weight,score)
               DO j=0,(nsep+ntr)
                 betas(j)=smbetas(j)
-              END DO 
+              END DO
             END IF
           ELSE IF (mdl.EQ.3) THEN
             CALL calcdev(n1,nop,ntr,prtr,nsep,seps,rsp,weight,
@@ -3640,7 +3640,7 @@
           END IF
         END IF
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -3660,7 +3660,7 @@
         ! arguments out
           INTEGER reject,n4
 
-      ! check for singularities in the predicted trees 
+      ! check for singularities in the predicted trees
         reject=0
         n4=0
         sum1=0
@@ -3675,7 +3675,7 @@
           END IF
         END IF
 
-      ! check for singularities with other predictors 
+      ! check for singularities with other predictors
         IF (reject.EQ.0.AND.nop.GT.1) THEN
           DO j=1,nop
             IF (j.NE.wh) THEN
@@ -3686,7 +3686,7 @@
               IF(prtr(1,wh).EQ.prtr(1,j))m= 1
               DO k=1,n1
                 IF(prtr(k,wh).NE.(l+m*prtr(k,j)))GOTO 4000
-              END DO 
+              END DO
               reject=1
               GOTO 1000
             END IF
@@ -3699,26 +3699,26 @@
           DO j=1,nsep
             DO k=1,n1
               IF((seps(j,k).NE.0.0).AND.(seps(j,k).NE.1.0))GOTO 3000
-            END DO 
+            END DO
             l=1
             m=-1
             IF(prtr(1,wh).EQ.seps(j,1))l=0
             IF(prtr(1,wh).EQ.seps(j,1))m= 1
             DO k=1,n1
               IF(prtr(k,wh).NE.(l+m*seps(j,k))) GOTO 3000
-            END DO 
+            END DO
             reject=1
             GOTO 2000
  3000       CONTINUE
           END DO
         END IF
  2000   CONTINUE
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
 
-      ! this subroutine estimates the parameters in the linear 
+      ! this subroutine estimates the parameters in the linear
       ! regression model
       ! last modification 10/17/02
 
@@ -3759,7 +3759,7 @@
         DO i=1,(4*LGCbetaMAX+4)
            dummy_vec(i)=0
         END DO
-        ! estimate the parameters for linear regression 
+        ! estimate the parameters for linear regression
         xtx(0,0)=xtxsep(0,0)
         xty(0)=0.0
         DO k=1,n1
@@ -3770,12 +3770,12 @@
             xtx(0,j)=xtxsep(0,j)
             DO k=1,nsep
              xtx(j,k)=xtxsep(j,k)
-            END DO        
+            END DO
             xty(j)=0.0
             DO i=1,n1
               tmp=weight(i)*seps(j,i)
               xty(j)=xty(j)+rsp(i)*tmp
-            END DO        
+            END DO
             xtx(j,0)=xtx(0,j)
           END DO
         END IF
@@ -3797,22 +3797,22 @@
                 DO k=1,j
                   xtx(nj,nsep+k)=xtx(nj,nsep+k)+
      #                                weight(i)*REAL(prtr(i,k))
-                END DO        
+                END DO
                 DO k=1,nsep
                   xtx(nj,k)=xtx(nj,k)+weight(i)*seps(k,i)
                 END DO
               END IF
-            END DO        
+            END DO
             xtx(nj,0)=xtx(0,nj)
             DO k=1,nsep
               xtx(k,nj)=xtx(nj,k)
-            END DO        
-          END DO        
+            END DO
+          END DO
           DO j=1,nop
             DO k=j+1,nop
               xtx(nsep+j,nsep+k)=xtx(nsep+k,nsep+j)
-            END DO        
-          END DO        
+            END DO
+          END DO
         END IF
         tweight=REAL(xtx(0,0))
         DO k=0,(nsep+nop)
@@ -3821,7 +3821,7 @@
           DO l=0,(nsep+nop)
             xtx(k,l)=xtx(k,l)/tweight
             xtx2(k,l)=xtx(k,l)
-          END DO        
+          END DO
         END DO
         DO j=1,(nsep+nop+1)
           dummy_vec(j)=0
@@ -3904,7 +3904,7 @@
         END IF
 
 
-      END 
+      END
 !     ! *****************************************************************
 !     ! *****************************************************************
 !     SUBROUTINE PRINTRSSMODEL(xtx,xty,nsep,nop,seps,rsp,weight,prtr,
@@ -3917,7 +3917,7 @@
 !     REAL seps(nsep,n1),z
 !     CHARACTER astring *200
 !     INTEGER i,j,k
-!     
+!
 !     call makeistring(1,8,astring,nop,8)
 !     call makeistring(9,16,astring,nsep,8)
 !     call makeistring(17,24,astring,n1,8)
@@ -3974,7 +3974,7 @@
         ! arguments out
           REAL score(3)
 
-      ! calculate residual standard error  
+      ! calculate residual standard error
         score(1)=0.0
         DO i=1,n1
           prediction=betas(0)
@@ -3992,12 +3992,12 @@
         END DO
         score(1)=SQRT(score(1)/REAL(n1-1-nsep-nop))
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
 
-      ! this subroutine estimates the parameters in the logistic 
+      ! this subroutine estimates the parameters in the logistic
       ! regression model and calculates the deviance
       ! last modification 10/17/02
 
@@ -4046,14 +4046,14 @@
               x(j,k+1)=seps(k,j)
             END DO
           END DO
-        END IF 
+        END IF
         IF (nop.GT.0) THEN
           DO j=1,n1
             DO k=1,nop
               x(j,k+nsep+1)=REAL(prtr(j,k))
             END DO
           END DO
-        END IF 
+        END IF
         DO j=1,n1
           y(j)=rsp(j)*weight(j)
           n(j)=weight(j)
@@ -4069,7 +4069,7 @@
           beta(j)=0.D0
         END DO
 
-      ! estimate the parameters for logistic regression 
+      ! estimate the parameters for logistic regression
         DO WHILE (iter.LT.20.AND.conv.EQ.0)
           iter=iter+1
           CALL lgtderiv(n1tmp,nsep+nop+1,n,x,y,beta,sco,d2mat,eta,p,w,
@@ -4116,7 +4116,7 @@
 
  1000   CONTINUE
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4179,7 +4179,7 @@
             END DO
           END DO
         END IF
-        
+
       ! calculate partial likelihood
         CALL myphxx(dcph,ordrs,covsf,nnf(1),n1,nsep,ntr,loglf,betaf,
      #              oops,weight,wud1(1:(5*n1)))
@@ -4190,7 +4190,7 @@
           betas(j)=REAL(betaf(j))
         END DO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4203,7 +4203,7 @@
       SUBROUTINE storing(nkn,ntr,conc,pick,npckmv,pickmv,ssize,nop)
       IMPLICIT NONE
 
-        ! parameters 
+        ! parameters
         ! arguments in
           INTEGER nkn,ntr
           INTEGER conc(nkn,ntr,3)
@@ -4269,7 +4269,7 @@
             END IF
           END DO
         END DO
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4281,7 +4281,7 @@
      #                   wud1,rsp,prtr,bmax,mat,jmax)
       IMPLICIT NONE
 
-        ! parameters 
+        ! parameters
           INTEGER LGCnknMAX,LGCntrMAX,LGCbetaMAX,bmax
           PARAMETER (LGCnknMAX  =   128)
           PARAMETER (LGCntrMAX  =     5)
@@ -4355,7 +4355,7 @@
 
       ! calculate response for scoring function
         DO j=1,n1
-          rsp(j)=resp(j) 
+          rsp(j)=resp(j)
         END DO
 
       ! store and evaluate variables
@@ -4381,7 +4381,7 @@
           END DO
         ELSE IF (mdl.EQ.2) THEN
           DO j=1,3
-            score(j)=0        
+            score(j)=0
           END DO
           CALL calcrss(nop,n1,ntr,betas,prtr,nsep,seps,
      #                 rsp,weight,score)
@@ -4394,15 +4394,15 @@
      #                 wud1(1:(3*n1)),
      #                 wud1((3*n1+1):(n1*(bmax+3))),
      #                 bmax)
-        ELSE IF (mdl.EQ.5) THEN 
+        ELSE IF (mdl.EQ.5) THEN
            CALL exposcore(prtr,rsp,dcph,weight,n1,ntr,nop,
      #                         nsep,seps,score(1),betas)
-        ELSE 
+        ELSE
            CALL Myownscoring(prtr,rsp,dcph,ordrs,weight,n1,ntr,nop,
      #                         wh,nsep,seps,score(1),betas)
         END IF
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4449,19 +4449,19 @@
             IF (rsp(i).EQ.0) prd=1-prd
             score(1)=score(1)-REAL(2.0*weight(i)*mylog(prd))
           ELSE
-          astring(1:34)=" * Fitted probabilities of 0 or 1 *" 
+          astring(1:34)=" * Fitted probabilities of 0 or 1 *"
           CALL stringprint(astring,35)
           astring(1:34)="PROGRAM MAY CRASH!!!!!!!!!!!!!!!!!"
           CALL stringprint(astring,34)
           ENDIF
         ENDDO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
 
-      ! this subroutine calculates the partial likelihood for the 
+      ! this subroutine calculates the partial likelihood for the
       ! proportional hazards model
       ! last modification 10/17/02
 
@@ -4469,7 +4469,7 @@
      #                    score,weight,wud1,covsf,bmax)
       IMPLICIT NONE
 
-        ! parameters 
+        ! parameters
           INTEGER LGCbetaMAX
           PARAMETER (LGCbetaMAX=    55)
         ! arguments in
@@ -4513,7 +4513,7 @@
         r=n1
         score(1)=REAL(-loglf)
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4524,7 +4524,7 @@
       SUBROUTINE myphxx(delta,idx,covs,np,n1,nsep,ntr,logl,beta,
      #                   oops,weight,wud1)
       IMPLICIT none
-        ! parameters 
+        ! parameters
           INTEGER LGCbetaMAX
           PARAMETER (LGCbetaMAX=    55)
         ! i/o
@@ -4537,7 +4537,7 @@
         ! local
           DOUBLE PRECISION ologl,nlogl,alpha,pp,alphap1,alphap2,prec
           DOUBLE PRECISION nbeta(LGCbetaMAX),grad(LGCbetaMAX)
-          DOUBLE PRECISION hess(LGCbetaMAX,LGCbetaMAX)   
+          DOUBLE PRECISION hess(LGCbetaMAX,LGCbetaMAX)
           INTEGER iter,i,np
 
           DO i=1,np
@@ -4604,7 +4604,7 @@
      #                   wud1((4*n1+1):(5*n1)))
 1234      CONTINUE
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4615,7 +4615,7 @@
       SUBROUTINE mygradph(grad,hess,beta,delta,idx,covs,np,n1,logl,lda,
      #                    weight,ff,s1,s1s,gg,ff2)
       IMPLICIT none
-        ! parameters 
+        ! parameters
           INTEGER LGCbetaMAX
           PARAMETER (LGCbetaMAX=    55)
         ! i/o
@@ -4685,7 +4685,7 @@
           END DO
           logl=u
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4726,7 +4726,7 @@
             END IF
           END DO
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4757,7 +4757,7 @@
              END IF
           END IF
 
-      END 
+      END
 
       ! ********************************************************
       ! ********************************************************
@@ -4776,8 +4776,8 @@
           s2=s3
           ls2=ls2+ls1
 
-      END 
-      
+      END
+
       ! ********************************************************
       ! ********************************************************
 
@@ -4795,7 +4795,7 @@
           INTEGER j
 
       ! here it goes
-        SUM2I=0   
+        SUM2I=0
 
         IF (iin.EQ.1) THEN
           DO j=fr,tto
@@ -4809,7 +4809,7 @@
       ! ********************************************************
 
       SUBROUTINE clearly(iearly,ntr,nkn,n2)
-      
+
       ! parameters
           INTEGER ntr,nkn,n2
           INTEGER iearly(0:6,ntr,0:nkn,n2,0:1,2)
@@ -4826,7 +4826,7 @@
               END DO
             END DO
           END DO
-          END 
+          END
       ! ********************************************************
       ! ********************************************************
       SUBROUTINE  xstopper(i,j,s1,vv,ww,k)
@@ -4840,7 +4840,7 @@
       IF(i.LT.j)THEN
         astring(1:24)="Insufficient declaration"
         CALL stringprint(astring,24)
-             
+
         s3(1:10)=s1(1:10)
         s3(11:14)=" is "
         CALL makeistring(15,22,s3,i,8)
@@ -4916,7 +4916,7 @@
       IF(ww.EQ.0.and.i.gt.1)aa((i-1):(i-1))="-"
       astring(k1:k2)=aa(1:(k2-k1+1))
       END
-      
+
       SUBROUTINE makeiistring(aa,i,j,p,f)
       CHARACTER (LEN=125) aa
       INTEGER i,j,p,f
@@ -5024,7 +5024,7 @@
          IF(mtp.EQ.0)postrat=(2*n2)*zz
          hyperpars(8)=REAL(mylog(postrat))
       END IF
-      END 
+      END
       SUBROUTINE getv2(nn,ssize,nkn,n2)
       DOUBLE PRECISION nn
       INTEGER i,nkn,n2,ssize
@@ -5072,7 +5072,7 @@
       END DO
       nn=mylog(nn)
       END
-      SUBROUTINE  getv(ll,ssize,ntr,nkn,n2) 
+      SUBROUTINE  getv(ll,ssize,ntr,nkn,n2)
       INTEGER ssize,ntr,nkn,n2
       DOUBLE PRECISION ll
       IF(ntr.EQ.1)THEN
@@ -5096,7 +5096,7 @@
          GOTO 567
       END IF
 567   CONTINUE
-      END 
+      END
       SUBROUTINE getv1(l,ssize,nb,n2)
       INTEGER ll,ssize,nb,precomp(25),n2
       DOUBLE PRECISION l,m,mylog,r
@@ -5219,7 +5219,7 @@
       IF(ssize.GT.0)THEN
         l=l+m*(2*ssize-1)+ssize*mylog(r)
       END IF
-      END 
+      END
       SUBROUTINE storeone(mcmc,new,hyperpars,lvisit,visit,
      #           ntr,nkn,conc,negs,term,nac,rd1,rd2,rd3,rd4,
      #           bout,n2,zz)
@@ -5349,7 +5349,7 @@
         visit(2)=0
       END IF
       END IF
-      END 
+      END
       SUBROUTINE redater(ii,x,y,w,prtr,seps,resp,wt,n1,ntr,nsep,bmax)
       IMPLICIT NONE
       INTEGER n1,ntr,nsep,ii,prtr(n1,ntr),bmax
@@ -5418,10 +5418,10 @@
             END DO
          END IF
       END DO
-117   CONTINUE 
+117   CONTINUE
       END
       SUBROUTINE copytree(ntr,nkn,conc,negs,pick,term,one,iin,iout)
-      IMPLICIT NONE 
+      IMPLICIT NONE
       INTEGER ntr,nkn,one,i1,i2,i3,i4,iin,iout
       INTEGER conc(nkn,ntr,3)
       INTEGER negs(nkn,ntr,3)
@@ -5465,7 +5465,7 @@
       improve=-1
       CALL copytree(ntr,nkn,conc,negs,pick,term,-1,1,2)
       CALL copytree(ntr,nkn,conc,negs,pick,term,-1,1,3)
-      
+
       DO wh=1,nop
         DO mtp=1,6
           DO knt=1,nkn
@@ -5617,7 +5617,7 @@
           END IF
           END IF
           END
- 
+
         SUBROUTINE evalgreed(nkn,ntr,conc,pick,negs,term,mtp,n1,n2,wh,
      #                    knt,storage,datri,prtr,mdl,nsep,dcph,ordrs,
      #                    mtm,rsp,weight,seps,cbetas,xtxsep,nop,
@@ -5658,7 +5658,7 @@
      #          wud1,wud2,wui1(1:(3*n1)),bmax)
 
        !   take care that the there is real convergence
-        l1=0 
+        l1=0
         l2=0
         IF(cbetas(1).GT. -10000.)l1=1
         IF(cbetas(1).LT. 10000.)l2=1
@@ -5666,7 +5666,7 @@
         IF (reject.NE.1) THEN
         IF(mdl.EQ.2)THEN
           score(1)=score(1)+penalty/(REAL(n1))*ssize
-        ELSE 
+        ELSE
           score(1)=score(1)+penalty*ssize
         END IF
         IF(oncemore.EQ.0)THEN
@@ -5703,7 +5703,7 @@
       SUBROUTINE gstoring(nkn,ntr,conc,pick,ssize,nop)
       IMPLICIT NONE
 
-        ! parameters 
+        ! parameters
         ! arguments in
           INTEGER nkn,ntr
           INTEGER conc(nkn,ntr,3)
@@ -5726,7 +5726,7 @@
             END IF
           END DO
         END DO
-      END 
+      END
       ! ********************************************************
       ! ********************************************************
       ! this routine scores exponential survival models
@@ -5762,10 +5762,10 @@ c       CALL RANDOM_NUMBER(score)
           END IF
           score=score-REAL(myexp(prd)*rsp(i)*weight(i))
           IF(dcph(i).EQ.1)score=score+REAL(prd*weight(i))
-             
+
         END DO
         score = - score
-      END 
+      END
       ! ********************************************************
       ! ********************************************************
       ! this routine fits exponential survival models

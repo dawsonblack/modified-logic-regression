@@ -1133,7 +1133,7 @@ C
 
         IF(x.LT.1.D-250) THEN
           mylog=-550.
-        ELSE 
+        ELSE
           mylog=LOG(x)
         END IF
         IF(mylog.LT.-550.)mylog=-550.
@@ -1147,7 +1147,7 @@ C
         IF(x.GT.550.) THEN
           myexp=550.
           myexp=dexp(myexp)
-        ELSE 
+        ELSE
           IF(x.LT.-550.)THEN
             myexp= -550.
             myexp=dexp(myexp)
@@ -1160,16 +1160,16 @@ C
 *       integer seed
 * c initializes common block containing seeds. if seed=0,
 * c the default value is 1802.
-* 
+*
 *       subroutine zufall(n,u)
 *       integer n
 *       double precision u(n)
 * c returns set of n uniforms u(1), ..., u(n).
-* 
+*
 *       subroutine zufallsv(zusave)
 *       double precision zusave(608)
 * c saves buffer and pointer in zusave, for later restarts
-* 
+*
 *       subroutine zufallrs(zusave)
 *       double precision zusave(608)
 * c restores seed buffer and pointer from zusave
@@ -1257,16 +1257,16 @@ c
       else
 c
 c more than 1 full segment
-c 
+c
           do 6 i=1,left
              a(i+aptr) = buff(ptr+i)
 6         continue
           nn   = nn - left
           ptr  = 0
           aptr = aptr+left
-c 
+c
 c buff -> a(aptr0)
-c 
+c
           VL   = 273
           k273 = 334
           k607 = 0
@@ -1392,7 +1392,7 @@ c
       subroutine zufallsv(svblk)
       implicit none
 c
-c  saves common blocks klotz0, containing seeds and 
+c  saves common blocks klotz0, containing seeds and
 c  pointer to position in seed block. IMPORTANT: svblk must be
 c  dimensioned at least 608 in driver. The entire contents
 c  of klotz0 (pointer in buff, and buff) must be saved.

@@ -4,11 +4,11 @@
 #include "clogic.h"
 #define Salloc(n, t)  (t *)R_alloc((long)(n), (int)sizeof(t))
 
-void F77_NAME(slogreg)(int *, int *, int *, int *, 
+void F77_NAME(slogreg)(int *, int *, int *, int *,
    float *, float *, int *, int *, float *,
    float *, int *, int *, float *, float *,
    int *, int *, int *, int *,
-   float *, int *, int*, 
+   float *, int *, int*,
    double *, double *, float *, int *, int *, int *, int *, int *, int *);
 
 static int *ilvector(int l);
@@ -33,7 +33,7 @@ void clogreg(int *n1,int *n2,int *nsep,int *intpars,float *rpars,float *seps,
    length = 7*intpars[5]*(ip4+1)*n2[0]*4;
    storage3 = ilvector(length);
    storage4 = flvector(length);
-   storage2 = ilvector(n1[0]*n2[0]); 
+   storage2 = ilvector(n1[0]*n2[0]);
    wud1 = dlvector(n1[0]*(bmax*bmax+bmax+6));
    wud2 = dlvector(16384*2);
    wur1 = flvector(n1[0]*(2*bmax+8));
